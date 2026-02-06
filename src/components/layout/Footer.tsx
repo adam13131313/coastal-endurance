@@ -11,7 +11,7 @@ const Footer = () => {
               Coastal Endurance
             </Link>
             <p className="mt-4 text-sm text-primary-foreground/70 max-w-sm leading-relaxed">
-              Built for sun, salt, wind, and age. Performance-driven skincare designed for Australian conditions.
+              Your skin faces it all. Field Oil rebuilds what the elements break down.
             </p>
           </div>
 
