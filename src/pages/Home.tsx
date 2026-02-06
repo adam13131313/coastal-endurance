@@ -105,8 +105,7 @@ const Home = () => {
             Fewer products. Better performance.
           </h2>
           <p className="mt-6 text-lg text-primary-foreground/80 leading-relaxed max-w-2xl mx-auto">
-            We don't sell routines. We sell solutions. Every ingredient earns its place. 
-            Every formula is designed for conditions you actually face.
+            Every ingredient earns its place.
           </p>
           <Link to="/philosophy" className="inline-flex items-center mt-8 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
             Read Our Philosophy
