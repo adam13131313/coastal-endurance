@@ -20,7 +20,7 @@ const Home = () => {
         <div className="container-wide relative z-10 pt-20">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium leading-tight animate-slide-up">
-              Skin resilience for men who live outside.
+              Built for sun, salt, wind, and age.
             </h1>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
               Sun, salt, wind, sweat, age. Your skin faces it all. 
