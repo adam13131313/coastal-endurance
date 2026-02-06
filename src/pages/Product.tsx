@@ -20,9 +20,9 @@ const Product = () => {
     image: fieldOilImage,
   };
 
-  // 12 months subscription with 2 months free = pay for 10 months
-  const subscriptionPrice = product.price * 10;
-  const subscriptionMonthlyPrice = Math.round(subscriptionPrice / 12);
+  // 12 months subscription: 6 bottles for the price of 5
+  const subscriptionPrice = product.price * 5; // $340 total
+  const savingsAmount = product.price; // Save $68
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : product.price * quantity;
 
   const handleAddToCart = () => {
@@ -133,75 +133,114 @@ const Product = () => {
               </ul>
 
               {/* Purchase Options */}
-              <div className="mt-10 space-y-4">
-                {/* Purchase Type Toggle */}
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => setPurchaseType("one-time")}
-                    className={`p-4 border text-left transition-colors ${
-                      purchaseType === "one-time"
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-border hover:border-foreground/50"
-                    }`}
-                  >
-                    <span className="block text-sm font-medium">One-time</span>
-                    <span className={`block text-xs mt-1 ${
-                      purchaseType === "one-time" ? "text-background/70" : "text-muted-foreground"
-                    }`}>
-                      ${product.price} AUD
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setPurchaseType("subscription")}
-                    className={`p-4 border text-left transition-colors relative ${
-                      purchaseType === "subscription"
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-border hover:border-foreground/50"
-                    }`}
-                  >
-                    <span className="absolute -top-2 right-3 bg-ocean-slate text-background text-xs px-2 py-0.5">
-                      2 months free
-                    </span>
-                    <span className="block text-sm font-medium">Subscribe</span>
-                    <span className={`block text-xs mt-1 ${
-                      purchaseType === "subscription" ? "text-background/70" : "text-muted-foreground"
-                    }`}>
-                      ${subscriptionMonthlyPrice}/mo for 12 months
-                    </span>
-                  </button>
-                </div>
-
-                {/* Quantity (only for one-time) */}
-                {purchaseType === "one-time" && (
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center border border-border">
-                      <button
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="p-3 hover:bg-muted transition-colors"
-                        aria-label="Decrease quantity"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="px-4 py-3 min-w-[3rem] text-center font-medium">
-                        {quantity}
+              <div className="mt-10 space-y-6">
+                {/* One-Time Purchase Option */}
+                <div
+                  onClick={() => setPurchaseType("one-time")}
+                  className={`p-5 border cursor-pointer transition-all ${
+                    purchaseType === "one-time"
+                      ? "border-foreground ring-1 ring-foreground"
+                      : "border-border hover:border-foreground/50"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="block text-base font-medium">One-Time Purchase</span>
+                      <span className="block text-sm text-muted-foreground mt-1">
+                        Single bottle — ${product.price} AUD
                       </span>
-                      <button
-                        onClick={() => setQuantity(quantity + 1)}
-                        className="p-3 hover:bg-muted transition-colors"
-                        aria-label="Increase quantity"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      purchaseType === "one-time" ? "border-foreground" : "border-muted-foreground/40"
+                    }`}>
+                      {purchaseType === "one-time" && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
+                      )}
                     </div>
                   </div>
-                )}
 
-                {/* Subscription Details */}
-                {purchaseType === "subscription" && (
-                  <p className="text-sm text-muted-foreground">
-                    12 bottles delivered monthly. Pay ${subscriptionPrice} AUD upfront. Cancel anytime after 12 months.
-                  </p>
-                )}
+                  {/* Quantity Selector */}
+                  {purchaseType === "one-time" && (
+                    <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
+                      <span className="text-sm text-muted-foreground">Quantity</span>
+                      <div className="flex items-center border border-border">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setQuantity(Math.max(1, quantity - 1)); }}
+                          className="p-2 hover:bg-muted transition-colors"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-medium">
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setQuantity(quantity + 1); }}
+                          className="p-2 hover:bg-muted transition-colors"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Subscription Card - Premium Design */}
+                <div
+                  onClick={() => setPurchaseType("subscription")}
+                  className={`relative p-6 border cursor-pointer transition-all ${
+                    purchaseType === "subscription"
+                      ? "border-ocean-slate ring-2 ring-ocean-slate bg-ocean-slate/5"
+                      : "border-border hover:border-ocean-slate/50"
+                  }`}
+                >
+                  {/* Best Value Badge */}
+                  <div className="absolute -top-3 left-6 bg-ocean-slate text-background text-xs font-medium px-3 py-1 uppercase tracking-wider">
+                    Best Value
+                  </div>
+
+                  <div className="flex items-start justify-between mt-1">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-display">12-Month Subscription</h4>
+                      <p className="text-base font-medium mt-1">
+                        One bottle delivered every 2 months
+                      </p>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                      purchaseType === "subscription" ? "border-ocean-slate" : "border-muted-foreground/40"
+                    }`}>
+                      {purchaseType === "subscription" && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-ocean-slate" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Price Presentation */}
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-display">${subscriptionPrice}</span>
+                      <span className="text-muted-foreground">AUD total</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      6 bottles for the price of 5 — save ${savingsAmount}
+                    </p>
+                  </div>
+
+                  {/* Benefits List */}
+                  <ul className="mt-5 space-y-2.5">
+                    {[
+                      "Free shipping on every delivery",
+                      "Delivered every 2 months",
+                      "Cancel anytime — no lock-in",
+                    ].map((benefit, index) => (
+                      <li key={index} className="flex items-center gap-3 text-sm">
+                        <Check className="w-4 h-4 text-ocean-slate flex-shrink-0" />
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 <button
                   onClick={handleAddToCart}
@@ -209,7 +248,7 @@ const Product = () => {
                 >
                   {purchaseType === "subscription" 
                     ? `Subscribe — $${subscriptionPrice} AUD`
-                    : `Add to Cart — $${currentPrice}`
+                    : `Add to Cart — $${currentPrice} AUD`
                   }
                 </button>
               </div>
