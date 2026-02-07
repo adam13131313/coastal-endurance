@@ -102,7 +102,7 @@ const Home = () => {
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="container-narrow text-center">
           <h2 className="text-3xl md:text-4xl font-display">
-            Fewer products. Better performance.
+            Better performance.
           </h2>
           <p className="mt-6 text-lg text-primary-foreground/80 leading-relaxed max-w-2xl mx-auto">
             Every ingredient earns its place.
