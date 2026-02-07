@@ -45,7 +45,7 @@ const Home = () => {
             Skincare for a life outside.
           </h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            It's skincare for sun, wind, and age. Built for men who spend their days outside — 
+            It's skincare for sun, salt, wind, and age. Built for men who spend their days outside — 
             surfers, runners, cyclists, builders, anyone who works and lives under the Australian sky.
           </p>
         </div>
