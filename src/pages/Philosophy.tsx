@@ -10,7 +10,7 @@ const Philosophy = () => {
     },
     {
       title: "Designed for real environments.",
-      description: "Most skincare is formulated for air-conditioned bathrooms. Ours is built for sun, salt, wind, and sweat. The conditions you actually face. The stress your skin actually endures.",
+      description: "Most skincare is built for how your skin looks today. Ours is built to support its health over time — under constant exposure to the natural environment.",
     },
     {
       title: "Ingredient integrity.",
