@@ -48,7 +48,7 @@ const Philosophy = () => {
       <section className="section-padding">
         <div className="container-narrow">
           <blockquote className="text-2xl md:text-3xl font-display text-center leading-relaxed">
-            "This is not skincare for bathrooms. It's skincare for sun, wind, and age."
+            Built for the elements.
           </blockquote>
         </div>
       </section>
