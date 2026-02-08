@@ -14,7 +14,7 @@ const Home = () => {
             alt="Field Oil product on sand"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
+          <div className="absolute inset-0 bg-background/90 md:bg-gradient-to-r md:from-background/90 md:via-background/60 md:to-transparent" />
         </div>
         
         <div className="container-wide relative z-10 pt-20">
@@ -22,7 +22,10 @@ const Home = () => {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium leading-tight animate-slide-up">
               Built for sun, salt, wind, and age.
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-foreground/80 leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            <p
+              className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
+              style={{ animationDelay: "0.1s" }}
+            >
               Field Oil rebuilds what the elements break down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
