@@ -45,36 +45,6 @@ const Product = () => {
     setQuantity(1);
   };
 
-  const ingredients = [
-    {
-      name: "Jojoba Oil",
-      benefit: "Mimics skin's natural sebum. Absorbs quickly without residue.",
-    },
-    {
-      name: "Australian Macadamia Oil",
-      benefit: "Rich in palmitoleic acid. Restores barrier function.",
-    },
-    {
-      name: "Meadowfoam Seed Oil",
-      benefit: "Long-lasting moisture. Prevents transepidermal water loss.",
-    },
-    {
-      name: "Rosehip Oil",
-      benefit: "Vitamin A and essential fatty acids. Supports cell turnover.",
-    },
-    {
-      name: "Squalane",
-      benefit: "Lightweight lipid. Reinforces the moisture barrier.",
-    },
-    {
-      name: "Vitamin E",
-      benefit: "Antioxidant protection. Stabilizes other active ingredients.",
-    },
-    {
-      name: "Kakadu Plum Extract",
-      benefit: "World's highest natural vitamin C content. Australian native.",
-    },
-  ];
 
   return (
     <main className="pt-20">
@@ -315,30 +285,6 @@ const Product = () => {
         </div>
       </section>
 
-      {/* Key Ingredients */}
-      <section className="section-padding bg-primary text-primary-foreground">
-        <div className="container-wide">
-          <h2 className="text-3xl md:text-4xl font-display text-center">
-            Key Ingredients
-          </h2>
-          <p className="mt-4 text-center text-primary-foreground/70 max-w-xl mx-auto">
-            Every ingredient has a purpose. No fillers. No fragrance. Just performance.
-          </p>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ingredients.map((ingredient, index) => (
-              <div
-                key={index}
-                className="p-6 border border-primary-foreground/10 hover:border-primary-foreground/30 transition-colors"
-              >
-                <h3 className="font-medium">{ingredient.name}</h3>
-                <p className="mt-2 text-sm text-primary-foreground/70">
-                  {ingredient.benefit}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </main>
   );
 };
