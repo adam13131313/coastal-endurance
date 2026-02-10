@@ -61,13 +61,6 @@ const Product = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="aspect-video bg-muted overflow-hidden">
-                <img
-                  src={heroImage}
-                  alt="Field Oil in natural setting"
-                  className="w-full h-full object-cover"
-                />
-              </div>
             </div>
 
             {/* Product Info */}
