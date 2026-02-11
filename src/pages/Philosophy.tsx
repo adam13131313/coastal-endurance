@@ -17,7 +17,7 @@ const Philosophy = () => {
       description: "Every ingredient earns its place through function, not marketing. No fillers. No fragrance. No compounds added for sensory appeal at the expense of performance. If it doesn't work, it doesn't go in.",
     },
     {
-      title: "Long-term resilience over short-term appearance.",
+      title: "Long-term resilience.",
       description: "We're not interested in temporary fixes or cosmetic tricks. Our focus is skin health — strengthening the barrier, supporting natural repair, building resilience that compounds over time.",
     },
   ];
