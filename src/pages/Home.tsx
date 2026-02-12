@@ -26,7 +26,7 @@ const Home = () => {
               className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
               style={{ animationDelay: "0.1s" }}
             >
-              Field Oil — face oil that rebuilds what the elements break down.
+              Field Oil rebuilds what the elements break down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <Link to="/product" className="btn-primary">
