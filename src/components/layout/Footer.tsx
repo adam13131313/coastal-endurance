@@ -11,7 +11,7 @@ const Footer = () => {
               Coastal Endurance
             </Link>
             <p className="mt-4 text-sm text-primary-foreground/70 max-w-sm leading-relaxed">
-              Built for sun, salt, wind, and time. Performance-driven skincare designed for life under the Australian sun.
+              Field Oil is a daily face oil built for men who spend their days outside — surfers, runners, cyclists, builders, farmers — anyone exposed to the Australian elements.
             </p>
           </div>
 
