@@ -48,7 +48,7 @@ const Home = () => {
             Skincare for a life outside.
           </h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-             Skincare for sun, salt, wind, and time. Field Oil is a daily face oil built for men who spend their days outside — 
+             Field Oil is a daily face oil built for men who spend their days outside — 
             surfers, runners, cyclists, builders, anyone who works and lives under the Australian sky.
           </p>
         </div>
