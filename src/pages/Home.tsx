@@ -20,13 +20,13 @@ const Home = () => {
         <div className="container-wide relative z-10 pt-20">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium leading-tight animate-slide-up">
-              Built for sun, salt, wind, and age.
+              Built for sun, salt, wind, and time.
             </h1>
             <p
               className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
               style={{ animationDelay: "0.1s" }}
             >
-              Field Oil rebuilds what the elements break down.
+              Field Oil — face oil that rebuilds what the elements break down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <Link to="/product" className="btn-primary">
