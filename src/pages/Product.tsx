@@ -47,7 +47,7 @@ const Product = () => {
 
 
   return (
-    <main className="pt-20">
+    <main className="pt-20" id="top">
       {/* Product Hero */}
       <section className="section-padding">
         <div className="container-wide">

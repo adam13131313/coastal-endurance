@@ -105,10 +105,10 @@ const About = () => {
           <p className="mt-6 text-primary-foreground/80 leading-relaxed max-w-2xl mx-auto">
             For now, Field Oil is everything we believe skincare should be. Start there.
           </p>
-          <Link to="/product" className="inline-flex items-center mt-10 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
+          <a href="/product#top" className="inline-flex items-center mt-10 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
             Shop Field Oil
             <ArrowRight className="ml-2 w-4 h-4" />
-          </Link>
+          </a>
         </div>
       </section>
     </main>
