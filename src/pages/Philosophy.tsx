@@ -23,7 +23,7 @@ const Philosophy = () => {
   ];
 
   return (
-    <main className="pt-20">
+    <main id="top" className="pt-20">
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center">
         <div className="absolute inset-0">
