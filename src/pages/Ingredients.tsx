@@ -1,46 +1,58 @@
 const Ingredients = () => {
   const ingredients = [
     {
-      name: "Jojoba Oil",
-      origin: "Desert shrub, commonly sourced from Australia and USA",
-      function: "Mimics the structure of human sebum (your skin's natural oil). Absorbs quickly without leaving residue. Provides deep hydration while allowing skin to breathe.",
-      why: "The closest thing nature offers to your skin's own oils. Non-comedogenic (won't clog pores), stable, and effective.",
+      name: "Squalane",
+      origin: "Olive-derived, European origin",
+      function: "Bioidentical to human sebum. Non-greasy, absorbs rapidly. Reef-safe. Restores barrier lipids.",
+      why: "Identical to oil your skin already produces. Fastest-absorbing base in the formula. Works as the delivery vehicle for everything else.",
     },
     {
-      name: "Australian Macadamia Oil",
-      origin: "Native Australian nut tree",
-      function: "High in palmitoleic acid — a fatty acid that decreases naturally as we age. Restores suppleness and barrier function (the skin's protective outer layer).",
-      why: "Replenishes what time and environment take away. Fast-absorbing and deeply nourishing.",
+      name: "Jojoba Oil",
+      origin: "Desert shrub, Australian-grown (SA/WA)",
+      function: "Structurally similar to human sebum. Non-comedogenic. Won't clog pores. Regulates sebum production.",
+      why: "The closest thing nature offers to your skin's own oils. Tells skin it doesn't need to overproduce oil. Exceptionally stable.",
     },
     {
       name: "Meadowfoam Seed Oil",
-      origin: "Pacific Northwest wildflower",
-      function: "Forms a protective barrier that locks in moisture. Prevents transepidermal water loss (moisture escaping through your skin) without feeling heavy.",
-      why: "Long-lasting protection for skin under constant environmental stress.",
+      origin: "Oregon Willamette Valley, USA (only place it grows)",
+      function: "Exceptionally UV-stable. Creates moisture-lock layer. Functions as protective sealant against environmental exposure.",
+      why: "Insanely stable in heat and UV. Protects other oils from degrading. Locks in the actives. Grows nowhere else on earth.",
     },
     {
       name: "Rosehip Oil",
-      origin: "Wild rose seeds, typically Rosa canina",
-      function: "Rich in vitamin A (supports skin renewal) and essential fatty acids. Supports cell turnover (how quickly fresh skin replaces old) and skin texture.",
-      why: "Proven regenerative properties. Helps with sun damage, scarring, and uneven skin tone.",
+      origin: "Cold-pressed, Chilean/European origin",
+      function: "High in essential fatty acids your skin can't produce. Supports skin exposed to sun and environmental stress.",
+      why: "Highest essential fatty acid content. Natural vitamin A precursors. Your hardest-working repair oil.",
     },
     {
-      name: "Squalane",
-      origin: "Plant-derived (olive or sugarcane)",
-      function: "Lightweight lipid (fat molecule) identical to one found naturally in human skin. Reinforces the moisture barrier.",
-      why: "Exceptional compatibility with human skin. Non-greasy, stable, and effective at any age.",
+      name: "Macadamia Oil",
+      origin: "Queensland-grown, Australian native",
+      function: "Lightweight. High in palmitoleic acid—rare in plants, abundant in young human skin, depletes with age.",
+      why: "Australian native. Palmitoleic acid content directly addresses age-related skin lipid loss. Lightweight texture.",
     },
     {
-      name: "Vitamin E (Tocopherol)",
-      origin: "Derived from vegetable oils",
-      function: "Potent antioxidant that neutralizes free radicals (unstable molecules that damage skin cells). Stabilizes other active ingredients in the formula.",
-      why: "Protects both your skin and the product. Essential for any formula exposed to light and air.",
+      name: "Kakadu Plum Extract (oil-soluble)",
+      origin: "Northern Territory/WA, Australian native, Indigenous-harvested",
+      function: "Most potent Vitamin C source on earth. High in antioxidants that support skin exposed to harsh conditions.",
+      why: "100x more Vitamin C than oranges. Neutralizes free radicals from UV exposure. Australian native hero ingredient.",
     },
     {
-      name: "Kakadu Plum Extract",
-      origin: "Native to Northern Australia",
-      function: "Contains the world's highest known natural concentration of vitamin C. Brightens, evens skin tone, and supports collagen (the protein that keeps skin firm).",
-      why: "Australian native with proven efficacy. Sourced sustainably from Indigenous communities.",
+      name: "Bisabolol",
+      origin: "Chamomile-derived, European/Brazilian origin",
+      function: "Helps soothe skin and reduce the appearance of redness from wind and sun exposure. Enhances penetration of other actives.",
+      why: "Decades of research. Calms irritated skin. Amplifies the whole formula by improving absorption.",
+    },
+    {
+      name: "Vitamin E (d-alpha tocopherol)",
+      origin: "Natural, non-GMO, international supply",
+      function: "Antioxidant. Extends product stability and supports skin's natural defenses against environmental stress.",
+      why: "Protects the formula from oxidation. Protects your skin from UV damage. Non-negotiable for shelf life.",
+    },
+    {
+      name: "Rosemary CO2 Extract",
+      origin: "European origin",
+      function: "Natural preservative. Prevents oil oxidation. Extends shelf life without synthetic preservatives.",
+      why: "Works with Vitamin E to keep oils fresh. No synthetic preservatives needed. Formula stability insurance.",
     },
   ];
 
@@ -143,9 +155,10 @@ const Ingredients = () => {
             Full INCI List
           </h2>
           <p className="text-center text-muted-foreground text-sm leading-relaxed">
-            Simmondsia Chinensis (Jojoba) Seed Oil, Macadamia Integrifolia Seed Oil, 
+            Squalane, Simmondsia Chinensis (Jojoba) Seed Oil, 
             Limnanthes Alba (Meadowfoam) Seed Oil, Rosa Canina (Rosehip) Seed Oil, 
-            Squalane, Tocopherol (Vitamin E), Terminalia Ferdinandiana (Kakadu Plum) Fruit Extract.
+            Macadamia Integrifolia Seed Oil, Terminalia Ferdinandiana (Kakadu Plum) Fruit Extract, 
+            Bisabolol, Tocopherol (Vitamin E), Rosmarinus Officinalis (Rosemary) Leaf Extract.
           </p>
         </div>
       </section>
