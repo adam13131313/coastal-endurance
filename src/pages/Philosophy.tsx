@@ -220,10 +220,10 @@ const Philosophy = () => {
               Founded by Adam Hyde.
             </p>
             <blockquote className="border-l-2 border-primary pl-6 text-muted-foreground leading-relaxed italic">
-              "I spent years working outdoors. My face showed it. I tried the usual stuff—Aesop, Kiehl's, 
-              whatever was at Mecca. It was either too expensive, too ritualistic, or didn't work for skin 
-              that's actually compromised by environmental exposure. So I built what I needed. If it works 
-              for me, it'll work for you."
+              "Years outdoors takes a toll. I tried the usual stuff—Aesop, Kiehl's, whatever was at Mecca. 
+              It was either too expensive, too ritualistic, or included ingredients I didn't want on my 
+              face—ingredients needed to enable moisturiser to retain its creaminess or preservatives I'd 
+              rather avoid. So I built what I needed. It works for me, and I hope you find it works for you."
             </blockquote>
           </div>
         </div>
