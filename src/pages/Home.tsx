@@ -45,7 +45,7 @@ const Home = () => {
       <section className="section-padding bg-secondary">
         <div className="container-narrow text-center">
           <h2 className="text-3xl md:text-4xl font-display">
-            Skincare for a life outside.
+            Built for a life outside.
           </h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
              Field Oil is a daily face oil built for men who spend their days outside — 

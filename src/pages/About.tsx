@@ -21,7 +21,7 @@ const About = () => {
         </div>
         <div className="container-narrow relative z-10 py-24 md:py-32">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
-            We Don't Make Skincare.
+            We Don't Make Cosmetics.
           </h1>
           <p className="mt-8 text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-xl">
             We make equipment maintenance. The difference matters.
@@ -44,8 +44,8 @@ const About = () => {
               You maintain your tools. Your vehicle. Your gear. Your face is no different.
             </p>
             <p>
-              The men who need this most are the least likely to buy "skincare." Not because they 
-              don't care—because skincare isn't built for them.
+              The men who need this most are the least likely to buy face oil. Not because they 
+              don't care—because nothing on the shelf is built for them.
             </p>
             <p className="text-foreground text-lg font-medium">
               You don't need to look younger. You need your skin to keep working.
