@@ -196,7 +196,7 @@ const Philosophy = () => {
           <div className="mt-8 space-y-6 text-muted-foreground leading-relaxed text-[17px]">
             <p>
               More products, eventually. A cleanser. A mineral sunscreen. Maybe a post-shave oil. All 
-              built the same way—small-batch, Australian-made, function over form, no bullshit.
+              built the same way—small-batch, Australian-made, function over form.
             </p>
             <p>
               But not yet. We'd rather do one thing well than ten things poorly.
