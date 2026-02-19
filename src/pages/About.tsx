@@ -99,14 +99,6 @@ const About = () => {
                 date. If something's wrong, we trace every ingredient back to its origin.
               </p>
             </div>
-
-            <div>
-              <h3 className="text-xl font-display">We don't apologise for being specific.</h3>
-              <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
-                This is for men who spend more time outside than in. If that's not you, there are a 
-                thousand other brands. We'd rather be honest.
-              </p>
-            </div>
           </div>
         </div>
       </section>
