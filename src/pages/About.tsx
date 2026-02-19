@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import coastalImage from "@/assets/coastal-landscape.jpg";
+import sweepingPlains from "@/assets/sweeping-plains.jpg";
+import ruggedCoast from "@/assets/rugged-coast.jpg";
+import droughtAndRain from "@/assets/drought-and-rain.jpg";
 
 const About = () => {
   return (
@@ -140,7 +143,18 @@ const About = () => {
         </div>
       </section>
 
-      <Separator className="max-w-[700px] mx-auto" />
+      {/* Image Break - Rugged Coast */}
+      <section className="py-12">
+        <div className="container-wide">
+          <div className="aspect-[21/9] overflow-hidden">
+            <img
+              src={ruggedCoast}
+              alt="Rugged Australian coastline with waves crashing against weathered sandstone cliffs"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* What We Make */}
       <section className="section-padding">
@@ -174,7 +188,18 @@ const About = () => {
         </div>
       </section>
 
-      <Separator className="max-w-[700px] mx-auto" />
+      {/* Image Break - Sweeping Plains */}
+      <section className="py-12">
+        <div className="container-wide">
+          <div className="aspect-[21/9] overflow-hidden">
+            <img
+              src={sweepingPlains}
+              alt="Vast Australian outback with red earth stretching to the horizon under dramatic skies"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* Why We Exist */}
       <section className="section-padding">
@@ -224,7 +249,18 @@ const About = () => {
         </div>
       </section>
 
-      <Separator className="max-w-[700px] mx-auto" />
+      {/* Image Break - Drought and Rain */}
+      <section className="py-12">
+        <div className="container-wide">
+          <div className="aspect-[21/9] overflow-hidden">
+            <img
+              src={droughtAndRain}
+              alt="Cracked dry earth with dark storm clouds rolling in across the Australian outback"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* Who We Are */}
       <section className="section-padding bg-secondary">
