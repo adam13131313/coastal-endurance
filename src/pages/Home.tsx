@@ -30,7 +30,7 @@ const Home = () => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <Link to="/product" className="btn-primary">
-                Shop Field Oil
+                Maintain Your Barrier
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
               <Link to="/philosophy" className="btn-outline">
