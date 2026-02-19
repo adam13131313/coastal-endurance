@@ -122,7 +122,7 @@ const Contact = () => {
                 </h3>
                 <p className="text-muted-foreground">
                   For wholesale and retail partnership inquiries, please include your 
-                  business name, location, and current skincare offering in your message.
+                  business name, location, and current product offering in your message.
                 </p>
               </div>
             </div>
