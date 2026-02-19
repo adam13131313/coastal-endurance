@@ -66,7 +66,7 @@ const Home = () => {
                 Field Oil
               </h2>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-                A daily recovery oil that reinforces your skin's natural barrier. 
+                A barrier oil that reinforces your skin's natural barrier. 
                 Fast-absorbing, non-greasy, built for real conditions. 
                 One product. Daily. That's the routine.
               </p>
