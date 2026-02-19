@@ -66,7 +66,7 @@ const Product = () => {
             {/* Product Info */}
             <div className="lg:sticky lg:top-32 lg:self-start">
               <span className="text-sm uppercase tracking-widest text-muted-foreground">
-                Barrier Oil
+                Daily Barrier Oil For Your Face
               </span>
               <h1 className="mt-4 text-4xl md:text-5xl font-display">
                 Field Oil
