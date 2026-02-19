@@ -147,7 +147,8 @@ const About = () => {
             <ul className="list-disc pl-6 space-y-2">
               <li>Ritualistic (ten-step routines, spa ceremonies)</li>
               <li>Generic (black packaging, masculine names, mediocre formulas)</li>
-              <li>Inaccessible ($200+ for status, not performance)</li>
+              <li>Padded with non-functional ingredients (emulsifiers, thickeners, synthetic preservatives—needed for texture, not your skin)</li>
+              <li>Not 100% natural (we are—every ingredient has a performance function, nothing else)</li>
             </ul>
             <p>
               That gap exists. Someone had to fill it.
