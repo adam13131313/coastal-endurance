@@ -48,7 +48,7 @@ const About = () => {
               don't care—because nothing on the shelf is built for them.
             </p>
             <p className="text-foreground text-lg font-medium">
-              You don't need to look younger. You need your skin to keep working.
+              Your skin does a job. We keep it doing that job.
             </p>
           </div>
         </div>
@@ -79,8 +79,8 @@ const About = () => {
             <div>
               <h3 className="text-xl font-display">We don't sell vanity.</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
-                You've earned every line. We're here to maintain barrier function, not erase ageing. 
-                There's a difference between getting older and environmental wear.
+                Your skin is an organ. It protects you from UV, wind, pollution, water loss. 
+                We maintain that function. Everything else is a side effect.
               </p>
             </div>
 
