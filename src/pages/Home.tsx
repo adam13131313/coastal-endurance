@@ -33,8 +33,8 @@ const Home = () => {
                 Maintain Your Barrier
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
-              <Link to="/philosophy" className="btn-outline">
-                Our Philosophy
+              <Link to="/about" className="btn-outline">
+                About Us
               </Link>
             </div>
           </div>
@@ -110,8 +110,8 @@ const Home = () => {
           <p className="mt-6 text-lg text-primary-foreground/80 leading-relaxed max-w-2xl mx-auto">
             Every ingredient earns its place.
           </p>
-          <a href="/philosophy#top" className="inline-flex items-center mt-8 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
-            Read Our Philosophy
+          <a href="/about#top" className="inline-flex items-center mt-8 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
+            Read Our Story
             <ArrowRight className="ml-2 w-4 h-4" />
           </a>
         </div>
