@@ -3,13 +3,13 @@ const Ingredients = () => {
     {
       name: "Squalane",
       origin: "Olive-derived, European origin",
-      function: "Bioidentical to human sebum. Non-greasy, absorbs rapidly. Reef-safe. Restores barrier lipids.",
+      function: "Bioidentical to human sebum (your skin's natural oil). Non-greasy, absorbs rapidly. Reef-safe. Restores barrier lipids (the fats that hold your skin's protective layer together).",
       why: "Identical to oil your skin already produces. Fastest-absorbing base in the formula. Works as the delivery vehicle for everything else.",
     },
     {
       name: "Jojoba Oil",
       origin: "Desert shrub, Australian-grown (SA/WA)",
-      function: "Structurally similar to human sebum. Non-comedogenic. Won't clog pores. Regulates sebum production.",
+      function: "Structurally similar to human sebum (your skin's natural oil). Non-comedogenic (won't clog pores). Regulates sebum production.",
       why: "The closest thing nature offers to your skin's own oils. Tells skin it doesn't need to overproduce oil. Exceptionally stable.",
     },
     {
@@ -21,37 +21,37 @@ const Ingredients = () => {
     {
       name: "Rosehip Oil",
       origin: "Cold-pressed, Chilean/European origin",
-      function: "High in essential fatty acids your skin can't produce. Supports skin exposed to sun and environmental stress.",
-      why: "Highest essential fatty acid content. Natural vitamin A precursors. Your hardest-working repair oil.",
+      function: "High in essential fatty acids (fats your body needs but can't make on its own). Supports skin exposed to sun and environmental stress.",
+      why: "Highest essential fatty acid content. Natural vitamin A precursors (compounds your body converts into vitamin A). Your hardest-working repair oil.",
     },
     {
       name: "Macadamia Oil",
       origin: "Queensland-grown, Australian native",
-      function: "Lightweight. High in palmitoleic acid—rare in plants, abundant in young human skin, depletes with age.",
-      why: "Australian native. Palmitoleic acid content directly addresses age-related skin lipid loss. Lightweight texture.",
+      function: "Lightweight. High in palmitoleic acid (a fatty acid rare in plants, abundant in young human skin, that depletes with age).",
+      why: "Australian native. Palmitoleic acid content directly addresses age-related skin lipid (fat) loss. Lightweight texture.",
     },
     {
       name: "Kakadu Plum Extract (oil-soluble)",
       origin: "Northern Territory/WA, Australian native, Indigenous-harvested",
-      function: "Most potent Vitamin C source on earth. High in antioxidants that support skin exposed to harsh conditions.",
-      why: "100x more Vitamin C than oranges. Neutralizes free radicals from UV exposure. Australian native hero ingredient.",
+      function: "Most potent Vitamin C source on earth. High in antioxidants (compounds that neutralize cell-damaging molecules from UV and pollution).",
+      why: "100x more Vitamin C than oranges. Neutralizes free radicals (unstable molecules that damage skin cells) from UV exposure. Australian native hero ingredient.",
     },
     {
       name: "Bisabolol",
       origin: "Chamomile-derived, European/Brazilian origin",
-      function: "Helps soothe skin and reduce the appearance of redness from wind and sun exposure. Enhances penetration of other actives.",
+      function: "Helps soothe skin and reduce the appearance of redness from wind and sun exposure. Enhances penetration (absorption) of other actives.",
       why: "Decades of research. Calms irritated skin. Amplifies the whole formula by improving absorption.",
     },
     {
       name: "Vitamin E (d-alpha tocopherol)",
       origin: "Natural, non-GMO, international supply",
-      function: "Antioxidant. Extends product stability and supports skin's natural defenses against environmental stress.",
-      why: "Protects the formula from oxidation. Protects your skin from UV damage. Non-negotiable for shelf life.",
+      function: "Antioxidant (protects cells from environmental damage). Extends product stability and supports skin's natural defenses against environmental stress.",
+      why: "Protects the formula from oxidation (breakdown caused by exposure to air). Protects your skin from UV damage. Non-negotiable for shelf life.",
     },
     {
       name: "Rosemary CO2 Extract",
       origin: "European origin",
-      function: "Natural preservative. Prevents oil oxidation. Extends shelf life without synthetic preservatives.",
+      function: "Natural preservative. Prevents oil oxidation (breakdown from air exposure). Extends shelf life without synthetic preservatives.",
       why: "Works with Vitamin E to keep oils fresh. No synthetic preservatives needed. Formula stability insurance.",
     },
   ];
