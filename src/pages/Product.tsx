@@ -229,6 +229,16 @@ const Product = () => {
                   Massage into face and neck. That's it. One product. Daily.
                 </p>
               </div>
+
+              {/* Suitable For */}
+              <div className="mt-8 pt-8 border-t border-border">
+                <h3 className="text-sm uppercase tracking-widest font-medium mb-4">
+                  Suitable For
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Normal, dry, mature, and outdoor-exposed skin.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -281,8 +291,50 @@ const Product = () => {
         </div>
       </section>
 
+      {/* Product Characteristics & Storage */}
+      <section className="section-padding bg-secondary">
+        <div className="container-wide">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+            {/* Characteristics */}
+            <div>
+              <h2 className="text-2xl font-display mb-8">Product Characteristics</h2>
+              <div className="space-y-4">
+                {[
+                  { label: "Appearance", value: "Clear to pale amber oil with golden hue" },
+                  { label: "Texture", value: "Medium-weight, absorbs in 90–120 seconds" },
+                  { label: "Scent", value: "Natural plant oil aroma (grassy, nutty, earthy) — dissipates quickly" },
+                  { label: "Colour", value: "Pale golden yellow" },
+                  { label: "Viscosity", value: "Medium (pours easily, not too thick or thin)" },
+                ].map((item, index) => (
+                  <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
+                    <span className="text-sm uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
+                    <span className="text-foreground">{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Shelf Life & Storage */}
+            <div>
+              <h2 className="text-2xl font-display mb-8">Shelf Life & Storage</h2>
+              <div className="space-y-4">
+                {[
+                  { label: "Shelf Life", value: "12–18 months from manufacture date" },
+                  { label: "Storage", value: "Below 25°C, away from direct sunlight" },
+                  { label: "Packaging", value: "Amber glass bottle (UV protection)" },
+                ].map((item, index) => (
+                  <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
+                    <span className="text-sm uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
+                    <span className="text-foreground">{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   );
 };
-
 export default Product;
