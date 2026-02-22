@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from "react";
 
-export type Currency = "AUD" | "USD" | "GBP";
+export type Currency = "AUD";
 
 interface CurrencyConfig {
   code: Currency;
@@ -10,15 +10,10 @@ interface CurrencyConfig {
 
 export const CURRENCIES: Record<Currency, CurrencyConfig> = {
   AUD: { code: "AUD", symbol: "$", label: "AUD $" },
-  USD: { code: "USD", symbol: "$", label: "USD $" },
-  GBP: { code: "GBP", symbol: "£", label: "GBP £" },
 };
 
-// Fixed prices per currency (AUD base)
 const PRICES: Record<Currency, number> = {
   AUD: 78,
-  USD: 52,
-  GBP: 42,
 };
 
 interface CurrencyContextType {
@@ -32,12 +27,11 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-  const [currency, setCurrency] = useState<Currency>("AUD");
-
+  const currency: Currency = "AUD";
   const config = CURRENCIES[currency];
   const unitPrice = PRICES[currency];
-
   const formatPrice = (amount: number) => `${config.symbol}${amount}`;
+  const setCurrency = () => {};
 
   return (
     <CurrencyContext.Provider value={{ currency, setCurrency, unitPrice, formatPrice, config }}>
