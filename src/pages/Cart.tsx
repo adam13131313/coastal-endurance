@@ -103,7 +103,7 @@ const Cart = () => {
               <span className="font-display text-2xl">{formatPrice(cartTotal)} {config.code}</span>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              Shipping calculated at checkout.
+              Free postage within Australia. International shipping calculated at checkout.
             </p>
 
             <div className="mt-8 space-y-3">
