@@ -1,58 +1,58 @@
 const Ingredients = () => {
   const ingredients = [
     {
-      name: "Squalane",
-      origin: "Olive-derived, European origin",
-      function: "Bioidentical to human sebum (your skin's natural oil). Non-greasy, absorbs rapidly. Reef-safe. Restores barrier lipids (the fats that hold your skin's protective layer together).",
-      why: "Identical to oil your skin already produces. Fastest-absorbing base in the formula. Works as the delivery vehicle for everything else.",
+      name: "Rosehip Oil",
+      origin: "Chilean/European origin, cold-pressed from seeds",
+      function: "Essential fatty acids (the building blocks your skin uses to repair itself) support barrier function. Contains vitamin A precursors. Used extensively in formulations for environmentally exposed skin.",
+      why: "Primary active ingredient. High concentration of barrier-supporting lipids (your skin's natural oils that hold its protective layer together). Used in cosmetic formulations worldwide for skin exposed to harsh conditions.",
     },
     {
       name: "Jojoba Oil",
-      origin: "Desert shrub, Australian-grown (SA/WA)",
-      function: "Structurally similar to human sebum (your skin's natural oil). Non-comedogenic (won't clog pores). Regulates sebum production.",
-      why: "The closest thing nature offers to your skin's own oils. Tells skin it doesn't need to overproduce oil. Exceptionally stable.",
+      origin: "Australian-grown, Western Australia / South Australia / NSW",
+      function: "Structurally similar to human sebum (your skin's natural oil). Helps regulate skin's natural oil balance. Lightweight, non-comedogenic (won't clog pores) wax ester.",
+      why: "Australian-sourced. Closely mimics skin's natural oil. Ideal for outdoor workers who sweat — helps maintain balanced skin without heaviness.",
     },
     {
-      name: "Meadowfoam Seed Oil",
-      origin: "Oregon Willamette Valley, USA (only place it grows)",
-      function: "Exceptionally UV-stable. Creates moisture-lock layer. Functions as protective sealant against environmental exposure.",
-      why: "Insanely stable in heat and UV. Protects other oils from degrading. Locks in the actives. Grows nowhere else on earth.",
+      name: "Evening Primrose Oil",
+      origin: "North American/European origin, refined cold-pressed",
+      function: "Contains gamma-linolenic acid (GLA, a beneficial omega-6 fatty acid your body can't make on its own). High in linoleic acid. Supports skin's natural barrier function and helps soothe visible redness.",
+      why: "GLA is uncommon in plant oils and helps address skin exposed to wind, sun, and environmental stress. Refined (filtered for stability) while maintaining effectiveness.",
     },
     {
-      name: "Rosehip Oil",
-      origin: "Cold-pressed, Chilean/European origin",
-      function: "High in essential fatty acids (fats your body needs but can't make on its own). Supports skin exposed to sun and environmental stress.",
-      why: "Highest essential fatty acid content. Natural vitamin A precursors (compounds your body converts into vitamin A). Your hardest-working repair oil.",
+      name: "Squalane",
+      origin: "Olive-derived, European origin",
+      function: "Bioidentical to a component naturally found in human sebum (your skin's natural oil). Lightweight, fast-absorbing. Helps restore skin's natural moisture barrier (the protective layer that keeps water in and irritants out).",
+      why: "Matches what your skin already produces. Fastest-absorbing carrier in the formula. Helps deliver other ingredients effectively.",
     },
     {
       name: "Macadamia Oil",
-      origin: "Queensland-grown, Australian native",
-      function: "Lightweight. High in palmitoleic acid (a fatty acid rare in plants, abundant in young human skin, that depletes with age).",
-      why: "Australian native. Palmitoleic acid content directly addresses age-related skin lipid (fat) loss. Lightweight texture.",
+      origin: "Australian-grown, Queensland / Northern NSW",
+      function: "Contains palmitoleic acid (omega-7, a fatty acid that naturally occurs in younger skin but decreases with age and sun exposure). Lightweight despite being nourishing.",
+      why: "Australian native tree. Provides fatty acids that help maintain skin's lipid barrier (your skin's natural oil layer). Contains omega-7, found in few other plant sources.",
     },
     {
-      name: "Kakadu Plum Extract (oil-soluble)",
-      origin: "Northern Territory/WA, Australian native, Indigenous-harvested",
-      function: "Most potent Vitamin C source on earth. High in antioxidants (compounds that neutralize cell-damaging molecules from UV and pollution).",
-      why: "100x more Vitamin C than oranges. Neutralizes free radicals (unstable molecules that damage skin cells) from UV exposure. Australian native hero ingredient.",
+      name: "Meadowfoam Seed Oil",
+      origin: "Oregon, USA (only region where it grows)",
+      function: "Exceptionally stable plant oil with long-chain fatty acids (meaning it doesn't break down or go rancid easily). Helps protect other oils from degradation. Forms a breathable protective layer on skin.",
+      why: "Acts as natural stabiliser, extending product shelf life without synthetic additives. Helps formula remain stable under sun exposure and temperature changes.",
     },
     {
-      name: "Bisabolol",
-      origin: "Chamomile-derived, European/Brazilian origin",
-      function: "Helps soothe skin and reduce the appearance of redness from wind and sun exposure. Enhances penetration (absorption) of other actives.",
-      why: "Decades of research. Calms irritated skin. Amplifies the whole formula by improving absorption.",
+      name: "Quandong Seed Oil",
+      origin: "Australian native, Northern Territory / South Australia / Western Australia",
+      function: "Contains rutin (a compound that helps strengthen tiny blood vessels near skin's surface), which helps reduce the appearance of redness. Phenolic compounds (plant antioxidants) provide antioxidant properties. Rich in oleic acid and vitamin E.",
+      why: "Indigenous Australian ingredient from arid regions. Helps address visible redness and sensitivity from environmental exposure. Wild-harvested or sustainably cultivated.",
     },
     {
-      name: "Vitamin E (d-alpha tocopherol)",
-      origin: "Natural, non-GMO, international supply",
-      function: "Antioxidant (protects cells from environmental damage). Extends product stability and supports skin's natural defenses against environmental stress.",
-      why: "Protects the formula from oxidation (breakdown caused by exposure to air). Protects your skin from UV damage. Non-negotiable for shelf life.",
+      name: "Vitamin E",
+      origin: "Natural d-alpha tocopherol, plant-derived",
+      function: "Antioxidant (protects against damage from environmental exposure) that helps protect skin from environmental stressors. Supports skin's natural lipid barrier (your skin's natural oil layer). Helps maintain product stability.",
+      why: "Natural form for better skin compatibility. Provides antioxidant protection without common allergen concerns.",
     },
     {
       name: "Rosemary CO2 Extract",
-      origin: "European origin",
-      function: "Natural preservative. Prevents oil oxidation (breakdown from air exposure). Extends shelf life without synthetic preservatives.",
-      why: "Works with Vitamin E to keep oils fresh. No synthetic preservatives needed. Formula stability insurance.",
+      origin: "Mediterranean origin, supercritical CO2 extraction",
+      function: "Contains carnosic acid (a natural antioxidant compound) with natural antioxidant and antimicrobial (keeps bacteria/fungi from growing) properties. Helps prevent product oxidation (going rancid). Maintains freshness without synthetic preservatives.",
+      why: "Natural preservation system. Minimal concentration means no detectable scent while effectively maintaining product integrity. ECOCERT certified.",
     },
   ];
 
@@ -85,7 +85,7 @@ const Ingredients = () => {
       <section className="section-padding bg-secondary">
         <div className="container-narrow text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
-            Ingredients
+            9 Ingredients. Zero Compromises.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl mx-auto">
             Every ingredient has a job. No marketing stories. No filler. 
@@ -97,6 +97,7 @@ const Ingredients = () => {
       {/* Ingredients List */}
       <section className="section-padding">
         <div className="container-wide">
+          <h2 className="sr-only">What's In Field Oil</h2>
           <div className="space-y-12">
             {ingredients.map((ingredient, index) => (
               <div
@@ -104,24 +105,33 @@ const Ingredients = () => {
                 className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12 border-b border-border last:border-0"
               >
                 <div className="lg:col-span-3">
-                  <h2 className="text-2xl font-display">{ingredient.name}</h2>
+                  <h3 className="text-2xl font-display">{ingredient.name}</h3>
                   <p className="mt-2 text-sm text-muted-foreground">{ingredient.origin}</p>
                 </div>
                 <div className="lg:col-span-5">
-                  <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
+                  <h4 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
                     Function
-                  </h3>
+                  </h4>
                   <p className="text-foreground leading-relaxed">{ingredient.function}</p>
                 </div>
                 <div className="lg:col-span-4">
-                  <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
+                  <h4 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
                     Why We Use It
-                  </h3>
+                  </h4>
                   <p className="text-foreground leading-relaxed">{ingredient.why}</p>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Australian Sourcing Callout */}
+      <section className="py-8 bg-secondary">
+        <div className="container-narrow text-center">
+          <p className="text-sm uppercase tracking-widest text-muted-foreground">
+            One-third Australian-grown by volume
+          </p>
         </div>
       </section>
 
@@ -156,9 +166,13 @@ const Ingredients = () => {
           </h2>
           <p className="text-center text-muted-foreground text-sm leading-relaxed">
             Squalane, Simmondsia Chinensis (Jojoba) Seed Oil, 
-            Limnanthes Alba (Meadowfoam) Seed Oil, Rosa Canina (Rosehip) Seed Oil, 
-            Macadamia Integrifolia Seed Oil, Terminalia Ferdinandiana (Kakadu Plum) Fruit Extract, 
-            Bisabolol, Tocopherol (Vitamin E), Rosmarinus Officinalis (Rosemary) Leaf Extract.
+            Oenothera Biennis (Evening Primrose) Oil,
+            Rosa Canina (Rosehip) Seed Oil, 
+            Macadamia Integrifolia Seed Oil, 
+            Limnanthes Alba (Meadowfoam) Seed Oil,
+            Santalum Acuminatum (Quandong) Seed Oil,
+            Tocopherol (Vitamin E), 
+            Rosmarinus Officinalis (Rosemary) Leaf Extract.
           </p>
         </div>
       </section>
