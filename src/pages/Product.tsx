@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, Minus, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 import heroImage from "@/assets/hero-product.jpg";
@@ -11,26 +12,27 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [purchaseType, setPurchaseType] = useState<PurchaseType>("one-time");
   const { addToCart } = useCart();
+  const { unitPrice, formatPrice, config } = useCurrency();
 
   const product = {
     id: "field-oil-30ml",
     name: "Field Oil",
-    price: 78,
     size: "30ml",
     image: fieldOilImage,
   };
 
+  const price = unitPrice;
   // 12 months subscription: 6 bottles for the price of 5
-  const subscriptionPrice = product.price * 5; // $340 total
-  const savingsAmount = product.price; // Save $68
-  const currentPrice = purchaseType === "subscription" ? subscriptionPrice : product.price * quantity;
+  const subscriptionPrice = price * 5;
+  const savingsAmount = price;
+  const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
 
   const handleAddToCart = () => {
     const cartItem = {
       ...product,
       id: purchaseType === "subscription" ? "field-oil-subscription-12m" : product.id,
       name: purchaseType === "subscription" ? "Field Oil — 12 Month Supply" : product.name,
-      price: purchaseType === "subscription" ? subscriptionPrice : product.price,
+      price: purchaseType === "subscription" ? subscriptionPrice : price,
     };
     
     const itemCount = purchaseType === "subscription" ? 1 : quantity;
@@ -72,7 +74,7 @@ const Product = () => {
                 Field Oil
               </h1>
               <p className="mt-2 text-2xl font-body">
-                ${product.price} <span className="text-sm text-muted-foreground">AUD</span>
+                {formatPrice(price)} <span className="text-sm text-muted-foreground">{config.code}</span>
               </p>
 
               <p className="mt-6 text-muted-foreground leading-relaxed">
@@ -110,7 +112,7 @@ const Product = () => {
                     <div>
                       <span className="block text-base font-medium">One-Time Purchase</span>
                       <span className="block text-sm text-muted-foreground mt-1">
-                        Single bottle — ${product.price} AUD
+                        Single bottle — {formatPrice(price)} {config.code}
                       </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -182,11 +184,11 @@ const Product = () => {
                   {/* Price Presentation */}
                   <div className="mt-4 pt-4 border-t border-border">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-display">${subscriptionPrice}</span>
-                      <span className="text-muted-foreground">AUD total</span>
+                      <span className="text-3xl font-display">{formatPrice(subscriptionPrice)}</span>
+                      <span className="text-muted-foreground">{config.code} total</span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">
-                      6 bottles for the price of 5 — save ${savingsAmount}
+                      6 bottles for the price of 5 — save {formatPrice(savingsAmount)}
                     </p>
                   </div>
 
@@ -210,8 +212,8 @@ const Product = () => {
                   className="btn-primary w-full"
                 >
                   {purchaseType === "subscription" 
-                    ? `Subscribe — $${subscriptionPrice} AUD`
-                    : `Add to Cart — $${currentPrice} AUD`
+                    ? `Subscribe — ${formatPrice(subscriptionPrice)} ${config.code}`
+                    : `Add to Cart — ${formatPrice(currentPrice)} ${config.code}`
                   }
                 </button>
               </div>

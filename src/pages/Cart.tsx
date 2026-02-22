@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { Minus, Plus, X, ArrowRight, ArrowLeft } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const Cart = () => {
   const { items, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { formatPrice, config } = useCurrency();
 
   if (items.length === 0) {
     return (
@@ -86,7 +88,7 @@ const Cart = () => {
 
                     {/* Price */}
                     <p className="font-medium">
-                      ${item.price * item.quantity} <span className="text-sm text-muted-foreground">AUD</span>
+                      {formatPrice(item.price * item.quantity)} <span className="text-sm text-muted-foreground">{config.code}</span>
                     </p>
                   </div>
                 </div>
@@ -98,7 +100,7 @@ const Cart = () => {
           <div className="mt-12 pt-6 border-t border-border">
             <div className="flex justify-between items-center text-lg">
               <span>Subtotal</span>
-              <span className="font-display text-2xl">${cartTotal} AUD</span>
+              <span className="font-display text-2xl">{formatPrice(cartTotal)} {config.code}</span>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
               Shipping calculated at checkout.
