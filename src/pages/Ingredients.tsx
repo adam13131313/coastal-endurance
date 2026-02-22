@@ -32,7 +32,7 @@ const Ingredients = () => {
     },
     {
       name: "Meadowfoam Seed Oil",
-      origin: "Oregon, USA (only region where it grows)",
+      origin: "Oregon, USA",
       function: "Exceptionally stable plant oil with long-chain fatty acids (meaning it doesn't break down or go rancid easily). Helps protect other oils from degradation. Forms a breathable protective layer on skin.",
       why: "Acts as natural stabiliser, extending product shelf life without synthetic additives. Helps formula remain stable under sun exposure and temperature changes.",
     },
