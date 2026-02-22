@@ -84,11 +84,14 @@ const Ingredients = () => {
       {/* Hero */}
       <section className="section-padding bg-secondary">
         <div className="container-narrow text-center">
+          <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
+            100% Natural
+          </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
             9 Ingredients. Zero Compromises.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            Every ingredient has a job. No marketing stories. No filler. 
+            100% natural. Every ingredient has a job. No synthetics. No filler. 
             Just functional compounds chosen for performance.
           </p>
         </div>
