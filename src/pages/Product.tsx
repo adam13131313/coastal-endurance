@@ -15,7 +15,7 @@ const Product = () => {
   const product = {
     id: "field-oil-30ml",
     name: "Field Oil",
-    price: 68,
+    price: 78,
     size: "30ml",
     image: fieldOilImage,
   };
