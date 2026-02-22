@@ -27,6 +27,9 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <div className="flex flex-col min-h-screen">
+            <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-medium tracking-wide">
+              Launching March 2026
+            </div>
             <Header />
             <div className="flex-1">
               <Routes>
