@@ -30,7 +30,7 @@ const App = () => (
           <ScrollToTop />
           <div className="flex flex-col min-h-screen">
             <div className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-center py-2 text-sm font-medium tracking-wide">
-              Launching March 2026
+              Launching April 2026
             </div>
             <div className="h-8" />
             <Header />
