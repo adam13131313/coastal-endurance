@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -7,23 +8,41 @@ const Contact = () => {
     email: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    const { error } = await supabase.from("contact_submissions").insert({
+      name: formData.name,
+      email: formData.email,
+      message: formData.message,
+    });
+    setIsSubmitting(false);
+    if (error) {
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
     toast.success("Message sent. We'll be in touch.");
     setFormData({ name: "", email: "", message: "" });
   };
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubscribing(true);
-    setTimeout(() => {
-      toast.success("You're subscribed. Updates only.");
-      setNewsletterEmail("");
-      setIsSubscribing(false);
-    }, 800);
+    const { error } = await supabase.from("newsletter_signups").insert({
+      email: newsletterEmail,
+      source: "contact",
+    });
+    setIsSubscribing(false);
+    if (error) {
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
+    toast.success("You're subscribed. Updates only.");
+    setNewsletterEmail("");
   };
 
   return (
@@ -87,8 +106,8 @@ const Contact = () => {
                     required
                   />
                 </div>
-                <button type="submit" className="btn-primary w-full md:w-auto">
-                  Send Message
+                <button type="submit" disabled={isSubmitting} className="btn-primary w-full md:w-auto disabled:opacity-50">
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </button>
               </form>
             </div>
