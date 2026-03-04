@@ -1,11 +1,71 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Minus, Plus, X, ArrowRight, ArrowLeft } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const Cart = () => {
-  const { items, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { items, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
   const { formatPrice, config } = useCurrency();
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [guestEmail, setGuestEmail] = useState("");
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsSignedIn(!!session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setIsSignedIn(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleCheckout = async () => {
+    setCheckingOut(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || null;
+
+      if (!userId && !guestEmail) {
+        toast({ title: "Email required", description: "Please enter your email to checkout as a guest.", variant: "destructive" });
+        setCheckingOut(false);
+        return;
+      }
+
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          user_id: userId,
+          guest_email: userId ? null : guestEmail,
+          total_amount: cartTotal,
+          currency: config.code,
+          status: "completed",
+        })
+        .select("id")
+        .single();
+
+      if (orderError || !order) throw orderError;
+
+      const orderItems = items.map((item) => ({
+        order_id: order.id,
+        product_name: item.name,
+        quantity: item.quantity,
+        unit_price: item.price,
+      }));
+
+      const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
+      if (itemsError) throw itemsError;
+
+      clearCart();
+      toast({ title: "Order placed!", description: "Thank you for your purchase." });
+    } catch (e: any) {
+      toast({ title: "Checkout failed", description: e?.message || "Something went wrong.", variant: "destructive" });
+    }
+    setCheckingOut(false);
+  };
 
   if (items.length === 0) {
     return (
@@ -106,10 +166,30 @@ const Cart = () => {
               Free postage within Australia. International shipping calculated at checkout.
             </p>
 
+            {!isSignedIn && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-1.5">Email (for order confirmation)</label>
+                <input
+                  type="email"
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="w-full px-3 py-2 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  <Link to="/auth" className="underline hover:text-foreground">Sign in</Link> to save your order to your account.
+                </p>
+              </div>
+            )}
+
             <div className="mt-8 space-y-3">
-              <button className="btn-primary w-full">
-                Proceed to Checkout
-                <ArrowRight className="ml-2 w-4 h-4" />
+              <button
+                onClick={handleCheckout}
+                disabled={checkingOut}
+                className="btn-primary w-full"
+              >
+                {checkingOut ? "Placing Order..." : "Place Order"}
+                {!checkingOut && <ArrowRight className="ml-2 w-4 h-4" />}
               </button>
               <Link
                 to="/product"
