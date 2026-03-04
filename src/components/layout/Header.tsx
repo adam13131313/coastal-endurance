@@ -1,12 +1,31 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, ShoppingBag, User, LogOut } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { supabase } from "@/integrations/supabase/client";
+import type { User as SupaUser } from "@supabase/supabase-js";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<SupaUser | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const { cartCount } = useCart();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null);
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
   const navLinks = [
     { name: "Shop", path: "/product" },
     { name: "Ingredients", path: "/ingredients" },
@@ -49,7 +68,22 @@ const Header = () => {
                 </span>
               )}
             </Link>
-            
+
+            {user ? (
+              <button
+                onClick={handleSignOut}
+                className="p-2 transition-colors hover:text-muted-foreground"
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            ) : (
+              <Link to="/auth" className="p-2 transition-colors hover:text-muted-foreground" aria-label="Sign in">
+                <User className="w-5 h-5" />
+              </Link>
+            )}
+
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 transition-colors hover:text-muted-foreground"
