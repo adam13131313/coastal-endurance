@@ -1,9 +1,30 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/hero-product.jpg";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
 const Home = () => {
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubscribing(true);
+    const { error } = await supabase.from("newsletter_signups").insert({
+      email: newsletterEmail,
+      source: "homepage",
+    });
+    setIsSubscribing(false);
+    if (error) {
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
+    toast.success("You're subscribed. Updates only.");
+    setNewsletterEmail("");
+  };
   return (
     <main>
       {/* Hero Section */}
@@ -130,15 +151,17 @@ const Home = () => {
           <p className="mt-4 text-muted-foreground">
             New products, restocks, and nothing else.
           </p>
-          <form className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <form onSubmit={handleNewsletterSubmit} className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Your email"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
               className="input-field flex-1"
               required
             />
-            <button type="submit" className="btn-primary whitespace-nowrap">
-              Subscribe
+            <button type="submit" disabled={isSubscribing} className="btn-primary whitespace-nowrap disabled:opacity-50">
+              {isSubscribing ? "..." : "Subscribe"}
             </button>
           </form>
         </div>
