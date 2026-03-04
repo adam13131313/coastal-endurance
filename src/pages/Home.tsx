@@ -15,7 +15,7 @@ const Home = () => {
     setIsSubscribing(true);
     const { error } = await supabase.from("newsletter_signups").insert({
       email: newsletterEmail,
-      source: "homepage",
+      source: "homepage"
     });
     setIsSubscribing(false);
     if (error) {
@@ -33,8 +33,8 @@ const Home = () => {
           <img
             src={heroImage}
             alt="Field Oil product on sand"
-            className="w-full h-full object-cover"
-          />
+            className="w-full h-full object-cover" />
+          
           <div className="absolute inset-0 bg-background/60 md:bg-gradient-to-r md:from-background/70 md:via-background/40 md:to-transparent" />
         </div>
         
@@ -48,8 +48,8 @@ const Home = () => {
             </h1>
             <p
               className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
-              style={{ animationDelay: "0.1s" }}
-            >
+              style={{ animationDelay: "0.1s" }}>
+              
               Field Oil maintains what the elements wear down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
@@ -71,9 +71,9 @@ const Home = () => {
           <h2 className="text-3xl md:text-4xl font-display">
             For life in the outdoors.
           </h2>
-          <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-             Field Oil is a daily face oil built for those who spend their days outside — 
-            surfers, runners, cyclists, builders, anyone who works and lives under the Australian sky.
+          <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">Field Oil is a daily face oil built for those who spend their days outside — surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
+
+
           </p>
         </div>
       </section>
@@ -96,16 +96,16 @@ const Home = () => {
               </p>
               <ul className="mt-8 space-y-3">
                 {[
-                  "Supports and maintains the skin barrier",
-                  "Australian-sourced actives",
-                  "No fragrance, no essential oils",
-                  "30ml — 2-month supply",
-                ].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3 text-muted-foreground">
+                "Supports and maintains the skin barrier",
+                "Australian-sourced actives",
+                "No fragrance, no essential oils",
+                "30ml — 2-month supply"].
+                map((feature, index) =>
+                <li key={index} className="flex items-start gap-3 text-muted-foreground">
                     <span className="w-1.5 h-1.5 rounded-full bg-ocean-slate mt-2 flex-shrink-0" />
                     {feature}
                   </li>
-                ))}
+                )}
               </ul>
               <Link to="/product" className="btn-primary mt-10 inline-flex">
                 Learn More
@@ -118,8 +118,8 @@ const Home = () => {
                   src={fieldOilImage}
                   alt="Field Oil 30ml bottle"
                   className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+                  loading="lazy" />
+                
               </div>
             </div>
           </div>
@@ -158,16 +158,16 @@ const Home = () => {
               value={newsletterEmail}
               onChange={(e) => setNewsletterEmail(e.target.value)}
               className="input-field flex-1"
-              required
-            />
+              required />
+            
             <button type="submit" disabled={isSubscribing} className="btn-primary whitespace-nowrap disabled:opacity-50">
               {isSubscribing ? "..." : "Subscribe"}
             </button>
           </form>
         </div>
       </section>
-    </main>
-  );
+    </main>);
+
 };
 
 export default Home;
