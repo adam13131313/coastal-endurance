@@ -70,14 +70,13 @@ const Header = () => {
             </Link>
 
             {user ? (
-              <button
-                onClick={handleSignOut}
-                className="p-2 transition-colors hover:text-muted-foreground"
-                aria-label="Sign out"
-                title="Sign out"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
+              <Link to="/account" className="p-2 transition-colors hover:text-muted-foreground" aria-label="My Account">
+                {user.user_metadata?.avatar_url ? (
+                  <img src={user.user_metadata.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover" />
+                ) : (
+                  <User className="w-5 h-5" />
+                )}
+              </Link>
             ) : (
               <Link to="/auth" className="p-2 transition-colors hover:text-muted-foreground" aria-label="Sign in">
                 <User className="w-5 h-5" />
