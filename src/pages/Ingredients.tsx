@@ -136,7 +136,7 @@ const Ingredients = () => {
             Oils. Zero Fragrance.
           </p>
           <p className="text-center text-muted-foreground mb-8">
-            Built for men with significant outdoor exposure.
+            Made for a life in the great outdoors.
           </p>
           <div className="max-w-lg mx-auto space-y-3 text-sm">
             <div className="flex gap-2">
