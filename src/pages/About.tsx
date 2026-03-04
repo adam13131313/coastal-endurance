@@ -44,7 +44,7 @@ const About = () => {
               You maintain your tools. Your vehicle. Your gear. Your face is no different.
             </p>
             <p>
-              The men who need this most are the least likely to buy face oil. Not because they 
+              The people who need this most are the least likely to buy face oil. Not because they 
               don't care—because nothing on the shelf is built for them.
             </p>
             <p className="text-foreground text-lg font-medium">
@@ -61,6 +61,7 @@ const About = () => {
             src={ruggedCoast}
             alt="Rugged Australian coastline"
             className="w-full h-full object-cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
         </div>
@@ -88,7 +89,7 @@ const About = () => {
               <h3 className="text-xl font-display">We don't manufacture a sourcing story.</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
                 Three ingredients from Australian soil—jojoba from WA, macadamia from Queensland, 
-                Kakadu plum from the NT. The rest from wherever they grow best. Performance dictates sourcing.
+                Australian sandalwood from WA. The rest from wherever they grow best. Performance dictates sourcing.
               </p>
             </div>
 
@@ -114,7 +115,7 @@ const About = () => {
             </p>
             <p>
               Squalane and jojoba mimic sebum (your skin's natural oil). Rosehip delivers fatty acids 
-              your skin can't make. Kakadu plum provides antioxidant protection. Meadowfoam locks in moisture.
+              your skin can't make. Australian sandalwood provides antioxidant support. Meadowfoam locks in moisture.
             </p>
             <p>
               Nine ingredients. No fillers. No fragrance. No synthetic preservatives.
@@ -133,6 +134,7 @@ const About = () => {
             src={droughtAndRain}
             alt="Cracked earth under approaching storm clouds"
             className="w-full h-full object-cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
         </div>
@@ -140,7 +142,7 @@ const About = () => {
           <h2 className="text-3xl md:text-4xl font-display">Why We Exist</h2>
           <div className="mt-8 space-y-6 text-muted-foreground leading-relaxed text-[17px]">
             <p>
-              Tradies, surfers, fishermen, sailors, farmers—the men who need this most aren't buying 
+              Tradies, surfers, fishermen, sailors, farmers—the people who need this most aren't buying 
               face oil. Because nothing in the market speaks to them.
             </p>
             <p>Everything is either:</p>
@@ -182,6 +184,7 @@ const About = () => {
             src={coastalImage}
             alt="Australian coastline"
             className="w-full h-full object-cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/75 to-background/30" />
         </div>

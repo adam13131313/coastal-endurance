@@ -4,7 +4,6 @@ import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
-import heroImage from "@/assets/hero-product.jpg";
 
 type PurchaseType = "one-time" | "subscription";
 
@@ -22,7 +21,6 @@ const Product = () => {
   };
 
   const price = unitPrice;
-  // 12 months subscription: 6 bottles for the price of 5
   const subscriptionPrice = price * 5;
   const savingsAmount = price;
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
@@ -46,7 +44,6 @@ const Product = () => {
     toast.success(message);
     setQuantity(1);
   };
-
 
   return (
     <main className="pt-20" id="top">
@@ -86,16 +83,16 @@ const Product = () => {
               <span className="text-sm uppercase tracking-widest text-muted-foreground">
                 Daily Barrier Oil For Your Face
               </span>
-              <h1 className="mt-4 text-4xl md:text-5xl font-display">
+              <h2 className="mt-4 text-4xl md:text-5xl font-display">
                 Field Oil
-              </h1>
+              </h2>
               <p className="mt-2 text-2xl font-body">
                 {formatPrice(price)} <span className="text-sm text-muted-foreground">{config.code}</span>
               </p>
 
               <p className="mt-6 text-muted-foreground leading-relaxed">
-                A lightweight daily oil that repairs and protects your skin barrier. 
-                Formulated for men who face sun, wind, salt, and sweat — every day.
+                A lightweight daily oil that supports and maintains your skin barrier. 
+                Formulated for those who face sun, wind, salt, and sweat — every day.
               </p>
 
               {/* Features */}
@@ -168,7 +165,7 @@ const Product = () => {
                   )}
                 </div>
 
-                {/* Subscription Card - Premium Design */}
+                {/* Subscription Card */}
                 <div
                   onClick={() => setPurchaseType("subscription")}
                   className={`relative p-6 border cursor-pointer transition-all ${
@@ -177,7 +174,6 @@ const Product = () => {
                       : "border-border hover:border-ocean-slate/50"
                   }`}
                 >
-                  {/* Best Value Badge */}
                   <div className="absolute -top-3 left-6 bg-ocean-slate text-background text-xs font-medium px-3 py-1 uppercase tracking-wider">
                     Best Value
                   </div>
@@ -198,7 +194,6 @@ const Product = () => {
                     </div>
                   </div>
 
-                  {/* Price Presentation */}
                   <div className="mt-4 pt-4 border-t border-border">
                     <div className="flex items-baseline gap-2">
                       <span className="text-3xl font-display">{formatPrice(subscriptionPrice)}</span>
@@ -209,7 +204,6 @@ const Product = () => {
                     </p>
                   </div>
 
-                  {/* Benefits List */}
                   <ul className="mt-5 space-y-2.5">
                     {[
                       "Free shipping on every delivery",
@@ -267,9 +261,9 @@ const Product = () => {
             Who It's For
           </h2>
           <p className="mt-6 text-center text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Field Oil is built for men who spend real time outside. Surfers, runners, cyclists, 
+            Field Oil is built for those who spend real time outside. Surfers, runners, cyclists, 
             builders, professionals who train before or after work. If your skin faces the elements daily, 
-            this is your recovery tool.
+            this is your maintenance tool.
           </p>
         </div>
       </section>
@@ -283,16 +277,16 @@ const Product = () => {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Rebuild",
-                description: "Replenishes essential lipids that sun, wind, and water strip away.",
+                title: "Support",
+                description: "Helps maintain essential lipids that sun, wind, and water strip away.",
               },
               {
                 title: "Protect",
                 description: "Reinforces the skin barrier against environmental stress.",
               },
               {
-                title: "Recover",
-                description: "Supports natural repair processes while you rest.",
+                title: "Maintain",
+                description: "Supports natural barrier function while you rest.",
               },
             ].map((step, index) => (
               <div key={index} className="text-center">
@@ -311,7 +305,6 @@ const Product = () => {
       <section className="section-padding bg-secondary">
         <div className="container-wide">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-            {/* Characteristics */}
             <div>
               <h2 className="text-2xl font-display mb-8">Product Characteristics</h2>
               <div className="space-y-4">
@@ -330,7 +323,6 @@ const Product = () => {
               </div>
             </div>
 
-            {/* Shelf Life & Storage */}
             <div>
               <h2 className="text-2xl font-display mb-8">Shelf Life & Storage</h2>
               <div className="space-y-4">
@@ -349,7 +341,6 @@ const Product = () => {
           </div>
         </div>
       </section>
-
     </main>
   );
 };

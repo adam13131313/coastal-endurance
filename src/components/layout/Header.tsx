@@ -11,6 +11,7 @@ const Header = () => {
     { name: "Shop", path: "/product" },
     { name: "Ingredients", path: "/ingredients" },
     { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -19,12 +20,10 @@ const Header = () => {
     <header className="fixed top-8 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
       <div className="container-wide">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
           <Link to="/" className="font-display text-xl md:text-2xl font-medium tracking-tight">
             Coastal Endurance
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
@@ -41,9 +40,7 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Right Actions */}
           <div className="flex items-center gap-2">
-
             <Link to="/cart" className="relative p-2 transition-colors hover:text-muted-foreground">
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
@@ -53,7 +50,6 @@ const Header = () => {
               )}
             </Link>
             
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 transition-colors hover:text-muted-foreground"
@@ -64,7 +60,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isMenuOpen && (
           <nav className="md:hidden py-6 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-4">
