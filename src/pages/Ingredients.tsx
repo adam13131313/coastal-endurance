@@ -279,9 +279,9 @@ const Ingredients = () => {
         <div className="container-narrow text-center">
           <h2 className="text-2xl md:text-3xl font-display mb-4">Built For</h2>
           <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            Men with significant outdoor exposure — surfers with 15-20 years in
-            salt water, tradies with decades on the tools, cyclists doing
-            serious miles, outdoor workers exposed to the elements.
+            For those who spend time in the great outdoors — surfers with 15+
+            years in the water, tradies with decades on the tools, cyclists
+            doing serious miles, outdoor workers exposed to the elements.
           </p>
           <p className="text-sm font-medium text-foreground mt-6">
             Not anti-aging. Barrier maintenance for cumulative environmental
