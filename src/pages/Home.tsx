@@ -29,7 +29,7 @@ const Home = () => {
               className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
               style={{ animationDelay: "0.1s" }}
             >
-              Field Oil rebuilds what the elements break down.
+              Field Oil maintains what the elements wear down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <Link to="/product" className="btn-primary">
@@ -51,7 +51,7 @@ const Home = () => {
             Built for a life outside.
           </h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-             Field Oil is a daily face oil built for men who spend their days outside — 
+             Field Oil is a daily face oil built for those who spend their days outside — 
             surfers, runners, cyclists, builders, anyone who works and lives under the Australian sky.
           </p>
         </div>
@@ -69,13 +69,13 @@ const Home = () => {
                 Field Oil
               </h2>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-                A barrier oil that reinforces your skin's natural barrier. 
+                A barrier oil that supports your skin's natural barrier. 
                 Fast-absorbing, non-greasy, built for real conditions. 
                 One product. Daily. That's the routine.
               </p>
               <ul className="mt-8 space-y-3">
                 {[
-                  "Repairs and protects the skin barrier",
+                  "Supports and maintains the skin barrier",
                   "Australian-sourced actives",
                   "No fragrance, no essential oils",
                   "30ml — 2-month supply",
@@ -97,6 +97,7 @@ const Home = () => {
                   src={fieldOilImage}
                   alt="Field Oil 30ml bottle"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>

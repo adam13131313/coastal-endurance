@@ -100,10 +100,10 @@ const Contact = () => {
                   Email
                 </h3>
                 <a
-                  href="mailto:hello@coastalendurance.com"
+                  href="mailto:hello@coastalendurance.co"
                   className="text-lg hover:text-muted-foreground transition-colors"
                 >
-                  hello@coastalendurance.com
+                  hello@coastalendurance.co
                 </a>
               </div>
 
