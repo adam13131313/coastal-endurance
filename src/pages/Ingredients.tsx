@@ -113,20 +113,48 @@ const Ingredients = () => {
 
   return (
     <main className="pt-20">
-      {/* Hero */}
-      <section className="section-padding bg-secondary">
-        <div className="container-narrow text-center">
-          <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
-            Field Oil — Ingredients
-          </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
-            What's In It
+      {/* Full Ingredient List (9 Ingredients) */}
+      <section className="section-padding">
+        <div className="container-wide">
+          <h1 className="text-3xl md:text-4xl font-display text-center mb-12">
+            Full Ingredient List (9 Ingredients)
           </h1>
+          <div className="space-y-12">
+            {ingredients.map((ingredient, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12 border-b border-border last:border-0"
+              >
+                <div className="lg:col-span-3">
+                  <h3 className="text-2xl font-display">{ingredient.name}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {ingredient.origin}
+                  </p>
+                </div>
+                <div className="lg:col-span-5">
+                  <h4 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
+                    Function
+                  </h4>
+                  <p className="text-foreground leading-relaxed">
+                    {ingredient.function}
+                  </p>
+                </div>
+                <div className="lg:col-span-4">
+                  <h4 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
+                    Why We Use It
+                  </h4>
+                  <p className="text-foreground leading-relaxed">
+                    {ingredient.why}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Product Characteristics */}
-      <section className="section-padding">
+      <section className="section-padding bg-secondary">
         <div className="container-narrow">
           <h2 className="text-2xl md:text-3xl font-display text-center mb-8">
             Product Characteristics
@@ -180,53 +208,8 @@ const Ingredients = () => {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="container-narrow">
-        <hr className="border-border" />
-      </div>
-
-      {/* Full Ingredient List (9 Ingredients) */}
-      <section className="section-padding">
-        <div className="container-wide">
-          <h2 className="text-3xl md:text-4xl font-display text-center mb-12">
-            Full Ingredient List (9 Ingredients)
-          </h2>
-          <div className="space-y-12">
-            {ingredients.map((ingredient, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12 border-b border-border last:border-0"
-              >
-                <div className="lg:col-span-3">
-                  <h3 className="text-2xl font-display">{ingredient.name}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {ingredient.origin}
-                  </p>
-                </div>
-                <div className="lg:col-span-5">
-                  <h4 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
-                    Function
-                  </h4>
-                  <p className="text-foreground leading-relaxed">
-                    {ingredient.function}
-                  </p>
-                </div>
-                <div className="lg:col-span-4">
-                  <h4 className="text-sm uppercase tracking-widest text-muted-foreground mb-2">
-                    Why We Use It
-                  </h4>
-                  <p className="text-foreground leading-relaxed">
-                    {ingredient.why}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Storage & Shelf Life */}
-      <section className="py-12 bg-secondary">
+      <section className="py-12">
         <div className="container-narrow">
           <h2 className="text-2xl md:text-3xl font-display text-center mb-8">
             Storage & Shelf Life
