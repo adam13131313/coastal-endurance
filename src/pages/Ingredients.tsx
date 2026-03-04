@@ -113,12 +113,24 @@ const Ingredients = () => {
 
   return (
     <main className="pt-20">
+      {/* Hero Banner */}
+      <section className="bg-primary text-primary-foreground py-16 md:py-24">
+        <div className="container-wide text-center">
+          <h1 className="text-3xl md:text-5xl font-display mb-6">
+            9 Ingredients. Zero Compromises.
+          </h1>
+          <p className="text-lg md:text-xl max-w-2xl mx-auto opacity-90">
+            100% natural. Every ingredient has a job. No synthetics. No filler. Just functional compounds chosen for performance.
+          </p>
+        </div>
+      </section>
+
       {/* Full Ingredient List (9 Ingredients) */}
       <section className="section-padding">
         <div className="container-wide">
-          <h1 className="text-3xl md:text-4xl font-display text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-display text-center mb-12">
             Full Ingredient List (9 Ingredients)
-          </h1>
+          </h2>
           <div className="space-y-12">
             {ingredients.map((ingredient, index) => (
               <div
