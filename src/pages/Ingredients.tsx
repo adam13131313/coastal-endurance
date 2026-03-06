@@ -109,6 +109,10 @@ const Ingredients = () => {
       q: 'What does "clinical-dose actives" mean?',
       a: "We use 59% active barrier-repair oils (Rosehip 35%, Evening Primrose 15%, etc.). Most face oils use 20-40% actives. Clinical dose means we use concentrations shown effective in studies, not just token amounts.",
     },
+    {
+      q: "Why a dropper and not a pump bottle?",
+      a: "Because pump bottles are chaos. You press it once and get either nothing or enough oil to fry an egg. The dropper has measurement markings on the pipette so you can pull exactly 3–4 drops every time — no guesswork, no waste. That's how 30ml lasts you a full two months instead of six weeks of \"oops, too much\" followed by two weeks of rationing. Precision beats convenience.",
+    },
   ];
 
   return (
@@ -329,7 +333,7 @@ const Ingredients = () => {
       <section className="section-padding">
         <div className="container-narrow">
           <h2 className="text-3xl md:text-4xl font-display text-center mb-8">
-            Frequently Asked Questions
+            Infrequently Asked Questions
           </h2>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
