@@ -29,7 +29,7 @@ const Home = () => {
     <main>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 overflow-hidden">
           <img
             src={heroImage}
             alt="Field Oil product on sand"
