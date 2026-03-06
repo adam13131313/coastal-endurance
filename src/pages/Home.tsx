@@ -35,7 +35,7 @@ const Home = () => {
             alt="Field Oil product on sand"
             className="w-full h-full object-cover" />
           
-          <div className="absolute inset-0 bg-background/80 md:bg-gradient-to-r md:from-background/85 md:via-background/60 md:to-background/20" />
+          <div className="absolute inset-0 bg-background/80 md:bg-gradient-to-r md:from-background/92 md:via-background/75 md:to-background/30" />
         </div>
         
         <div className="container-wide relative z-10 pt-20">
