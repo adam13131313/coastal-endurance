@@ -333,7 +333,7 @@ const Ingredients = () => {
       <section className="section-padding">
         <div className="container-narrow">
           <h2 className="text-3xl md:text-4xl font-display text-center mb-8">
-            Infrequently Asked Questions
+            Frequently Asked Questions
           </h2>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
