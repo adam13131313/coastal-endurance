@@ -28,28 +28,24 @@ const Home = () => {
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center">
+      {/* Mobile: image with overlay text */}
+      <section className="relative min-h-screen flex items-center md:hidden">
         <div className="absolute inset-0">
           <img
             src={heroImage}
             alt="Field Oil product on sand"
             className="w-full h-full object-cover" />
-          
-          <div className="absolute inset-0 bg-background/80 md:bg-gradient-to-r md:from-background/92 md:via-background/75 md:to-background/30" />
+          <div className="absolute inset-0 bg-background/80" />
         </div>
-        
         <div className="container-wide relative z-10 pt-20">
           <div className="max-w-2xl">
             <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
               100% Natural Ingredients
             </p>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
+            <h1 className="text-4xl font-display font-medium leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
               Built for sun, salt, wind, and time.
             </h1>
-            <p
-              className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
-              style={{ animationDelay: "0.1s" }}>
-              
+            <p className="mt-6 text-lg text-foreground leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
               Field Oil maintains what the elements wear down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
@@ -62,6 +58,38 @@ const Home = () => {
               </Link>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Desktop: side-by-side layout — text left, image right */}
+      <section className="hidden md:flex min-h-screen">
+        <div className="w-1/2 flex items-center bg-background">
+          <div className="px-12 lg:px-20 xl:px-28 max-w-2xl ml-auto mr-0">
+            <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
+              100% Natural Ingredients
+            </p>
+            <h1 className="text-5xl lg:text-6xl xl:text-7xl font-display font-medium leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
+              Built for sun, salt, wind, and time.
+            </h1>
+            <p className="mt-6 text-lg lg:text-xl text-foreground/80 leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
+              Field Oil maintains what the elements wear down.
+            </p>
+            <div className="mt-10 flex flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+              <Link to="/product" className="btn-primary">
+                Maintain Your Barrier
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
+              <Link to="/about" className="btn-outline">
+                About Us
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="w-1/2 relative">
+          <img
+            src={heroImage}
+            alt="Field Oil product on sand"
+            className="absolute inset-0 w-full h-full object-cover" />
         </div>
       </section>
 
