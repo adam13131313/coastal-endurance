@@ -29,22 +29,27 @@ const Home = () => {
     <main>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0">
           <img
             src={heroImage}
             alt="Field Oil product on sand"
-            className="w-full h-full object-cover md:scale-110 md:translate-x-[20%]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/50 to-background/10" />
+            className="w-full h-full object-cover" />
+          
+          <div className="absolute inset-0 bg-background/80 md:bg-gradient-to-r md:from-background/92 md:via-background/75 md:to-background/30" />
         </div>
+        
         <div className="container-wide relative z-10 pt-20">
           <div className="max-w-2xl">
             <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
               100% Natural Ingredients
             </p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-medium leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
               Built for sun, salt, wind, and time.
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-foreground/80 leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            <p
+              className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
+              style={{ animationDelay: "0.1s" }}>
+              
               Field Oil maintains what the elements wear down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
