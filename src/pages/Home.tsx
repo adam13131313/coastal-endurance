@@ -29,11 +29,11 @@ const Home = () => {
     <main>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 overflow-hidden">
           <img
             src={heroImage}
             alt="Field Oil product on sand"
-            className="w-full h-full object-cover object-[70%_center] md:object-[75%_center]" />
+            className="w-full h-full object-cover md:scale-110 md:translate-x-[10%]" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/50 to-background/10" />
         </div>
         <div className="container-wide relative z-10 pt-20">
