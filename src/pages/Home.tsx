@@ -33,7 +33,7 @@ const Home = () => {
           <img
             src={heroImage}
             alt="Field Oil product on sand"
-            className="w-full h-full object-cover md:scale-110 md:translate-x-[10%]" />
+            className="w-full h-full object-cover md:scale-110 md:translate-x-[20%]" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/50 to-background/10" />
         </div>
         <div className="container-wide relative z-10 pt-20">
