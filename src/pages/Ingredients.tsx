@@ -19,7 +19,7 @@ const Ingredients = () => {
       origin: "Australian-grown, Western Australia/South Australia/NSW",
       function:
         "Structurally similar to human sebum (your skin's natural oil). Helps regulate skin's natural oil balance. Lightweight, non-comedogenic (won't clog pores) wax ester.",
-      why: "Australian-sourced. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat — helps maintain balanced skin without heaviness. One-third of our Australian-grown content.",
+      why: "Australian-sourced at clinical dose. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat — helps maintain balanced skin without heaviness. Primary component of our 44% Australian-grown content.",
     },
     {
       name: "Evening Primrose Oil",
@@ -29,18 +29,11 @@ const Ingredients = () => {
       why: "GLA is uncommon in plant oils and helps address skin exposed to wind, sun, and environmental stress. Refined (filtered for stability) while maintaining effectiveness. Specifically targets inflammation from years of outdoor exposure.",
     },
     {
-      name: "Squalane",
-      origin: "Olive-derived, European origin",
-      function:
-        "Bioidentical to a component naturally found in human sebum (your skin's natural oil). Lightweight, fast-absorbing. Helps restore skin's natural moisture barrier (the protective layer that keeps water in and irritants out).",
-      why: "Matches what your skin already produces. Fastest-absorbing carrier in the formula. Helps deliver other ingredients effectively. Critical for men who need quick absorption (90-120 seconds) without greasy residue.",
-    },
-    {
       name: "Macadamia Oil",
       origin: "Australian-grown, Queensland/Northern NSW",
       function:
         "Contains palmitoleic acid (omega-7, a fatty acid that naturally occurs in younger skin but decreases with age and sun exposure). Lightweight despite being nourishing.",
-      why: "Australian native tree. Provides fatty acids that help maintain skin's lipid barrier (your skin's natural oil layer). Contains omega-7, found in few other plant sources. Addresses age-related lipid depletion accelerated by environmental exposure.",
+      why: "Australian native tree at clinically meaningful dose. Provides fatty acids that help maintain skin's lipid barrier (your skin's natural oil layer). Contains omega-7, found in few other plant sources. Addresses age-related lipid depletion accelerated by environmental exposure. Part of our 44% Australian-grown content.",
     },
     {
       name: "Meadowfoam Seed Oil",
@@ -48,13 +41,6 @@ const Ingredients = () => {
       function:
         "Exceptionally stable plant oil with long-chain fatty acids (meaning it doesn't break down or go rancid easily). Helps protect other oils from degradation. Forms a breathable protective layer on skin.",
       why: "Acts as natural stabilizer, extending product shelf life without synthetic additives. Helps formula remain stable under sun exposure and temperature changes. Critical for protecting the 50% oxidation-prone oils in this formula from Australian sun.",
-    },
-    {
-      name: "Australian Sandalwood Seed Oil",
-      origin: "Australian native, Western Australia",
-      function:
-        "Contains beneficial fatty acids and phenolic compounds (plant antioxidants) with anti-inflammatory properties. Helps reduce the appearance of redness. Related to Desert Quandong (same botanical family, Santalum).",
-      why: "Australian native ingredient. Provides anti-inflammatory support for skin exposed to harsh environmental conditions over decades. Sustainably grown in Western Australian plantations. Part of our 34% Australian-grown content.",
     },
     {
       name: "Vitamin E",
@@ -67,7 +53,7 @@ const Ingredients = () => {
       name: "Rosemary CO2 Extract",
       origin: "Mediterranean origin, supercritical CO2 extraction",
       function:
-        "Contains carnosic acid (a natural antioxidant compound) with natural antioxidant and antimicrobial (keeps bacteria/fungi from growing) properties. Helps prevent product oxidation. Maintains freshness without synthetic preservatives.",
+        "Contains carnosic acid (a natural antioxidant compound) with natural antioxidant and antimicrobial (keeps bacteria/fungi from growing) properties. Helps prevent product oxidation (going rancid). Maintains freshness without synthetic preservatives.",
       why: "Natural preservation system. Minimal concentration means no detectable scent while effectively maintaining product integrity. At 0.3%, it's functionally active but undetectable — above 0.5% would smell herbal. ECOCERT certified.",
     },
   ];
@@ -99,7 +85,7 @@ const Ingredients = () => {
     },
     {
       q: "Why Australian ingredients?",
-      a: "Australian-grown ingredients (Jojoba, Macadamia, Sandalwood) make up 34% of the formula. They're sourced locally, built for harsh Australian conditions, and support Australian agriculture.",
+      a: "Australian-grown ingredients (Jojoba, Macadamia) make up 44% of the formula. They're sourced locally, built for harsh Australian conditions, and support Australian agriculture.",
     },
     {
       q: "How long does 30ml last?",
@@ -109,10 +95,6 @@ const Ingredients = () => {
       q: 'What does "clinical-dose actives" mean?',
       a: "We use 59% active barrier-repair oils (Rosehip 35%, Evening Primrose 15%, etc.). Most face oils use 20-40% actives. Clinical dose means we use concentrations shown effective in studies, not just token amounts.",
     },
-    {
-      q: "Why a dropper and not a pump bottle?",
-      a: "Because pump bottles are chaos. You press it once and get either nothing or enough oil to fry an egg. The dropper has measurement markings on the pipette so you can pull exactly 3–4 drops every time — no guesswork, no waste. That's how 30ml lasts you a full two months instead of six weeks of \"oops, too much\" followed by two weeks of rationing. Precision beats convenience.",
-    },
   ];
 
   return (
@@ -121,7 +103,7 @@ const Ingredients = () => {
       <section className="bg-primary text-primary-foreground py-16 md:py-24">
         <div className="container-wide text-center">
           <h1 className="text-3xl md:text-5xl font-display mb-6">
-            9 Ingredients. Zero Compromises.
+            7 Ingredients. Zero Compromises.
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto opacity-90">
             100% natural. Every ingredient has a job. No synthetics. No filler. Just functional compounds chosen for performance.
@@ -129,7 +111,7 @@ const Ingredients = () => {
         </div>
       </section>
 
-      {/* Full Ingredient List (9 Ingredients) */}
+      {/* Full Ingredient List */}
       <section className="section-padding">
         <div className="container-wide">
           <div className="space-y-12">
@@ -177,7 +159,7 @@ const Ingredients = () => {
             Oils. Zero Fragrance.
           </p>
           <p className="text-center text-muted-foreground mb-8">
-            Made for a life in the great outdoors.
+            Built for men with significant outdoor exposure — those who've been doing the thing long enough that the environmental damage shows.
           </p>
           <div className="max-w-lg mx-auto space-y-3 text-sm">
             <div className="flex gap-2">
@@ -193,7 +175,7 @@ const Ingredients = () => {
                 Texture:
               </span>
               <span className="text-muted-foreground">
-                Medium-weight, absorbs in 90-120 seconds
+                Medium-weight, absorbs in approximately 2 minutes
               </span>
             </div>
             <div className="flex gap-2">
@@ -215,7 +197,7 @@ const Ingredients = () => {
             </div>
           </div>
           <p className="text-center text-sm font-medium text-foreground mt-8">
-            59% active barrier-repair oils. 34% Australian-grown. Not
+            59% active barrier-repair oils. 44% Australian-grown. Not
             anti-aging — equipment maintenance.
           </p>
         </div>
@@ -264,11 +246,10 @@ const Ingredients = () => {
         <div className="container-narrow text-center">
           <h2 className="text-2xl md:text-3xl font-display mb-4">Origin</h2>
           <p className="font-medium text-foreground mb-2">
-            One-third Australian-grown by volume
+            44% Australian-grown by volume
           </p>
           <p className="text-muted-foreground text-sm max-w-xl mx-auto">
-            Jojoba, Macadamia, and Australian Sandalwood sourced from Australian
-            farms and sustainable cultivation.
+            Jojoba and Macadamia sourced from Australian farms.
           </p>
         </div>
       </section>
@@ -283,9 +264,7 @@ const Ingredients = () => {
         <div className="container-narrow text-center">
           <h2 className="text-2xl md:text-3xl font-display mb-4">Built For</h2>
           <p className="text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            Those who spend time in the great outdoors — surfers with 15+
-            years in the water, tradies with decades on the tools, cyclists
-            doing serious miles, outdoor workers exposed to the elements.
+            Men with significant outdoor exposure — surfers with 15+ years in the water, tradies with decades on the tools, cyclists doing serious miles, outdoor workers exposed to the elements.
           </p>
           <p className="text-sm font-medium text-foreground mt-6">
             Not anti-aging. Barrier maintenance for cumulative environmental
@@ -302,8 +281,8 @@ const Ingredients = () => {
           </h2>
           <p className="text-center text-muted-foreground text-sm leading-relaxed">
             Rosa Canina Fruit Oil, Simmondsia Chinensis Seed Oil, Oenothera
-            Biennis Oil, Squalane, Macadamia Ternifolia Seed Oil, Limnanthes
-            Alba Seed Oil, Santalum Spicatum Seed Oil, Tocopherol, Rosmarinus
+            Biennis Oil, Macadamia Ternifolia Seed Oil, Limnanthes
+            Alba Seed Oil, Tocopherol, Rosmarinus
             Officinalis Leaf Extract
           </p>
           <p className="text-center text-sm font-medium text-foreground mt-4">
@@ -375,7 +354,7 @@ const Ingredients = () => {
             Questions?{" "}
             <a
               href="mailto:hello@coastalendurance.co"
-              className="underline hover:text-foreground transition-colors"
+              className="text-foreground underline underline-offset-4 hover:text-primary transition-colors"
             >
               hello@coastalendurance.co
             </a>

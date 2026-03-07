@@ -54,7 +54,7 @@ const Product = () => {
             100% Natural Ingredients
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
-            9 Natural Ingredients. Zero Compromises.
+            7 Natural Ingredients. Zero Compromises.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl mx-auto">
             100% natural. Every ingredient has a job. No synthetics. No filler. 
@@ -310,7 +310,7 @@ const Product = () => {
               <div className="space-y-4">
                 {[
                   { label: "Appearance", value: "Clear to pale amber oil with golden hue" },
-                  { label: "Texture", value: "Medium-weight, absorbs in 90–120 seconds" },
+                  { label: "Texture", value: "Medium-weight, absorbs in approximately 2 minutes" },
                   { label: "Scent", value: "Natural plant oil aroma (grassy, nutty, earthy) — dissipates quickly" },
                   { label: "Colour", value: "Pale golden yellow" },
                   { label: "Viscosity", value: "Medium (pours easily, not too thick or thin)" },

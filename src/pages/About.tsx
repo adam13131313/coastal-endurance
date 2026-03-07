@@ -88,8 +88,8 @@ const About = () => {
             <div>
               <h3 className="text-xl font-display">We don't manufacture a sourcing story.</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
-                Three ingredients from Australian soil—jojoba from WA, macadamia from Queensland, 
-                Australian sandalwood from WA. The rest from wherever they grow best. Performance dictates sourcing.
+                Two ingredients from Australian soil—jojoba from WA, macadamia from Queensland. 
+                The rest from wherever they grow best. Performance dictates sourcing.
               </p>
             </div>
 
@@ -114,11 +114,11 @@ const About = () => {
               bioidentical lipids—oils structurally identical to what your skin already produces.
             </p>
             <p>
-              Squalane and jojoba mimic sebum (your skin's natural oil). Rosehip delivers fatty acids 
-              your skin can't make. Australian sandalwood provides antioxidant support. Meadowfoam locks in moisture.
+              Jojoba mimics sebum (your skin's natural oil). Rosehip delivers fatty acids 
+              your skin can't make. Macadamia provides omega-7. Meadowfoam locks in moisture.
             </p>
             <p>
-              Nine ingredients. No fillers. No fragrance. No synthetic preservatives.
+              Seven ingredients. No fillers. No fragrance. No synthetic preservatives.
             </p>
             <p className="text-foreground text-lg font-medium">
               It's not magic. It's mechanical.
