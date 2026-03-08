@@ -38,6 +38,36 @@ export type Database = {
         }
         Relationships: []
       }
+      field_team_applications: {
+        Row: {
+          created_at: string
+          email: string
+          experience_duration: string
+          first_name: string
+          id: string
+          last_name: string
+          outdoor_activity: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          experience_duration: string
+          first_name: string
+          id?: string
+          last_name: string
+          outdoor_activity: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          experience_duration?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          outdoor_activity?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           created_at: string
