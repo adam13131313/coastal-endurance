@@ -3,6 +3,7 @@ import { Check, Minus, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
+import { Helmet } from "react-helmet-async";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
 type PurchaseType = "one-time" | "subscription";
@@ -47,6 +48,11 @@ const Product = () => {
 
   return (
     <main className="pt-20" id="top">
+      <Helmet>
+        <title>Field Oil — Daily Barrier Face Oil for Outdoor Men | Coastal Endurance</title>
+        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $85 AUD. Made in Australia." />
+        <link rel="canonical" href="https://coastalendurance.com/product" />
+      </Helmet>
       {/* Header Banner */}
       <section className="section-padding bg-secondary">
         <div className="container-narrow text-center">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
@@ -47,6 +48,11 @@ const Contact = () => {
 
   return (
     <main className="pt-20">
+      <Helmet>
+        <title>Contact Coastal Endurance — Questions, Feedback & Wholesale | Australia</title>
+        <meta name="description" content="Get in touch with Coastal Endurance. Questions about Field Oil, wholesale inquiries, or feedback. We respond within 24-48 hours." />
+        <link rel="canonical" href="https://coastalendurance.com/contact" />
+      </Helmet>
       {/* Hero */}
       <section className="section-padding bg-secondary">
         <div className="container-narrow text-center">

@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Helmet } from "react-helmet-async";
 
 const Ingredients = () => {
   const ingredients = [
@@ -99,6 +100,23 @@ const Ingredients = () => {
 
   return (
     <main className="pt-20">
+      <Helmet>
+        <title>Ingredients — 7 Natural Barrier-Repair Oils | Field Oil by Coastal Endurance</title>
+        <meta name="description" content="Full ingredient breakdown for Field Oil. 7 natural ingredients: Rosehip, Jojoba, Evening Primrose, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. 59% active barrier-repair oils. Zero synthetics." />
+        <link rel="canonical" href="https://coastalendurance.com/ingredients" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqs.map(faq => ({
+            "@type": "Question",
+            "name": faq.q,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.a
+            }
+          }))
+        })}</script>
+      </Helmet>
       {/* Hero Banner */}
       <section className="bg-primary text-primary-foreground py-16 md:py-24">
         <div className="container-wide text-center">
