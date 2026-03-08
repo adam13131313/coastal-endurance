@@ -23,8 +23,8 @@ const Terms = () => {
             <h2 className="text-2xl font-display text-foreground">Contact</h2>
             <p>
               Questions? Email{" "}
-              <a href="mailto:hello@coastalendurance.co" className="text-foreground underline underline-offset-4 hover:text-primary transition-colors">
-                hello@coastalendurance.co
+              <a href="mailto:hello@coastalendurance.com" className="text-foreground underline underline-offset-4 hover:text-primary transition-colors">
+                hello@coastalendurance.com
               </a>
             </p>
           </div>

@@ -38,8 +38,8 @@ const Footer = () => {
               <Link to="/contact" className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
                 Get in Touch
               </Link>
-              <a href="mailto:hello@coastalendurance.co" className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
-                hello@coastalendurance.co
+              <a href="mailto:hello@coastalendurance.com" className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                hello@coastalendurance.com
               </a>
             </div>
           </div>
