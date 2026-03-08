@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/hero-product.jpg";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
@@ -27,6 +28,11 @@ const Home = () => {
   };
   return (
     <main>
+      <Helmet>
+        <title>Field Oil by Coastal Endurance — Barrier Maintenance for Outdoor Men | Australia</title>
+        <meta name="description" content="Field Oil is a daily face oil built for Australian men with years of outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Equipment maintenance for your skin." />
+        <link rel="canonical" href="https://coastalendurance.com/" />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
         <div className="absolute inset-0">

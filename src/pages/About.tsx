@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Helmet } from "react-helmet-async";
 import coastalImage from "@/assets/coastal-landscape.jpg";
 import sweepingPlains from "@/assets/sweeping-plains.jpg";
 import ruggedCoast from "@/assets/rugged-coast.jpg";
@@ -9,6 +10,11 @@ import droughtAndRain from "@/assets/drought-and-rain.jpg";
 const About = () => {
   return (
     <main id="top" className="pt-20">
+      <Helmet>
+        <title>About Coastal Endurance — Equipment Maintenance, Not Cosmetics | Australia</title>
+        <meta name="description" content="Coastal Endurance makes barrier maintenance products for men with outdoor exposure. Founded in Australia. One product: Field Oil. 7 natural ingredients. No rituals, no vanity — just function." />
+        <link rel="canonical" href="https://coastalendurance.com/about" />
+      </Helmet>
       {/* Hero - Sweeping Plains */}
       <section className="relative min-h-[70vh] flex items-center">
         <div className="absolute inset-0">
