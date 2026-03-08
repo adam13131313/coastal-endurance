@@ -211,8 +211,8 @@ const About = () => {
           <div className="mt-8 space-y-6 text-muted-foreground leading-relaxed text-[17px]">
             <p>
               Email us at{" "}
-              <a href="mailto:hello@coastalendurance.co" className="text-foreground underline underline-offset-4 hover:text-primary transition-colors">
-                hello@coastalendurance.co
+              <a href="mailto:hello@coastalendurance.com" className="text-foreground underline underline-offset-4 hover:text-primary transition-colors">
+                hello@coastalendurance.com
               </a>
               . We answer everything. We're not a corporation. We're a brand you can talk to.
             </p>

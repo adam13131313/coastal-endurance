@@ -353,10 +353,10 @@ const Ingredients = () => {
           <p className="text-sm text-muted-foreground">
             Questions?{" "}
             <a
-              href="mailto:hello@coastalendurance.co"
+              href="mailto:hello@coastalendurance.com"
               className="text-foreground underline underline-offset-4 hover:text-primary transition-colors"
             >
-              hello@coastalendurance.co
+              hello@coastalendurance.com
             </a>
           </p>
         </div>
