@@ -68,12 +68,12 @@ const FieldTeam = () => {
         </div>
         <div className="max-w-[700px] mx-auto px-6 relative z-10 py-24 md:py-32">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
-            The Field Team
+            <span className="bg-background/80 px-3 py-1 box-decoration-clone leading-[1.4]">The Field Team</span>
           </h1>
           <p className="mt-6 text-xl md:text-2xl text-foreground font-display leading-relaxed">
-            Thirty men. Thirty days. Real conditions.
+            <span className="bg-background/80 px-3 py-1 box-decoration-clone leading-[1.6]">Thirty men. Thirty days. Real conditions.</span>
           </p>
-          <p className="mt-6 text-muted-foreground leading-relaxed text-[17px] max-w-xl">
+          <p className="mt-6 text-muted-foreground leading-relaxed text-[17px] max-w-xl bg-background/80 px-3 py-2 rounded">
             We're looking for 30 men to put Field Oil through its paces before
             we launch. You'll receive a full-size product, use it daily for 30
             days, and tell us honestly what you think. No script. No obligation.
