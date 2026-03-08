@@ -20,6 +20,7 @@ import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
+import FieldTeam from "./pages/FieldTeam";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/account" element={<Account />} />
+                <Route path="/field-team" element={<FieldTeam />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
