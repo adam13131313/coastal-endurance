@@ -20,6 +20,7 @@ import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
+import FieldTeam from "./pages/FieldTeam";
 
 const queryClient = new QueryClient();
 
