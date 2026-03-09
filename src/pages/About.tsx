@@ -111,11 +111,10 @@ const About = () => {
 
           <div className="mt-12 space-y-10">
             <div>
-              <h3 className="text-xl font-display">1. Positioning: Equipment Maintenance</h3>
+              <h3 className="text-xl font-display">1. Equipment Maintenance</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
-                We frame skincare as functional maintenance, not beauty ritual. Your wetsuit gets rinsed. 
-                Your bike gets serviced. Your skin needs the same approach — regular upkeep for gear that's 
-                constantly exposed to harsh conditions.
+                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach — 
+                regular upkeep for gear that's constantly exposed to harsh conditions.
               </p>
             </div>
 
