@@ -119,16 +119,12 @@ const About = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-display">2. Target: Active Outdoor People</h3>
+              <h3 className="text-xl font-display">2. Built for Outdoor People</h3>
               <div className="mt-3 space-y-4 text-muted-foreground leading-relaxed text-[17px]">
                 <p>
-                  Built for men who are serious about their outdoor activity. Not for guys who used to surf 
-                  or used to ride. For guys who are actively doing it — daily sessions, training rides, years 
-                  on the tools — and want to keep doing it for decades more.
-                </p>
-                <p>
-                  You don't need to wait until you see damage. If you're doing it seriously (10+ hours/week 
-                  outdoors, year-round), maintenance matters now.
+                  Built for men who love being outdoors — whether that's daily sessions, weekend rides, 
+                  or years on the tools. If you're out there regularly and want to keep doing it, 
+                  maintenance matters.
                 </p>
               </div>
             </div>
