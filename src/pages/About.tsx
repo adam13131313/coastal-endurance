@@ -177,23 +177,20 @@ const About = () => {
         <div className="max-w-[700px] mx-auto px-6 relative z-10">
           <h2 className="text-3xl md:text-4xl font-display">Who It's For</h2>
           <div className="mt-8 space-y-6 text-muted-foreground leading-relaxed text-[17px]">
-            <p className="text-foreground font-medium">Men who are serious about their outdoor activity:</p>
+            <p className="text-foreground font-medium">Men who love the outdoors:</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Surfers paddling out regularly (not weekend warriors)</li>
-              <li>Cyclists putting in serious miles (training rides, gran fondos, Masters racing)</li>
-              <li>Outdoor workers who are out there daily (tradies, builders, farmers)</li>
-              <li>Anyone spending 10+ hours a week outdoors, year-round</li>
+              <li>Surfers — whether it's dawn patrol every day or weekend sessions</li>
+              <li>Cyclists putting in miles on the road or the trail</li>
+              <li>Outdoor workers — tradies, builders, farmers</li>
+              <li>Dads who spend every spare hour outside with their kids</li>
+              <li>Anyone whose outdoor time adds up, week after week</li>
             </ul>
             <p>
-              <strong className="text-foreground">Defining characteristic:</strong> Activity level and outdoor 
-              exposure, not age.
-            </p>
-            <p>
-              The 35-year-old who's surfed daily since university needs this more than the 55-year-old who 
-              works indoors. Cumulative exposure matters — this addresses that.
+              <strong className="text-foreground">Defining characteristic:</strong> You spend real time outdoors — 
+              and you want to keep doing it. Whether that's daily or every weekend, cumulative exposure matters.
             </p>
             <p className="text-foreground font-medium">
-              You don't need to wait for visible damage. If you're doing it seriously, maintenance keeps you going.
+              You don't need to wait for visible damage. If you're out there regularly, maintenance keeps you going.
             </p>
           </div>
         </div>
