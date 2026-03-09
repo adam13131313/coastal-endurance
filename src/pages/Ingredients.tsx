@@ -130,8 +130,8 @@ const Ingredients = () => {
       </Helmet>
 
       {/* Header */}
-      <section className="py-16 md:py-24 border-b border-border">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding border-b border-border">
+        <div className="max-w-[700px] mx-auto px-6">
           <p className="text-sm uppercase tracking-widest text-muted-foreground mb-3">
             What's In It
           </p>
@@ -140,12 +140,12 @@ const Ingredients = () => {
       </section>
 
       {/* Product Overview */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding">
+        <div className="max-w-[700px] mx-auto px-6">
           <p className="text-lg md:text-xl font-medium text-foreground leading-relaxed">
             100% Natural Ingredients. Zero Synthetic Ingredients. Zero Essential Oils. Zero Fragrance.
           </p>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
+          <p className="mt-4 text-muted-foreground leading-relaxed text-[17px]">
             Built for men with significant outdoor exposure — those who've been doing the thing long enough that the environmental damage shows.
           </p>
 
@@ -169,8 +169,8 @@ const Ingredients = () => {
       </section>
 
       {/* Ingredients List */}
-      <section className="pb-16 md:pb-24">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="pb-20 md:pb-32">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-2xl md:text-3xl font-display mb-12">
             Full Ingredient List (7 Ingredients)
           </h2>
@@ -189,7 +189,7 @@ const Ingredients = () => {
                     <h4 className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-2">
                       Function
                     </h4>
-                    <p className="text-foreground leading-relaxed text-[15px]">
+                    <p className="text-foreground leading-relaxed text-[17px]">
                       {ingredient.function}
                     </p>
                   </div>
@@ -197,7 +197,7 @@ const Ingredients = () => {
                     <h4 className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-2">
                       Why We Use It
                     </h4>
-                    <p className="text-foreground leading-relaxed text-[15px]">
+                    <p className="text-foreground leading-relaxed text-[17px]">
                       {ingredient.why}
                     </p>
                   </div>
@@ -209,8 +209,8 @@ const Ingredients = () => {
       </section>
 
       {/* Storage & Shelf Life */}
-      <section className="py-12 md:py-16 bg-secondary">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding bg-secondary">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-display mb-6">Storage & Shelf Life</h2>
           <div className="border-t border-border">
             {[
@@ -231,53 +231,53 @@ const Ingredients = () => {
       </section>
 
       {/* Origin */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-display mb-3">Origin</h2>
           <p className="text-lg font-medium text-foreground">59% Australian-grown by volume</p>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-[17px] text-muted-foreground">
             Tasmanian Hemp, Australian Jojoba, and Australian Macadamia sourced from Australian farms.
           </p>
         </div>
       </section>
 
-      <div className="max-w-3xl mx-auto px-6">
+      <div className="max-w-[700px] mx-auto px-6">
         <hr className="border-border" />
       </div>
 
       {/* Built For */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-display mb-3">Built For</h2>
-          <p className="text-muted-foreground leading-relaxed">
+          <p className="text-muted-foreground leading-relaxed text-[17px]">
             Men with significant outdoor exposure — surfers with 15+ years in the water, tradies with decades on the tools, cyclists doing serious miles, outdoor workers exposed to the elements.
           </p>
-          <p className="mt-4 text-sm font-medium text-foreground">
+          <p className="mt-4 text-[17px] font-medium text-foreground">
             Not anti-aging. Barrier maintenance for cumulative environmental damage from prolonged outdoor conditions.
           </p>
         </div>
       </section>
 
       {/* INCI List */}
-      <section className="py-12 md:py-16 bg-secondary">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding bg-secondary">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-display mb-4">Full INCI List</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-[17px] text-muted-foreground leading-relaxed">
             Rosa Canina Fruit Oil, Simmondsia Chinensis Seed Oil, Cannabis Sativa Seed Oil, Macadamia Ternifolia Seed Oil, Limnanthes Alba Seed Oil, Tocopherol, Rosmarinus Officinalis Leaf Extract
           </p>
-          <p className="mt-4 text-sm font-medium text-foreground">
+          <p className="mt-4 text-[17px] font-medium text-foreground">
             Contains: Tree nut derivatives (Macadamia)
           </p>
         </div>
       </section>
 
       {/* What It Doesn't Contain */}
-      <section className="py-12 md:py-16">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-display mb-6">What It Doesn't Contain</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
             {excludedItems.map((item, index) => (
-              <div key={index} className="flex items-center gap-3 text-sm py-1">
+              <div key={index} className="flex items-center gap-3 text-[17px] py-1">
                 <span className="text-muted-foreground">❌</span>
                 <span className="text-foreground">{item}</span>
               </div>
@@ -287,17 +287,17 @@ const Ingredients = () => {
       </section>
 
       {/* FAQ */}
-      <section className="py-12 md:py-16 bg-secondary">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="section-padding bg-secondary">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-display mb-6">Frequently Asked Questions</h2>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`faq-${index}`}>
-                <AccordionTrigger className="text-left text-sm font-medium">
+                <AccordionTrigger className="text-left text-[17px] font-medium">
                   {faq.q}
                 </AccordionTrigger>
                 <AccordionContent>
-                  <p className="text-muted-foreground leading-relaxed text-sm">
+                  <p className="text-muted-foreground leading-relaxed text-[17px]">
                     {faq.a}
                   </p>
                 </AccordionContent>
@@ -309,7 +309,7 @@ const Ingredients = () => {
 
       {/* Disclaimer */}
       <section className="py-10">
-        <div className="max-w-3xl mx-auto px-6">
+        <div className="max-w-[700px] mx-auto px-6">
           <p className="text-xs text-muted-foreground leading-relaxed">
             This product is a cosmetic, not a therapeutic good. It is designed to support barrier function and help maintain skin's natural moisture barrier. It is not intended to diagnose, treat, cure, or prevent any disease. Australian Certified Organic ingredients where specified. For external use only.
           </p>
@@ -318,8 +318,8 @@ const Ingredients = () => {
 
       {/* Contact */}
       <section className="py-8 border-t border-border">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="max-w-[700px] mx-auto px-6 text-center">
+          <p className="text-[17px] text-muted-foreground">
             Questions?{" "}
             <a
               href="mailto:hello@coastalendurance.com"

@@ -2,9 +2,9 @@ const Terms = () => {
   return (
     <main className="pt-20">
       <section className="section-padding">
-        <div className="container-narrow">
+        <div className="max-w-[700px] mx-auto px-6">
           <h1 className="text-4xl md:text-5xl font-display mb-8">Terms & Conditions</h1>
-          <div className="space-y-6 text-muted-foreground leading-relaxed">
+          <div className="space-y-6 text-muted-foreground leading-relaxed text-[17px]">
             <p>
               By using the Coastal Endurance website and purchasing our products, you agree to the following terms.
             </p>

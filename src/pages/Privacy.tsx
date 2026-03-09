@@ -2,9 +2,9 @@ const Privacy = () => {
   return (
     <main className="pt-20">
       <section className="section-padding">
-        <div className="container-narrow">
+        <div className="max-w-[700px] mx-auto px-6">
           <h1 className="text-4xl md:text-5xl font-display mb-8">Privacy Policy</h1>
-          <div className="space-y-6 text-muted-foreground leading-relaxed">
+          <div className="space-y-6 text-muted-foreground leading-relaxed text-[17px]">
             <p>
               Coastal Endurance respects your privacy. This policy outlines how we collect, use, and protect your personal information.
             </p>

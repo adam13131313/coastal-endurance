@@ -55,14 +55,14 @@ const Product = () => {
       </Helmet>
       {/* Header Banner */}
       <section className="section-padding bg-secondary">
-        <div className="container-narrow text-center">
+        <div className="max-w-[700px] mx-auto px-6 text-center">
           <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
             100% Natural Ingredients
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
             7 Natural Ingredients. Zero Compromises.
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
             100% natural. Every ingredient has a job. No synthetics. No filler. 
             59% Australian-grown. Just functional compounds chosen for performance.
           </p>
@@ -96,7 +96,7 @@ const Product = () => {
                 {formatPrice(price)} <span className="text-sm text-muted-foreground">{config.code}</span>
               </p>
 
-              <p className="mt-6 text-muted-foreground leading-relaxed">
+              <p className="mt-6 text-muted-foreground leading-relaxed text-[17px]">
                 A lightweight daily oil that supports and maintains your skin barrier. 
                 Formulated for those who face sun, wind, salt, and sweat — every day.
               </p>
@@ -240,7 +240,7 @@ const Product = () => {
                 <h3 className="text-sm uppercase tracking-widest font-medium mb-4">
                   How to Use
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-[17px]">
                   Apply 3-4 drops to clean, slightly damp skin. Morning or evening. 
                   Massage into face and neck. That's it. One product. Daily.
                 </p>
@@ -251,7 +251,7 @@ const Product = () => {
                 <h3 className="text-sm uppercase tracking-widest font-medium mb-4">
                   Suitable For
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-[17px]">
                   Normal, dry, mature, and outdoor-exposed skin.
                 </p>
               </div>
@@ -262,11 +262,11 @@ const Product = () => {
 
       {/* Who It's For */}
       <section className="section-padding bg-secondary">
-        <div className="container-narrow">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-display text-center">
             Who It's For
           </h2>
-          <p className="mt-6 text-center text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-center text-muted-foreground leading-relaxed text-[17px]">
             Field Oil is built for those who spend real time outside. Surfers, runners, cyclists, 
             builders, professionals who train before or after work. If your skin faces the elements daily, 
             this is your maintenance tool.
@@ -276,7 +276,7 @@ const Product = () => {
 
       {/* How It Works */}
       <section className="section-padding">
-        <div className="container-narrow">
+        <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-display text-center">
             How It Works
           </h2>
@@ -300,7 +300,7 @@ const Product = () => {
                   {index + 1}
                 </span>
                 <h3 className="mt-4 text-xl font-display">{step.title}</h3>
-                <p className="mt-2 text-muted-foreground">{step.description}</p>
+                <p className="mt-2 text-muted-foreground text-[17px]">{step.description}</p>
               </div>
             ))}
           </div>
@@ -309,8 +309,8 @@ const Product = () => {
 
       {/* Product Characteristics & Storage */}
       <section className="section-padding bg-secondary">
-        <div className="container-wide">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+        <div className="max-w-[700px] mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
             <div>
               <h2 className="text-2xl font-display mb-8">Product Characteristics</h2>
               <div className="space-y-4">
@@ -323,7 +323,7 @@ const Product = () => {
                 ].map((item, index) => (
                   <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
                     <span className="text-sm uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
-                    <span className="text-foreground">{item.value}</span>
+                    <span className="text-foreground text-[17px]">{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -339,7 +339,7 @@ const Product = () => {
                 ].map((item, index) => (
                   <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
                     <span className="text-sm uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
-                    <span className="text-foreground">{item.value}</span>
+                    <span className="text-foreground text-[17px]">{item.value}</span>
                   </div>
                 ))}
               </div>
