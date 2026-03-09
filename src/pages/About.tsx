@@ -121,7 +121,7 @@ const About = () => {
             </p>
             <p>
               Jojoba mimics sebum (your skin's natural oil). Rosehip delivers fatty acids 
-              your skin can't make. Macadamia provides omega-7. Meadowfoam locks in moisture.
+              your skin can't make. Tasmanian hemp balances inflammation. Macadamia provides omega-7. Meadowfoam locks in moisture.
             </p>
             <p>
               Seven ingredients. No fillers. No fragrance. No synthetic preservatives.
