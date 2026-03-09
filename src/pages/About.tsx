@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 import sweepingPlains from "@/assets/sweeping-plains.jpg";
 import ruggedCoast from "@/assets/rugged-coast.jpg";
 import droughtAndRain from "@/assets/drought-and-rain.jpg";
-import coastalImage from "@/assets/coastal-landscape.jpg";
+
 
 const About = () => {
   return (
