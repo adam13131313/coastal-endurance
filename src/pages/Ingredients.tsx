@@ -85,7 +85,7 @@ const Ingredients = () => {
     },
     {
       q: "How is this different from other face oils?",
-      a: "Clinical-dose actives (59% barrier-repair oils vs typical 20-40%), Australian provenance (59% Australian-grown), equipment maintenance positioning (not anti-aging or luxury), essential oil-free, built specifically for outdoor-exposed men.",
+      a: "Clinical-dose actives (59% barrier-repair oils vs typical 20-40%), Australian provenance (59% Australian-grown), equipment maintenance approach (not anti-aging or luxury), essential oil-free, built specifically for outdoor-exposed men.",
     },
     {
       q: "Why only 7 ingredients?",

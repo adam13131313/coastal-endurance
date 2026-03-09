@@ -41,8 +41,8 @@ const About = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <div className="space-y-6 text-muted-foreground leading-relaxed text-[17px]">
             <p>
-              Field Oil is a barrier maintenance face oil for men who are serious about outdoor activity. 
-              We position it as equipment maintenance — not anti-aging, not grooming, not luxury ritual.
+              Field Oil is a barrier maintenance face oil for men who love the outdoors. 
+              Not anti-aging. Not grooming. Not luxury ritual. Equipment maintenance.
             </p>
             <p>
               If you're spending serious time outdoors — surfing regularly, riding centuries, working in the sun — your 
@@ -72,11 +72,11 @@ const About = () => {
           <div className="mt-10">
             <h3 className="text-xl font-display">The Problem</h3>
             <div className="mt-4 space-y-4 text-muted-foreground leading-relaxed text-[17px]">
-              <p>Traditional skincare doesn't address active outdoor people.</p>
+               <p>Traditional skincare doesn't address outdoor people.</p>
               <p>
-                Most face oils target chronological aging ("look younger") or position themselves as luxury 
-                rituals (10-step routines, aromatherapy, self-care). Neither works for men who are putting in 
-                serious hours outdoors.
+                Most face oils target chronological aging ("look younger") or are built around luxury 
+                rituals (10-step routines, aromatherapy, self-care). Neither works for men who spend 
+                real time outdoors.
               </p>
               <p>
                 If you're surfing daily, riding 12+ hours a week, or working outside year-round, your skin is 
@@ -89,7 +89,7 @@ const About = () => {
           <div className="mt-12">
             <h3 className="text-xl font-display">The Solution</h3>
             <div className="mt-4 space-y-4 text-muted-foreground leading-relaxed text-[17px]">
-              <p>Field Oil positions barrier maintenance as equipment maintenance.</p>
+              <p>Field Oil treats barrier maintenance the same way you'd treat any other gear.</p>
               <p>
                 Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach — maintenance 
                 while you're actively doing the thing, not repair after the fact.
@@ -111,25 +111,20 @@ const About = () => {
 
           <div className="mt-12 space-y-10">
             <div>
-              <h3 className="text-xl font-display">1. Positioning: Equipment Maintenance</h3>
+              <h3 className="text-xl font-display">1. Equipment Maintenance</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
-                We frame skincare as functional maintenance, not beauty ritual. Your wetsuit gets rinsed. 
-                Your bike gets serviced. Your skin needs the same approach — regular upkeep for gear that's 
-                constantly exposed to harsh conditions.
+                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach — 
+                regular upkeep for gear that's constantly exposed to harsh conditions.
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-display">2. Target: Active Outdoor People</h3>
+              <h3 className="text-xl font-display">2. Built for Outdoor People</h3>
               <div className="mt-3 space-y-4 text-muted-foreground leading-relaxed text-[17px]">
                 <p>
-                  Built for men who are serious about their outdoor activity. Not for guys who used to surf 
-                  or used to ride. For guys who are actively doing it — daily sessions, training rides, years 
-                  on the tools — and want to keep doing it for decades more.
-                </p>
-                <p>
-                  You don't need to wait until you see damage. If you're doing it seriously (10+ hours/week 
-                  outdoors, year-round), maintenance matters now.
+                  Built for men who love being outdoors — whether that's daily sessions, weekend rides, 
+                  or years on the tools. If you're out there regularly and want to keep doing it, 
+                  maintenance matters.
                 </p>
               </div>
             </div>
