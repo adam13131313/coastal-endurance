@@ -72,11 +72,11 @@ const About = () => {
           <div className="mt-10">
             <h3 className="text-xl font-display">The Problem</h3>
             <div className="mt-4 space-y-4 text-muted-foreground leading-relaxed text-[17px]">
-              <p>Traditional skincare doesn't address active outdoor people.</p>
+               <p>Traditional skincare doesn't address outdoor people.</p>
               <p>
-                Most face oils target chronological aging ("look younger") or position themselves as luxury 
-                rituals (10-step routines, aromatherapy, self-care). Neither works for men who are putting in 
-                serious hours outdoors.
+                Most face oils target chronological aging ("look younger") or are built around luxury 
+                rituals (10-step routines, aromatherapy, self-care). Neither works for men who spend 
+                real time outdoors.
               </p>
               <p>
                 If you're surfing daily, riding 12+ hours a week, or working outside year-round, your skin is 
