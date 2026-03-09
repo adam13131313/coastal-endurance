@@ -64,7 +64,7 @@ const Product = () => {
           </h1>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl mx-auto">
             100% natural. Every ingredient has a job. No synthetics. No filler. 
-            Just functional compounds chosen for performance.
+            59% Australian-grown. Just functional compounds chosen for performance.
           </p>
         </div>
       </section>
