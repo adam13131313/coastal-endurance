@@ -89,7 +89,7 @@ const About = () => {
           <div className="mt-12">
             <h3 className="text-xl font-display">The Solution</h3>
             <div className="mt-4 space-y-4 text-muted-foreground leading-relaxed text-[17px]">
-              <p>Field Oil positions barrier maintenance as equipment maintenance.</p>
+              <p>Field Oil treats barrier maintenance the same way you'd treat any other gear.</p>
               <p>
                 Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach — maintenance 
                 while you're actively doing the thing, not repair after the fact.
