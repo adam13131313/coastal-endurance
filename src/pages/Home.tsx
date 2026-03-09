@@ -73,13 +73,12 @@ const Home = () => {
 
       {/* Problem Section */}
       <section className="section-padding bg-secondary">
-        <div className="container-narrow text-center">
+        <div className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-display">
             For life in the outdoors.
           </h2>
-          <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">Field Oil is a daily face oil built for those who spend their days outside — surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
-
-
+          <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
+            Field Oil is a daily face oil built for those who spend their days outside — surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
           </p>
         </div>
       </section>
@@ -95,7 +94,7 @@ const Home = () => {
               <h2 className="mt-4 text-3xl md:text-5xl font-display">
                 Field Oil
               </h2>
-              <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
+              <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
                 A barrier oil that supports your skin's natural barrier. 
                 Fast-absorbing, non-greasy, built for real conditions. 
                 One product. Daily. That's the routine.
@@ -107,7 +106,7 @@ const Home = () => {
                 "No fragrance, no essential oils",
                 "30ml — 2-month supply"].
                 map((feature, index) =>
-                <li key={index} className="flex items-start gap-3 text-muted-foreground">
+                <li key={index} className="flex items-start gap-3 text-muted-foreground text-[17px]">
                     <span className="w-1.5 h-1.5 rounded-full bg-ocean-slate mt-2 flex-shrink-0" />
                     {feature}
                   </li>
@@ -134,11 +133,11 @@ const Home = () => {
 
       {/* Philosophy Preview */}
       <section className="section-padding bg-primary text-primary-foreground">
-        <div className="container-narrow text-center">
+        <div className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-display">
             Better performance.
           </h2>
-          <p className="mt-6 text-lg text-primary-foreground/80 leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-[17px] text-primary-foreground/80 leading-relaxed">
             Every ingredient earns its place.
           </p>
           <a href="/about#top" className="inline-flex items-center mt-8 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
@@ -150,11 +149,11 @@ const Home = () => {
 
       {/* Newsletter */}
       <section className="section-padding">
-        <div className="container-narrow text-center">
+        <div className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-display">
             Updates only. No noise.
           </h2>
-          <p className="mt-4 text-muted-foreground">
+          <p className="mt-4 text-[17px] text-muted-foreground">
             New products, restocks, and nothing else.
           </p>
           <form onSubmit={handleNewsletterSubmit} className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">

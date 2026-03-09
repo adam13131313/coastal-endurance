@@ -55,11 +55,11 @@ const Contact = () => {
       </Helmet>
       {/* Hero */}
       <section className="section-padding bg-secondary">
-        <div className="container-narrow text-center">
+        <div className="max-w-[700px] mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
             Contact
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
             Questions, feedback, or wholesale inquiries. We read everything.
           </p>
         </div>
@@ -67,7 +67,7 @@ const Contact = () => {
 
       {/* Contact Form */}
       <section className="section-padding">
-        <div className="container-narrow">
+        <div className="max-w-[700px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Form */}
             <div>
@@ -126,7 +126,7 @@ const Contact = () => {
                 </h3>
                 <a
                   href="mailto:hello@coastalendurance.com"
-                  className="text-lg hover:text-muted-foreground transition-colors"
+                  className="text-[17px] hover:text-muted-foreground transition-colors"
                 >
                   hello@coastalendurance.com
                 </a>
@@ -136,7 +136,7 @@ const Contact = () => {
                 <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-3">
                   Response Time
                 </h3>
-                <p className="text-foreground">
+                <p className="text-foreground text-[17px]">
                   We respond within 24-48 hours on business days.
                 </p>
               </div>
@@ -145,7 +145,7 @@ const Contact = () => {
                 <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-3">
                   Wholesale
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-[17px]">
                   For wholesale and retail partnership inquiries, please include your 
                   business name, location, and current product offering in your message.
                 </p>
@@ -157,11 +157,11 @@ const Contact = () => {
 
       {/* Newsletter */}
       <section className="section-padding bg-primary text-primary-foreground">
-        <div className="container-narrow text-center">
+        <div className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-display">
             Updates only. No noise.
           </h2>
-          <p className="mt-4 text-primary-foreground/70">
+          <p className="mt-4 text-[17px] text-primary-foreground/70">
             New products, restocks, and nothing else. Unsubscribe anytime.
           </p>
           <form
