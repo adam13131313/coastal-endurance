@@ -41,8 +41,8 @@ const About = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <div className="space-y-6 text-muted-foreground leading-relaxed text-[17px]">
             <p>
-              Field Oil is a barrier maintenance face oil for men who are serious about outdoor activity. 
-              We position it as equipment maintenance — not anti-aging, not grooming, not luxury ritual.
+              Field Oil is a barrier maintenance face oil for men who love the outdoors. 
+              Not anti-aging. Not grooming. Not luxury ritual. Equipment maintenance.
             </p>
             <p>
               If you're spending serious time outdoors — surfing regularly, riding centuries, working in the sun — your 
