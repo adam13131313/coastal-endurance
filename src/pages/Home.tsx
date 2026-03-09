@@ -103,7 +103,7 @@ const Home = () => {
               <ul className="mt-8 space-y-3">
                 {[
                 "Supports and maintains the skin barrier",
-                "Australian-sourced actives",
+                "59% Australian-grown actives",
                 "No fragrance, no essential oils",
                 "30ml — 2-month supply"].
                 map((feature, index) =>

@@ -94,8 +94,8 @@ const About = () => {
             <div>
               <h3 className="text-xl font-display">We don't manufacture a sourcing story.</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
-                Two ingredients from Australian soil—jojoba from WA, macadamia from Queensland. 
-                The rest from wherever they grow best. Performance dictates sourcing.
+                Three ingredients from Australian soil — Tasmanian hemp, jojoba from WA, macadamia from Queensland. 
+                59% Australian-grown by volume. The rest from wherever they grow best. Performance dictates sourcing.
               </p>
             </div>
 
@@ -121,7 +121,7 @@ const About = () => {
             </p>
             <p>
               Jojoba mimics sebum (your skin's natural oil). Rosehip delivers fatty acids 
-              your skin can't make. Macadamia provides omega-7. Meadowfoam locks in moisture.
+              your skin can't make. Tasmanian hemp balances inflammation. Macadamia provides omega-7. Meadowfoam locks in moisture.
             </p>
             <p>
               Seven ingredients. No fillers. No fragrance. No synthetic preservatives.
