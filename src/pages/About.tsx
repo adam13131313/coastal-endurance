@@ -94,8 +94,8 @@ const About = () => {
             <div>
               <h3 className="text-xl font-display">We don't manufacture a sourcing story.</h3>
               <p className="mt-3 text-muted-foreground leading-relaxed text-[17px]">
-                Two ingredients from Australian soil—jojoba from WA, macadamia from Queensland. 
-                The rest from wherever they grow best. Performance dictates sourcing.
+                Three ingredients from Australian soil — Tasmanian hemp, jojoba from WA, macadamia from Queensland. 
+                59% Australian-grown by volume. The rest from wherever they grow best. Performance dictates sourcing.
               </p>
             </div>
 
