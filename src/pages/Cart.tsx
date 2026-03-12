@@ -35,22 +35,23 @@ const Cart = () => {
         return;
       }
 
-      const { data: order, error: orderError } = await supabase
+      const orderId = crypto.randomUUID();
+
+      const { error: orderError } = await supabase
         .from("orders")
         .insert({
+          id: orderId,
           user_id: userId,
           guest_email: userId ? null : guestEmail,
           total_amount: cartTotal,
           currency: config.code,
           status: "completed",
-        })
-        .select("id")
-        .single();
+        });
 
-      if (orderError || !order) throw orderError;
+      if (orderError) throw orderError;
 
       const orderItems = items.map((item) => ({
-        order_id: order.id,
+        order_id: orderId,
         product_name: item.name,
         quantity: item.quantity,
         unit_price: item.price,
