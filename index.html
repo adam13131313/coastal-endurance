@@ -32,6 +32,7 @@
       "@type": "Product",
       "name": "Field Oil",
       "description": "A daily barrier maintenance face oil for men with outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance, zero essential oils. 30ml. Made in Australia.",
+      "image": "https://coastalendurance.com/og-image.png",
       "brand": {
         "@type": "Brand",
         "name": "Coastal Endurance"
@@ -42,7 +43,55 @@
         "priceCurrency": "AUD",
         "priceValidUntil": "2026-12-31",
         "availability": "https://schema.org/PreOrder",
-        "url": "https://coastalendurance.com/product"
+        "url": "https://coastalendurance.com/product",
+        "shippingDetails": [
+          {
+            "@type": "OfferShippingDetails",
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "AU"
+            },
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0.00",
+              "currency": "AUD"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 1,
+                "maxValue": 3,
+                "unitCode": "d"
+              }
+            }
+          },
+          {
+            "@type": "OfferShippingDetails",
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "US"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 1,
+                "maxValue": 3,
+                "unitCode": "d"
+              }
+            }
+          }
+        ],
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "AU",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 30,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn",
+          "merchantReturnLink": "https://coastalendurance.com/returns"
+        }
       },
       "countryOfOrigin": {
         "@type": "Country",
