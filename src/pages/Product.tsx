@@ -6,8 +6,11 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
+type PurchaseType = "one-time" | "subscription";
+
 const Product = () => {
   const [quantity, setQuantity] = useState(1);
+  const [purchaseType, setPurchaseType] = useState<PurchaseType>("one-time");
   const [shopifyProduct, setShopifyProduct] = useState<ShopifyProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const { addItem, isLoading: cartLoading } = useCartStore();
