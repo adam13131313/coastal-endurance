@@ -36,6 +36,9 @@ const Product = () => {
   const price = variant ? parseFloat(variant.price.amount) : 78;
   const currencyCode = variant?.price.currencyCode || "AUD";
   const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
+  const subscriptionPrice = price * 5;
+  const savingsAmount = price;
+  const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
 
   const handleAddToCart = async () => {
     if (!shopifyProduct || !variant) {
@@ -43,16 +46,21 @@ const Product = () => {
       return;
     }
 
+    const itemQuantity = purchaseType === "subscription" ? 6 : quantity;
+
     await addItem({
       product: shopifyProduct,
       variantId: variant.id,
       variantTitle: variant.title,
       price: variant.price,
-      quantity,
+      quantity: itemQuantity,
       selectedOptions: variant.selectedOptions || [],
     });
 
-    toast.success(`Added ${quantity} × Field Oil to cart`);
+    const message = purchaseType === "subscription"
+      ? "Added 12-month subscription to cart"
+      : `Added ${quantity} × Field Oil to cart`;
+    toast.success(message);
     setQuantity(1);
   };
 
