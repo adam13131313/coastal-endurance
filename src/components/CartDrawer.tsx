@@ -33,13 +33,12 @@ export const CartDrawer = () => {
           )}
         </button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col h-full pt-8 p-0 overflow-hidden">
+      <SheetContent className="w-full sm:max-w-lg flex flex-col h-full p-0 overflow-hidden border-l border-border">
         {/* Background image */}
         <div className="absolute inset-0 z-0">
-          <img src={snowyMountains} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-background/88" />
+          <img src={snowyMountains} alt="" className="w-full h-full object-cover opacity-15" />
         </div>
-        <div className="relative z-10 flex flex-col h-full px-6 pt-8">
+        <div className="relative z-10 flex flex-col h-full px-6 pt-12 pb-6">
         <SheetHeader className="flex-shrink-0 mt-2">
           <SheetTitle className="font-display">Your Cart</SheetTitle>
           <SheetDescription>
