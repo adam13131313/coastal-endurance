@@ -12,56 +12,72 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [purchaseType, setPurchaseType] = useState<PurchaseType>("one-time");
   const [shopifyProduct, setShopifyProduct] = useState<ShopifyProduct | null>(null);
+  const [subscriptionProduct, setSubscriptionProduct] = useState<ShopifyProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const { addItem, isLoading: cartLoading } = useCartStore();
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProducts = async () => {
       try {
-        const data = await storefrontApiRequest(STOREFRONT_PRODUCT_BY_HANDLE_QUERY, { handle: "field-oil" });
-        const product = data?.data?.productByHandle;
-        if (product) {
-          setShopifyProduct({ node: product });
+        const [singleData, subData] = await Promise.all([
+          storefrontApiRequest(STOREFRONT_PRODUCT_BY_HANDLE_QUERY, { handle: "field-oil" }),
+          storefrontApiRequest(STOREFRONT_PRODUCT_BY_HANDLE_QUERY, { handle: "field-oil-12-month-supply" }),
+        ]);
+        if (singleData?.data?.productByHandle) {
+          setShopifyProduct({ node: singleData.data.productByHandle });
+        }
+        if (subData?.data?.productByHandle) {
+          setSubscriptionProduct({ node: subData.data.productByHandle });
         }
       } catch (error) {
-        console.error("Failed to fetch product:", error);
+        console.error("Failed to fetch products:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchProduct();
+    fetchProducts();
   }, []);
 
   const variant = shopifyProduct?.node.variants.edges[0]?.node;
+  const subVariant = subscriptionProduct?.node.variants.edges[0]?.node;
   const price = variant ? parseFloat(variant.price.amount) : 78;
   const currencyCode = variant?.price.currencyCode || "AUD";
   const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
-  const subscriptionPrice = price * 5;
-  const savingsAmount = price;
+  const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 5;
+  const savingsAmount = (price * 6) - subscriptionPrice;
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
 
   const handleAddToCart = async () => {
-    if (!shopifyProduct || !variant) {
-      toast.error("Product not available");
-      return;
+    if (purchaseType === "subscription") {
+      if (!subscriptionProduct || !subVariant) {
+        toast.error("Subscription product not available");
+        return;
+      }
+      await addItem({
+        product: subscriptionProduct,
+        variantId: subVariant.id,
+        variantTitle: subVariant.title,
+        price: subVariant.price,
+        quantity: 1,
+        selectedOptions: subVariant.selectedOptions || [],
+      });
+      toast.success("Added 12-month subscription to cart");
+    } else {
+      if (!shopifyProduct || !variant) {
+        toast.error("Product not available");
+        return;
+      }
+      await addItem({
+        product: shopifyProduct,
+        variantId: variant.id,
+        variantTitle: variant.title,
+        price: variant.price,
+        quantity,
+        selectedOptions: variant.selectedOptions || [],
+      });
+      toast.success(`Added ${quantity} × Field Oil to cart`);
+      setQuantity(1);
     }
-
-    const itemQuantity = purchaseType === "subscription" ? 6 : quantity;
-
-    await addItem({
-      product: shopifyProduct,
-      variantId: variant.id,
-      variantTitle: variant.title,
-      price: variant.price,
-      quantity: itemQuantity,
-      selectedOptions: variant.selectedOptions || [],
-    });
-
-    const message = purchaseType === "subscription"
-      ? "Added 12-month subscription to cart"
-      : `Added ${quantity} × Field Oil to cart`;
-    toast.success(message);
-    setQuantity(1);
   };
 
   return (
