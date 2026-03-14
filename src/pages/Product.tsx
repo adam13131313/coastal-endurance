@@ -6,8 +6,11 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
+type PurchaseType = "one-time" | "subscription";
+
 const Product = () => {
   const [quantity, setQuantity] = useState(1);
+  const [purchaseType, setPurchaseType] = useState<PurchaseType>("one-time");
   const [shopifyProduct, setShopifyProduct] = useState<ShopifyProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const { addItem, isLoading: cartLoading } = useCartStore();
@@ -33,6 +36,9 @@ const Product = () => {
   const price = variant ? parseFloat(variant.price.amount) : 78;
   const currencyCode = variant?.price.currencyCode || "AUD";
   const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
+  const subscriptionPrice = price * 5;
+  const savingsAmount = price;
+  const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
 
   const handleAddToCart = async () => {
     if (!shopifyProduct || !variant) {
@@ -40,16 +46,21 @@ const Product = () => {
       return;
     }
 
+    const itemQuantity = purchaseType === "subscription" ? 6 : quantity;
+
     await addItem({
       product: shopifyProduct,
       variantId: variant.id,
       variantTitle: variant.title,
       price: variant.price,
-      quantity,
+      quantity: itemQuantity,
       selectedOptions: variant.selectedOptions || [],
     });
 
-    toast.success(`Added ${quantity} × Field Oil to cart`);
+    const message = purchaseType === "subscription"
+      ? "Added 12-month subscription to cart"
+      : `Added ${quantity} × Field Oil to cart`;
+    toast.success(message);
     setQuantity(1);
   };
 
@@ -124,29 +135,111 @@ const Product = () => {
                 ))}
               </ul>
 
-              {/* Quantity & Add to Cart */}
+              {/* Purchase Options */}
               <div className="mt-10 space-y-6">
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-muted-foreground">Quantity</span>
-                  <div className="flex items-center border border-border">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-2 hover:bg-muted transition-colors"
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus className="w-3 h-3" />
-                    </button>
-                    <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-medium">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="p-2 hover:bg-muted transition-colors"
-                      aria-label="Increase quantity"
-                    >
-                      <Plus className="w-3 h-3" />
-                    </button>
+                {/* One-Time Purchase Option */}
+                <div
+                  onClick={() => setPurchaseType("one-time")}
+                  className={`p-5 border cursor-pointer transition-all ${
+                    purchaseType === "one-time"
+                      ? "border-foreground ring-1 ring-foreground"
+                      : "border-border hover:border-foreground/50"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="block text-base font-medium">One-Time Purchase</span>
+                      <span className="block text-sm text-muted-foreground mt-1">
+                        Single bottle — ${price.toFixed(2)} {currencyCode}
+                      </span>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      purchaseType === "one-time" ? "border-foreground" : "border-muted-foreground/40"
+                    }`}>
+                      {purchaseType === "one-time" && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
+                      )}
+                    </div>
                   </div>
+
+                  {/* Quantity Selector */}
+                  {purchaseType === "one-time" && (
+                    <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
+                      <span className="text-sm text-muted-foreground">Quantity</span>
+                      <div className="flex items-center border border-border">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setQuantity(Math.max(1, quantity - 1)); }}
+                          className="p-2 hover:bg-muted transition-colors"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-medium">
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setQuantity(quantity + 1); }}
+                          className="p-2 hover:bg-muted transition-colors"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Subscription Card */}
+                <div
+                  onClick={() => setPurchaseType("subscription")}
+                  className={`relative p-6 border cursor-pointer transition-all ${
+                    purchaseType === "subscription"
+                      ? "border-ocean-slate ring-2 ring-ocean-slate bg-ocean-slate/5"
+                      : "border-border hover:border-ocean-slate/50"
+                  }`}
+                >
+                  <div className="absolute -top-3 left-6 bg-ocean-slate text-background text-xs font-medium px-3 py-1 uppercase tracking-wider">
+                    Best Value
+                  </div>
+
+                  <div className="flex items-start justify-between mt-1">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-display">12-Month Subscription</h4>
+                      <p className="text-base font-medium mt-1">
+                        One bottle delivered every 2 months
+                      </p>
+                    </div>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+                      purchaseType === "subscription" ? "border-ocean-slate" : "border-muted-foreground/40"
+                    }`}>
+                      {purchaseType === "subscription" && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-ocean-slate" />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-display">${subscriptionPrice.toFixed(2)}</span>
+                      <span className="text-muted-foreground">{currencyCode} total</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      6 bottles for the price of 5 — save ${savingsAmount.toFixed(2)}
+                    </p>
+                  </div>
+
+                  <ul className="mt-5 space-y-2.5">
+                    {[
+                      "Free shipping on every delivery",
+                      "Delivered every 2 months",
+                      "Cancel anytime — no lock-in",
+                    ].map((benefit, index) => (
+                      <li key={index} className="flex items-center gap-3 text-sm">
+                        <Check className="w-4 h-4 text-ocean-slate flex-shrink-0" />
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 <button
@@ -156,8 +249,10 @@ const Product = () => {
                 >
                   {cartLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : purchaseType === "subscription" ? (
+                    `Subscribe — $${subscriptionPrice.toFixed(2)} ${currencyCode}`
                   ) : (
-                    `Add to Cart — $${(price * quantity).toFixed(2)} ${currencyCode}`
+                    `Add to Cart — $${currentPrice.toFixed(2)} ${currencyCode}`
                   )}
                 </button>
               </div>
