@@ -4,8 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import { CartProvider } from "@/context/CartContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
+import { useCartSync } from "@/hooks/useCartSync";
 import ScrollToTop from "@/components/ScrollToTop";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -24,45 +24,51 @@ import FieldTeam from "./pages/FieldTeam";
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  useCartSync();
+
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
+      <div className="flex flex-col min-h-screen">
+        <div className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-center py-2 text-sm font-medium tracking-wide">
+          Launching April 2026
+        </div>
+        <div className="h-8" />
+        <Header />
+        <div className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/product" element={<Product />} />
+            <Route path="/ingredients" element={<Ingredients />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/field-team" element={<FieldTeam />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+        <Footer />
+      </div>
+    </BrowserRouter>
+  );
+};
+
 const App = () => (
   <HelmetProvider>
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <CartProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
         <CurrencyProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <div className="flex flex-col min-h-screen">
-            <div className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-center py-2 text-sm font-medium tracking-wide">
-              Launching April 2026
-            </div>
-            <div className="h-8" />
-            <Header />
-            <div className="flex-1">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/product" element={<Product />} />
-                <Route path="/ingredients" element={<Ingredients />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/field-team" element={<FieldTeam />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-            <Footer />
-          </div>
-        </BrowserRouter>
+          <Toaster />
+          <Sonner />
+          <AppContent />
         </CurrencyProvider>
-      </CartProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
   </HelmetProvider>
 );
 
