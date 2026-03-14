@@ -114,6 +114,7 @@ export const CartDrawer = () => {
             </>
           )}
         </div>
+        </div>
       </SheetContent>
     </Sheet>
   );
