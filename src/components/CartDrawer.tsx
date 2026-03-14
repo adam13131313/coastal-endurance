@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingBag, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import snowyMountains from "@/assets/snowy-mountains.jpg";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +33,13 @@ export const CartDrawer = () => {
           )}
         </button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col h-full pt-8">
+      <SheetContent className="w-full sm:max-w-lg flex flex-col h-full pt-8 p-0 overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0 z-0">
+          <img src={snowyMountains} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-background/88" />
+        </div>
+        <div className="relative z-10 flex flex-col h-full px-6 pt-8">
         <SheetHeader className="flex-shrink-0 mt-2">
           <SheetTitle className="font-display">Your Cart</SheetTitle>
           <SheetDescription>
@@ -106,6 +113,7 @@ export const CartDrawer = () => {
               </div>
             </>
           )}
+        </div>
         </div>
       </SheetContent>
     </Sheet>
