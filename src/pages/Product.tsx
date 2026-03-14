@@ -1,48 +1,55 @@
-import { useState } from "react";
-import { Check, Minus, Plus } from "lucide-react";
-import { useCart } from "@/context/CartContext";
-import { useCurrency } from "@/context/CurrencyContext";
+import { useState, useEffect } from "react";
+import { Check, Minus, Plus, Loader2 } from "lucide-react";
+import { useCartStore } from "@/stores/cartStore";
+import { storefrontApiRequest, STOREFRONT_PRODUCT_BY_HANDLE_QUERY, type ShopifyProduct } from "@/lib/shopify";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
-type PurchaseType = "one-time" | "subscription";
-
 const Product = () => {
   const [quantity, setQuantity] = useState(1);
-  const [purchaseType, setPurchaseType] = useState<PurchaseType>("one-time");
-  const { addToCart } = useCart();
-  const { unitPrice, formatPrice, config } = useCurrency();
+  const [shopifyProduct, setShopifyProduct] = useState<ShopifyProduct | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { addItem, isLoading: cartLoading } = useCartStore();
 
-  const product = {
-    id: "field-oil-30ml",
-    name: "Field Oil",
-    size: "30ml",
-    image: fieldOilImage,
-  };
-
-  const price = unitPrice;
-  const subscriptionPrice = price * 5;
-  const savingsAmount = price;
-  const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
-
-  const handleAddToCart = () => {
-    const cartItem = {
-      ...product,
-      id: purchaseType === "subscription" ? "field-oil-subscription-12m" : product.id,
-      name: purchaseType === "subscription" ? "Field Oil — 12 Month Supply" : product.name,
-      price: purchaseType === "subscription" ? subscriptionPrice : price,
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const data = await storefrontApiRequest(STOREFRONT_PRODUCT_BY_HANDLE_QUERY, { handle: "field-oil" });
+        const product = data?.data?.productByHandle;
+        if (product) {
+          setShopifyProduct({ node: product });
+        }
+      } catch (error) {
+        console.error("Failed to fetch product:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    const itemCount = purchaseType === "subscription" ? 1 : quantity;
-    for (let i = 0; i < itemCount; i++) {
-      addToCart(cartItem);
+    fetchProduct();
+  }, []);
+
+  const variant = shopifyProduct?.node.variants.edges[0]?.node;
+  const price = variant ? parseFloat(variant.price.amount) : 78;
+  const currencyCode = variant?.price.currencyCode || "AUD";
+  const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
+
+  const handleAddToCart = async () => {
+    if (!shopifyProduct || !variant) {
+      toast.error("Product not available");
+      return;
     }
-    
-    const message = purchaseType === "subscription" 
-      ? "Added 12-month subscription to cart" 
-      : `Added ${quantity} × Field Oil to cart`;
-    toast.success(message);
+
+    await addItem({
+      product: shopifyProduct,
+      variantId: variant.id,
+      variantTitle: variant.title,
+      price: variant.price,
+      quantity,
+      selectedOptions: variant.selectedOptions || [],
+    });
+
+    toast.success(`Added ${quantity} × Field Oil to cart`);
     setQuantity(1);
   };
 
@@ -77,7 +84,7 @@ const Product = () => {
             <div className="space-y-4">
               <div className="aspect-square bg-muted overflow-hidden">
                 <img
-                  src={fieldOilImage}
+                  src={productImage}
                   alt="Field Oil 30ml bottle"
                   className="w-full h-full object-cover"
                 />
@@ -93,7 +100,7 @@ const Product = () => {
                 Field Oil
               </h2>
               <p className="mt-2 text-2xl font-body">
-                {formatPrice(price)} <span className="text-sm text-muted-foreground">{config.code}</span>
+                ${price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
               </p>
 
               <p className="mt-6 text-muted-foreground leading-relaxed text-[17px]">
@@ -117,121 +124,41 @@ const Product = () => {
                 ))}
               </ul>
 
-              {/* Purchase Options */}
+              {/* Quantity & Add to Cart */}
               <div className="mt-10 space-y-6">
-                {/* One-Time Purchase Option */}
-                <div
-                  onClick={() => setPurchaseType("one-time")}
-                  className={`p-5 border cursor-pointer transition-all ${
-                    purchaseType === "one-time"
-                      ? "border-foreground ring-1 ring-foreground"
-                      : "border-border hover:border-foreground/50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="block text-base font-medium">One-Time Purchase</span>
-                      <span className="block text-sm text-muted-foreground mt-1">
-                        Single bottle — {formatPrice(price)} {config.code}
-                      </span>
-                    </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      purchaseType === "one-time" ? "border-foreground" : "border-muted-foreground/40"
-                    }`}>
-                      {purchaseType === "one-time" && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
-                      )}
-                    </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-muted-foreground">Quantity</span>
+                  <div className="flex items-center border border-border">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="p-2 hover:bg-muted transition-colors"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="w-3 h-3" />
+                    </button>
+                    <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-medium">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="p-2 hover:bg-muted transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </button>
                   </div>
-
-                  {/* Quantity Selector */}
-                  {purchaseType === "one-time" && (
-                    <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
-                      <span className="text-sm text-muted-foreground">Quantity</span>
-                      <div className="flex items-center border border-border">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setQuantity(Math.max(1, quantity - 1)); }}
-                          className="p-2 hover:bg-muted transition-colors"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-medium">
-                          {quantity}
-                        </span>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setQuantity(quantity + 1); }}
-                          className="p-2 hover:bg-muted transition-colors"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Subscription Card */}
-                <div
-                  onClick={() => setPurchaseType("subscription")}
-                  className={`relative p-6 border cursor-pointer transition-all ${
-                    purchaseType === "subscription"
-                      ? "border-ocean-slate ring-2 ring-ocean-slate bg-ocean-slate/5"
-                      : "border-border hover:border-ocean-slate/50"
-                  }`}
-                >
-                  <div className="absolute -top-3 left-6 bg-ocean-slate text-background text-xs font-medium px-3 py-1 uppercase tracking-wider">
-                    Best Value
-                  </div>
-
-                  <div className="flex items-start justify-between mt-1">
-                    <div className="flex-1">
-                      <h4 className="text-lg font-display">12-Month Subscription</h4>
-                      <p className="text-base font-medium mt-1">
-                        One bottle delivered every 2 months
-                      </p>
-                    </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
-                      purchaseType === "subscription" ? "border-ocean-slate" : "border-muted-foreground/40"
-                    }`}>
-                      {purchaseType === "subscription" && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-ocean-slate" />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-display">{formatPrice(subscriptionPrice)}</span>
-                      <span className="text-muted-foreground">{config.code} total</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      6 bottles for the price of 5 — save {formatPrice(savingsAmount)}
-                    </p>
-                  </div>
-
-                  <ul className="mt-5 space-y-2.5">
-                    {[
-                      "Free shipping on every delivery",
-                      "Delivered every 2 months",
-                      "Cancel anytime — no lock-in",
-                    ].map((benefit, index) => (
-                      <li key={index} className="flex items-center gap-3 text-sm">
-                        <Check className="w-4 h-4 text-ocean-slate flex-shrink-0" />
-                        {benefit}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
 
                 <button
                   onClick={handleAddToCart}
-                  className="btn-primary w-full"
+                  disabled={cartLoading || loading}
+                  className="btn-primary w-full flex items-center justify-center"
                 >
-                  {purchaseType === "subscription" 
-                    ? `Subscribe — ${formatPrice(subscriptionPrice)} ${config.code}`
-                    : `Add to Cart — ${formatPrice(currentPrice)} ${config.code}`
-                  }
+                  {cartLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    `Add to Cart — $${(price * quantity).toFixed(2)} ${currencyCode}`
+                  )}
                 </button>
               </div>
 
@@ -350,4 +277,5 @@ const Product = () => {
     </main>
   );
 };
+
 export default Product;

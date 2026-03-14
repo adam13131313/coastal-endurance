@@ -1,71 +1,17 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, X, ArrowRight, ArrowLeft } from "lucide-react";
-import { useCart } from "@/context/CartContext";
-import { useCurrency } from "@/context/CurrencyContext";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { useCartStore } from "@/stores/cartStore";
 
 const Cart = () => {
-  const { items, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
-  const { formatPrice, config } = useCurrency();
-  const [checkingOut, setCheckingOut] = useState(false);
-  const [guestEmail, setGuestEmail] = useState("");
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl } = useCartStore();
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsSignedIn(!!session);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setIsSignedIn(!!session);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleCheckout = async () => {
-    setCheckingOut(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id || null;
-
-      if (!userId && !guestEmail) {
-        toast({ title: "Email required", description: "Please enter your email to checkout as a guest.", variant: "destructive" });
-        setCheckingOut(false);
-        return;
-      }
-
-      const orderId = crypto.randomUUID();
-
-      const { error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          id: orderId,
-          user_id: userId,
-          guest_email: userId ? null : guestEmail,
-          total_amount: cartTotal,
-          currency: config.code,
-          status: "completed",
-        });
-
-      if (orderError) throw orderError;
-
-      const orderItems = items.map((item) => ({
-        order_id: orderId,
-        product_name: item.name,
-        quantity: item.quantity,
-        unit_price: item.price,
-      }));
-
-      const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
-      if (itemsError) throw itemsError;
-
-      clearCart();
-      toast({ title: "Order placed!", description: "Thank you for your purchase." });
-    } catch (e: any) {
-      toast({ title: "Checkout failed", description: e?.message || "Something went wrong.", variant: "destructive" });
+  const handleCheckout = () => {
+    const checkoutUrl = getCheckoutUrl();
+    if (checkoutUrl) {
+      window.open(checkoutUrl, '_blank');
     }
-    setCheckingOut(false);
   };
 
   if (items.length === 0) {
@@ -93,43 +39,38 @@ const Cart = () => {
             Your Cart
           </h1>
 
-          {/* Cart Items */}
           <div className="space-y-6">
             {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-6 pb-6 border-b border-border"
-              >
-                {/* Image */}
+              <div key={item.variantId} className="flex gap-6 pb-6 border-b border-border">
                 <div className="w-24 h-24 bg-muted flex-shrink-0 overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
+                  {item.product.node.images?.edges?.[0]?.node && (
+                    <img
+                      src={item.product.node.images.edges[0].node.url}
+                      alt={item.product.node.title}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
 
-                {/* Details */}
                 <div className="flex-1 flex flex-col">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-display text-lg">{item.name}</h3>
-                      <p className="text-sm text-muted-foreground">30ml</p>
+                      <h3 className="font-display text-lg">{item.product.node.title}</h3>
+                      <p className="text-sm text-muted-foreground">{item.selectedOptions.map(o => o.value).join(' · ')}</p>
                     </div>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeItem(item.variantId)}
                       className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                       aria-label="Remove item"
                     >
-                      <X className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
 
                   <div className="mt-auto flex items-center justify-between">
-                    {/* Quantity */}
                     <div className="flex items-center border border-border">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
                         className="p-2 hover:bg-muted transition-colors"
                         aria-label="Decrease quantity"
                       >
@@ -139,7 +80,7 @@ const Cart = () => {
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                         className="p-2 hover:bg-muted transition-colors"
                         aria-label="Increase quantity"
                       >
@@ -147,9 +88,8 @@ const Cart = () => {
                       </button>
                     </div>
 
-                    {/* Price */}
                     <p className="font-medium">
-                      {formatPrice(item.price * item.quantity)} <span className="text-sm text-muted-foreground">{config.code}</span>
+                      ${(parseFloat(item.price.amount) * item.quantity).toFixed(2)} <span className="text-sm text-muted-foreground">{item.price.currencyCode}</span>
                     </p>
                   </div>
                 </div>
@@ -157,40 +97,29 @@ const Cart = () => {
             ))}
           </div>
 
-          {/* Summary */}
           <div className="mt-12 pt-6 border-t border-border">
             <div className="flex justify-between items-center text-lg">
               <span>Subtotal</span>
-              <span className="font-display text-2xl">{formatPrice(cartTotal)} {config.code}</span>
+              <span className="font-display text-2xl">${totalPrice.toFixed(2)} {items[0]?.price.currencyCode}</span>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
               Free postage within Australia. International shipping calculated at checkout.
             </p>
 
-            {!isSignedIn && (
-              <div className="mt-4">
-                <label className="block text-sm font-medium mb-1.5">Email (for order confirmation)</label>
-                <input
-                  type="email"
-                  value={guestEmail}
-                  onChange={(e) => setGuestEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="w-full px-3 py-2 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  <Link to="/auth" className="underline hover:text-foreground">Sign in</Link> to save your order to your account.
-                </p>
-              </div>
-            )}
-
             <div className="mt-8 space-y-3">
               <button
                 onClick={handleCheckout}
-                disabled={checkingOut}
-                className="btn-primary w-full"
+                disabled={isLoading || isSyncing}
+                className="btn-primary w-full flex items-center justify-center"
               >
-                {checkingOut ? "Placing Order..." : "Place Order"}
-                {!checkingOut && <ArrowRight className="ml-2 w-4 h-4" />}
+                {isLoading || isSyncing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    Checkout
+                    <ExternalLink className="ml-2 w-4 h-4" />
+                  </>
+                )}
               </button>
               <Link
                 to="/product"
