@@ -1,6 +1,13 @@
+import { Helmet } from "react-helmet-async";
+
 const Terms = () => {
   return (
     <main className="pt-20">
+      <Helmet>
+        <title>Terms & Conditions — Coastal Endurance</title>
+        <meta name="description" content="Coastal Endurance terms and conditions. Products, orders, shipping, returns, and usage terms." />
+        <link rel="canonical" href="https://coastalendurance.com/terms" />
+      </Helmet>
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
           <h1 className="text-4xl md:text-5xl font-display mb-8">Terms & Conditions</h1>
