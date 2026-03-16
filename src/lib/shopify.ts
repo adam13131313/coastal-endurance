@@ -277,10 +277,13 @@ export interface CartItem {
   selectedOptions: Array<{ name: string; value: string }>;
 }
 
-export async function createShopifyCart(item: CartItem): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
-  const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
-    input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
-  });
+export async function createShopifyCart(item: CartItem, buyerIdentity?: BuyerIdentity): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
+  const input: any = { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] };
+  if (buyerIdentity) {
+    input.buyerIdentity = buyerIdentity;
+  }
+
+  const data = await storefrontApiRequest(CART_CREATE_MUTATION, { input });
 
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
     console.error('Cart creation failed:', data.data.cartCreate.userErrors);
@@ -294,6 +297,22 @@ export async function createShopifyCart(item: CartItem): Promise<{ cartId: strin
   if (!lineId) return null;
 
   return { cartId: cart.id, checkoutUrl: formatCheckoutUrl(cart.checkoutUrl), lineId };
+}
+
+export async function updateCartBuyerIdentity(cartId: string, buyerIdentity: BuyerIdentity): Promise<{ success: boolean; checkoutUrl?: string }> {
+  const data = await storefrontApiRequest(CART_BUYER_IDENTITY_UPDATE_MUTATION, {
+    cartId,
+    buyerIdentity,
+  });
+
+  const userErrors = data?.data?.cartBuyerIdentityUpdate?.userErrors || [];
+  if (userErrors.length > 0) {
+    console.error('Buyer identity update failed:', userErrors);
+    return { success: false };
+  }
+
+  const checkoutUrl = data?.data?.cartBuyerIdentityUpdate?.cart?.checkoutUrl;
+  return { success: true, checkoutUrl: checkoutUrl ? formatCheckoutUrl(checkoutUrl) : undefined };
 }
 
 export async function addLineToShopifyCart(cartId: string, item: CartItem): Promise<{ success: boolean; lineId?: string; cartNotFound?: boolean }> {
