@@ -195,6 +195,33 @@ export const CART_CREATE_MUTATION = `
   }
 `;
 
+export const CART_BUYER_IDENTITY_UPDATE_MUTATION = `
+  mutation cartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart { id checkoutUrl }
+      userErrors { field message }
+    }
+  }
+`;
+
+export interface BuyerIdentity {
+  email?: string;
+  phone?: string;
+  deliveryAddressPreferences?: Array<{
+    deliveryAddress: {
+      firstName?: string;
+      lastName?: string;
+      address1?: string;
+      address2?: string;
+      city?: string;
+      provinceCode?: string;
+      countryCode?: string;
+      zip?: string;
+      phone?: string;
+    };
+  }>;
+}
+
 export const CART_LINES_ADD_MUTATION = `
   mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
     cartLinesAdd(cartId: $cartId, lines: $lines) {
