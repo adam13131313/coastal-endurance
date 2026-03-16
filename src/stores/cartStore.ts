@@ -46,13 +46,16 @@ export const useCartStore = create<CartStore>()(
         set({ isLoading: true });
         try {
           if (!cartId) {
-            const result = await createShopifyCart({ ...item, lineId: null });
+            // Fetch logged-in user's profile for checkout pre-fill
+            const buyerIdentity = await getBuyerIdentity();
+            const result = await createShopifyCart({ ...item, lineId: null }, buyerIdentity || undefined);
             if (result) {
               set({
                 cartId: result.cartId,
                 checkoutUrl: result.checkoutUrl,
                 items: [{ ...item, lineId: result.lineId }],
               });
+            }
             }
           } else if (existingItem) {
             const newQuantity = existingItem.quantity + item.quantity;
