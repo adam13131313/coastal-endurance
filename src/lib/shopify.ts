@@ -228,6 +228,7 @@ export const CART_LINES_REMOVE_MUTATION = `
 function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
+    url.hostname = 'checkout.coastalendurance.com';
     url.searchParams.set('channel', 'online_store');
     return url.toString();
   } catch {
