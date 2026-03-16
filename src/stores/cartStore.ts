@@ -3,13 +3,16 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   CartItem,
   ShopifyProduct,
+  BuyerIdentity,
   createShopifyCart,
   addLineToShopifyCart,
   updateShopifyCartLine,
   removeLineFromShopifyCart,
+  updateCartBuyerIdentity,
   storefrontApiRequest,
   CART_QUERY,
 } from '@/lib/shopify';
+import { supabase } from '@/integrations/supabase/client';
 
 export type { CartItem, ShopifyProduct };
 
