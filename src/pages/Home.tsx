@@ -140,10 +140,10 @@ const Home = () => {
           <p className="mt-6 text-[17px] text-primary-foreground/80 leading-relaxed">
             Every ingredient earns its place.
           </p>
-          <a href="/about#top" className="inline-flex items-center mt-8 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
+          <Link to="/about" className="inline-flex items-center mt-8 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
             Read Our Story
             <ArrowRight className="ml-2 w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </section>
 

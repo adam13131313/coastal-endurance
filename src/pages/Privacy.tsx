@@ -1,6 +1,13 @@
+import { Helmet } from "react-helmet-async";
+
 const Privacy = () => {
   return (
     <main className="pt-20">
+      <Helmet>
+        <title>Privacy Policy — Coastal Endurance</title>
+        <meta name="description" content="Coastal Endurance privacy policy. How we collect, use, and protect your personal information." />
+        <link rel="canonical" href="https://coastalendurance.com/privacy" />
+      </Helmet>
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
           <h1 className="text-4xl md:text-5xl font-display mb-8">Privacy Policy</h1>
