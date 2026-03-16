@@ -3,15 +3,60 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   CartItem,
   ShopifyProduct,
+  BuyerIdentity,
   createShopifyCart,
   addLineToShopifyCart,
   updateShopifyCartLine,
   removeLineFromShopifyCart,
+  updateCartBuyerIdentity,
   storefrontApiRequest,
   CART_QUERY,
 } from '@/lib/shopify';
+import { supabase } from '@/integrations/supabase/client';
 
 export type { CartItem, ShopifyProduct };
+
+async function getBuyerIdentity(): Promise<BuyerIdentity | null> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return null;
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email, display_name, phone, address_line1, address_line2, city, state, country, postal_code')
+      .eq('id', session.user.id)
+      .single();
+
+    if (!profile) return null;
+
+    const identity: BuyerIdentity = {};
+    if (profile.email) identity.email = profile.email;
+    if (profile.phone) identity.phone = profile.phone;
+
+    const hasAddress = profile.address_line1 || profile.city || profile.country;
+    if (hasAddress) {
+      const nameParts = (profile.display_name || '').split(' ');
+      identity.deliveryAddressPreferences = [{
+        deliveryAddress: {
+          firstName: nameParts[0] || undefined,
+          lastName: nameParts.slice(1).join(' ') || undefined,
+          address1: profile.address_line1 || undefined,
+          address2: profile.address_line2 || undefined,
+          city: profile.city || undefined,
+          provinceCode: profile.state || undefined,
+          countryCode: profile.country || 'AU',
+          zip: profile.postal_code || undefined,
+          phone: profile.phone || undefined,
+        },
+      }];
+    }
+
+    return identity;
+  } catch (error) {
+    console.error('Failed to fetch buyer identity:', error);
+    return null;
+  }
+}
 
 interface CartStore {
   items: CartItem[];
@@ -25,6 +70,7 @@ interface CartStore {
   clearCart: () => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
+  updateBuyerIdentity: () => Promise<void>;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -43,7 +89,8 @@ export const useCartStore = create<CartStore>()(
         set({ isLoading: true });
         try {
           if (!cartId) {
-            const result = await createShopifyCart({ ...item, lineId: null });
+            const buyerIdentity = await getBuyerIdentity();
+            const result = await createShopifyCart({ ...item, lineId: null }, buyerIdentity || undefined);
             if (result) {
               set({
                 cartId: result.cartId,
@@ -130,6 +177,20 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
       getCheckoutUrl: () => get().checkoutUrl,
+
+      // Update buyer identity on an existing cart (e.g., when user logs in with items in cart)
+      updateBuyerIdentity: async () => {
+        const { cartId } = get();
+        if (!cartId) return;
+
+        const buyerIdentity = await getBuyerIdentity();
+        if (!buyerIdentity) return;
+
+        const result = await updateCartBuyerIdentity(cartId, buyerIdentity);
+        if (result.success && result.checkoutUrl) {
+          set({ checkoutUrl: result.checkoutUrl });
+        }
+      },
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();
