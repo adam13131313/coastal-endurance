@@ -263,7 +263,7 @@ const Ingredients = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-display mb-4">Full INCI List</h2>
           <p className="text-[17px] text-muted-foreground leading-relaxed">
-            Rosa Canina Fruit Oil, Simmondsia Chinensis Seed Oil, Cannabis Sativa Seed Oil, Macadamia Ternifolia Seed Oil, Limnanthes Alba Seed Oil, Tocopherol, Rosmarinus Officinalis Leaf Extract
+            Rosa Canina Fruit Oil (Rosehip), Simmondsia Chinensis Seed Oil (Jojoba), Cannabis Sativa Seed Oil (Hemp Seed), Macadamia Ternifolia Seed Oil (Macadamia), Limnanthes Alba Seed Oil (Meadowfoam), Tocopherol (Vitamin E), Rosmarinus Officinalis Leaf Extract (Rosemary)
           </p>
           <p className="mt-4 text-[17px] font-medium text-foreground">
             Contains: Tree nut derivatives (Macadamia)
