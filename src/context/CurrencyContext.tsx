@@ -13,7 +13,7 @@ export const CURRENCIES: Record<Currency, CurrencyConfig> = {
 };
 
 const PRICES: Record<Currency, number> = {
-  AUD: 78,
+  AUD: 68,
 };
 
 interface CurrencyContextType {
