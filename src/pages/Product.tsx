@@ -306,11 +306,11 @@ const Product = () => {
 
       {/* How It Works */}
       <section className="section-padding">
-        <div className="max-w-[700px] mx-auto px-6">
+        <div className="max-w-[900px] mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-typewriter uppercase text-center">
             HOW IT WORKS
           </h2>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
             {[
               {
                 title: "SUPPORT",
@@ -330,7 +330,7 @@ const Product = () => {
                   {index + 1}
                 </span>
                 <h3 className="mt-4 text-xl font-typewriter uppercase">{step.title}</h3>
-                <p className="mt-2 font-body text-muted-foreground text-[17px]">{step.description}</p>
+                <p className="mt-3 font-body text-muted-foreground text-[17px] leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
