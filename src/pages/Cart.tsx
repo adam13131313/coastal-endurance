@@ -1,9 +1,40 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, Loader2, User, LogIn } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import { toast } from "@/hooks/use-toast";
 
 const Cart = () => {
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl } = useCartStore();
+  const [user, setUser] = useState<any>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [signingIn, setSigningIn] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setAuthChecked(true);
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthChecked(true);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignIn = async (provider: "google" | "apple") => {
+    setSigningIn(provider);
+    const { error } = await lovable.auth.signInWithOAuth(provider, {
+      redirect_uri: window.location.origin + "/cart",
+    });
+    if (error) {
+      toast({ title: "Sign in failed", description: error.message, variant: "destructive" });
+      setSigningIn(null);
+    }
+  };
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
