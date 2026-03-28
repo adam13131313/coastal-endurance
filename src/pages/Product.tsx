@@ -84,7 +84,7 @@ const Product = () => {
     <main className="pt-20" id="top">
       <Helmet>
         <title>Field Oil — Daily Barrier Face Oil for Outdoor Men | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $78 AUD. Made in Australia." />
+        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $68 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
       </Helmet>
 
