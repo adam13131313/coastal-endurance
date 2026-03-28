@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Special+Elite&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Coastal Endurance Design System
-   Premium minimalist men's barrier maintenance brand
+   Equipment maintenance brand — technical documentation aesthetic
+   Typography: Special Elite (headers/CTAs) + Inter (body)
    Colors: Sand, Charcoal, Off-white, Coastal slate
 */
 
@@ -13,28 +14,28 @@
   :root {
     /* Core brand colors - earthy coastal palette */
     --background: 40 20% 97%;
-    --foreground: 30 10% 15%;
+    --foreground: 0 0% 0%;
 
     --card: 40 15% 95%;
-    --card-foreground: 30 10% 15%;
+    --card-foreground: 0 0% 0%;
 
     --popover: 40 20% 97%;
-    --popover-foreground: 30 10% 15%;
+    --popover-foreground: 0 0% 0%;
 
-    /* Primary - Deep charcoal */
-    --primary: 30 10% 18%;
+    /* Primary - Black */
+    --primary: 0 0% 0%;
     --primary-foreground: 40 20% 97%;
 
     /* Secondary - Warm sand */
     --secondary: 35 25% 90%;
-    --secondary-foreground: 30 10% 18%;
+    --secondary-foreground: 0 0% 0%;
 
     /* Muted - Soft sand */
     --muted: 35 15% 92%;
-    --muted-foreground: 30 8% 45%;
+    --muted-foreground: 0 0% 20%;
 
-    /* Accent - Coastal slate */
-    --accent: 200 15% 35%;
+    /* Accent - Dark gray */
+    --accent: 0 0% 20%;
     --accent-foreground: 40 20% 97%;
 
     --destructive: 0 65% 50%;
@@ -42,14 +43,14 @@
 
     --border: 35 15% 85%;
     --input: 35 15% 88%;
-    --ring: 30 10% 18%;
+    --ring: 0 0% 0%;
 
-    --radius: 0.25rem;
+    --radius: 0rem;
 
     /* Custom brand tokens */
     --sand: 38 30% 92%;
-    --charcoal: 30 10% 18%;
-    --ocean-slate: 200 15% 35%;
+    --charcoal: 0 0% 0%;
+    --ocean-slate: 0 0% 20%;
     --warm-stone: 35 20% 85%;
     --cream: 45 25% 96%;
   }
@@ -67,17 +68,19 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    font-size: 17px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
-    @apply font-medium tracking-tight;
+    font-family: 'Special Elite', 'Courier New', monospace;
+    @apply tracking-tight;
+    font-weight: 400;
   }
 }
 
 @layer components {
   .text-display {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Special Elite', 'Courier New', monospace;
   }
 
   .text-body {
@@ -101,11 +104,11 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground text-sm font-medium tracking-wide uppercase transition-all duration-300 hover:bg-charcoal/90;
+    @apply inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-typewriter text-sm tracking-wide uppercase transition-all duration-300 hover:bg-primary/90;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center px-8 py-4 border border-primary text-primary text-sm font-medium tracking-wide uppercase transition-all duration-300 hover:bg-primary hover:text-primary-foreground;
+    @apply inline-flex items-center justify-center px-8 py-4 border border-primary text-primary font-typewriter text-sm tracking-wide uppercase transition-all duration-300 hover:bg-primary hover:text-primary-foreground;
   }
 
   .input-field {
