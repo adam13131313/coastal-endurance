@@ -93,7 +93,7 @@ const FieldTeam = () => {
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
               <span>
                 <strong className="text-foreground">Field Oil (30ml)</strong> —
-                full size, yours to keep. Valued at $78.
+                full size, yours to keep.
               </span>
             </li>
             <li className="flex items-start gap-3">
