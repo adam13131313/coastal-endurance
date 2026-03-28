@@ -55,7 +55,7 @@ const Ingredients = () => {
       origin: "Mediterranean origin, supercritical CO2 extraction",
       function:
         "Contains carnosic acid (a natural antioxidant compound) with natural antioxidant and antimicrobial (keeps bacteria/fungi from growing) properties. Helps prevent product oxidation (going rancid). Maintains freshness without synthetic preservatives.",
-      why: "Natural preservation system. Minimal concentration means no detectable scent while effectively maintaining product integrity. At 0.3%, it's functionally active but undetectable — above 0.5% would smell herbal. ECOCERT certified.",
+      why: "Natural preservation system. Minimal concentration means no detectable scent while effectively maintaining product integrity. Functionally active but undetectable. ECOCERT certified.",
     },
   ];
 

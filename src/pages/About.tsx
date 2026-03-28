@@ -122,9 +122,8 @@ const About = () => {
             <div>
               <h3 className="text-xl font-typewriter uppercase">3. CLINICAL-DOSE ACTIVES</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                59% active barrier-repair oils (Rosehip 35%, Hemp Seed 15%, Macadamia 9%). Most face oils 
-                use 20–40% actives diluted with cheap carriers. We use clinical doses — concentrations shown 
-                in research to support barrier function.
+                59% active barrier-repair oils. Most face oils use 20–40% actives diluted with cheap carriers. 
+                We use clinical doses — concentrations shown in research to support barrier function.
               </p>
             </div>
 

@@ -16,7 +16,7 @@ const Auth = () => {
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/");
+      if (session) navigate("/account");
     });
 
     return () => subscription.unsubscribe();

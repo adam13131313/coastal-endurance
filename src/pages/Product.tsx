@@ -126,7 +126,7 @@ const Product = () => {
               </p>
 
               <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
-                A lightweight daily oil that supports and maintains your skin barrier. 
+                A medium-weight daily oil that supports and maintains your skin barrier. 
                 Formulated for those who face sun, wind, salt, and sweat — every day.
               </p>
 
