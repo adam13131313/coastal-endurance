@@ -23,7 +23,6 @@ export default {
         body: ['"Inter"', 'system-ui', 'sans-serif'],
         typewriter: ['"Special Elite"', '"Courier New"', 'monospace'],
       },
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
