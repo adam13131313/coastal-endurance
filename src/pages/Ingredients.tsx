@@ -93,7 +93,7 @@ const Ingredients = () => {
     },
     {
       q: "Can I use this if I have oily skin?",
-      a: "Not recommended for very oily or acne-prone skin. This is formulated for normal, dry, or mature skin that's been exposed to outdoor conditions for years. If you're uncertain, start with 2 drops instead of 3-4.",
+      a: "Not recommended for very oily or acne-prone skin. This is formulated for normal, dry, or mature skin that's been exposed to outdoor conditions for years. If you're uncertain, start with ≈0.2ml instead of 0.4ml.",
     },
   ];
 
