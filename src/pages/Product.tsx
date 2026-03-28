@@ -339,8 +339,8 @@ const Product = () => {
 
       {/* Product Characteristics & Storage */}
       <section className="section-padding bg-secondary">
-        <div className="max-w-[700px] mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
+        <div className="max-w-[900px] mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
             <div>
               <h2 className="text-2xl font-typewriter uppercase mb-8">PRODUCT CHARACTERISTICS</h2>
               <div className="space-y-4">
@@ -351,8 +351,8 @@ const Product = () => {
                   { label: "Colour", value: "Pale golden yellow" },
                   { label: "Viscosity", value: "Medium (pours easily, not too thick or thin)" },
                 ].map((item, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
-                    <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
+                  <div key={index} className="pb-4 border-b border-border last:border-0">
+                    <span className="block font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-1">{item.label}</span>
                     <span className="font-body text-foreground text-[17px]">{item.value}</span>
                   </div>
                 ))}
@@ -367,8 +367,8 @@ const Product = () => {
                   { label: "Storage", value: "Below 25°C, away from direct sunlight" },
                   { label: "Packaging", value: "Amber glass bottle (UV protection)" },
                 ].map((item, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
-                    <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
+                  <div key={index} className="pb-4 border-b border-border last:border-0">
+                    <span className="block font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-1">{item.label}</span>
                     <span className="font-body text-foreground text-[17px]">{item.value}</span>
                   </div>
                 ))}
