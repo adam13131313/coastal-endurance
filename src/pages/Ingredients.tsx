@@ -13,7 +13,7 @@ const Ingredients = () => {
       origin: "Chilean/European origin, cold-pressed from seeds",
       function:
         "Essential fatty acids (the building blocks your skin uses to maintain itself) support barrier function. Contains vitamin A precursors. Used extensively in formulations for environmentally exposed skin.",
-      why: "Primary active ingredient at clinical dose. High concentration of barrier-supporting lipids (your skin's natural oils that hold its protective layer together). At 35%, this addresses cumulative environmental damage from prolonged outdoor exposure.",
+      why: "Primary active ingredient at clinical dose. High concentration of barrier-supporting lipids (your skin's natural oils that hold its protective layer together). Addresses cumulative environmental damage from prolonged outdoor exposure.",
     },
     {
       name: "JOJOBA OIL",
