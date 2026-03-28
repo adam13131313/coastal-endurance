@@ -53,13 +53,14 @@ const Contact = () => {
         <meta name="description" content="Get in touch with Coastal Endurance. Questions about Field Oil, wholesale inquiries, or feedback. We respond within 24-48 hours." />
         <link rel="canonical" href="https://coastalendurance.com/contact" />
       </Helmet>
+
       {/* Hero */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
-            Contact
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
+            CONTACT
           </h1>
-          <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
+          <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
             Questions, feedback, or wholesale inquiries. We read everything.
           </p>
         </div>
@@ -69,12 +70,11 @@ const Contact = () => {
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Form */}
             <div>
-              <h2 className="text-2xl font-display mb-6">Get in Touch</h2>
+              <h2 className="text-2xl font-typewriter uppercase mb-6">GET IN TOUCH</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-2">
+                  <label htmlFor="name" className="block text-sm font-body font-medium mb-2">
                     Name
                   </label>
                   <input
@@ -87,7 +87,7 @@ const Contact = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  <label htmlFor="email" className="block text-sm font-body font-medium mb-2">
                     Email
                   </label>
                   <input
@@ -100,7 +100,7 @@ const Contact = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">
+                  <label htmlFor="message" className="block text-sm font-body font-medium mb-2">
                     Message
                   </label>
                   <textarea
@@ -113,39 +113,38 @@ const Contact = () => {
                   />
                 </div>
                 <button type="submit" disabled={isSubmitting} className="btn-primary w-full md:w-auto disabled:opacity-50">
-                  {isSubmitting ? "Sending..." : "Send Message"}
+                  {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
                 </button>
               </form>
             </div>
 
-            {/* Info */}
             <div className="space-y-10">
               <div>
-                <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-3">
-                  Email
+                <h3 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                  EMAIL
                 </h3>
                 <a
                   href="mailto:hello@coastalendurance.com"
-                  className="text-[17px] hover:text-muted-foreground transition-colors"
+                  className="text-[17px] font-body hover:text-muted-foreground transition-colors"
                 >
                   hello@coastalendurance.com
                 </a>
               </div>
 
               <div>
-                <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-3">
-                  Response Time
+                <h3 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                  RESPONSE TIME
                 </h3>
-                <p className="text-foreground text-[17px]">
+                <p className="font-body text-foreground text-[17px]">
                   We respond within 24-48 hours on business days.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-3">
-                  Wholesale
+                <h3 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                  WHOLESALE
                 </h3>
-                <p className="text-muted-foreground text-[17px]">
+                <p className="font-body text-muted-foreground text-[17px]">
                   For wholesale and retail partnership inquiries, please include your 
                   business name, location, and current product offering in your message.
                 </p>
@@ -158,10 +157,10 @@ const Contact = () => {
       {/* Newsletter */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-display">
-            Updates only. No noise.
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
+            UPDATES ONLY. NO NOISE.
           </h2>
-          <p className="mt-4 text-[17px] text-primary-foreground/70">
+          <p className="mt-4 text-[17px] font-body text-primary-foreground/70">
             New products, restocks, and nothing else. Unsubscribe anytime.
           </p>
           <form
@@ -179,9 +178,9 @@ const Contact = () => {
             <button
               type="submit"
               disabled={isSubscribing}
-              className="px-8 py-3 bg-primary-foreground text-primary text-sm font-medium uppercase tracking-wide hover:bg-primary-foreground/90 transition-colors disabled:opacity-50"
+              className="px-8 py-3 bg-primary-foreground text-primary font-typewriter text-sm uppercase tracking-wide hover:bg-primary-foreground/90 transition-colors disabled:opacity-50"
             >
-              {isSubscribing ? "..." : "Subscribe"}
+              {isSubscribing ? "..." : "SUBSCRIBE"}
             </button>
           </form>
         </div>

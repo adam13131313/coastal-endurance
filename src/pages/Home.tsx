@@ -26,6 +26,7 @@ const Home = () => {
     toast.success("You're subscribed. Updates only.");
     setNewsletterEmail("");
   };
+
   return (
     <main>
       <Helmet>
@@ -33,6 +34,7 @@ const Home = () => {
         <meta name="description" content="Field Oil is a daily face oil built for Australian men with years of outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Equipment maintenance for your skin." />
         <link rel="canonical" href="https://coastalendurance.com/" />
       </Helmet>
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
         <div className="absolute inset-0">
@@ -40,31 +42,32 @@ const Home = () => {
             src={heroImage}
             alt="Field Oil product on sand"
             className="w-full h-full object-cover" />
-          
           <div className="absolute inset-0 bg-background/80 md:bg-gradient-to-r md:from-background/92 md:via-background/75 md:to-background/30" />
         </div>
         
         <div className="container-wide relative z-10 pt-20">
           <div className="max-w-2xl">
-            <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
-              100% Natural Ingredients
+            <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
+              100% NATURAL INGREDIENTS
             </p>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
-              Built for sun, salt, wind, and time.
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
+              FIELD OIL
             </h1>
+            <p className="mt-4 text-xl md:text-2xl font-typewriter text-foreground animate-slide-up" style={{ animationDelay: "0.08s" }}>
+              For Sun, Salt, Wind, & Time
+            </p>
             <p
-              className="mt-6 text-lg md:text-xl text-foreground md:text-foreground/80 leading-relaxed animate-slide-up"
+              className="mt-6 text-lg font-body text-foreground/80 leading-relaxed animate-slide-up max-w-lg"
               style={{ animationDelay: "0.1s" }}>
-              
               Field Oil maintains what the elements wear down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <Link to="/product" className="btn-primary">
-                Maintain Your Barrier
+                MAINTAIN YOUR BARRIER
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
               <Link to="/about" className="btn-outline">
-                About Us
+                ABOUT US
               </Link>
             </div>
           </div>
@@ -74,10 +77,10 @@ const Home = () => {
       {/* Problem Section */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-display">
-            For life in the outdoors.
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
+            FOR LIFE IN THE OUTDOORS
           </h2>
-          <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
+          <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
             Field Oil is a daily face oil built for those who spend their days outside — surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
           </p>
         </div>
@@ -88,13 +91,13 @@ const Home = () => {
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="order-2 lg:order-1">
-              <span className="text-sm uppercase tracking-widest text-muted-foreground">
-                The Hero Product
+              <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
+                THE HERO PRODUCT
               </span>
-              <h2 className="mt-4 text-3xl md:text-5xl font-display">
-                Field Oil
+              <h2 className="mt-4 text-3xl md:text-5xl font-typewriter uppercase">
+                FIELD OIL
               </h2>
-              <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
+              <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
                 A barrier oil that supports your skin's natural barrier. 
                 Fast-absorbing, non-greasy, built for real conditions. 
                 One product. Daily. That's the routine.
@@ -106,14 +109,14 @@ const Home = () => {
                 "No fragrance, no essential oils",
                 "30ml — 2-month supply"].
                 map((feature, index) =>
-                <li key={index} className="flex items-start gap-3 text-muted-foreground text-[17px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-ocean-slate mt-2 flex-shrink-0" />
+                <li key={index} className="flex items-start gap-3 font-body text-muted-foreground text-[17px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-foreground mt-2 flex-shrink-0" />
                     {feature}
                   </li>
                 )}
               </ul>
               <Link to="/product" className="btn-primary mt-10 inline-flex">
-                Learn More
+                LEARN MORE
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </div>
@@ -124,7 +127,6 @@ const Home = () => {
                   alt="Field Oil 30ml bottle"
                   className="w-full h-full object-cover"
                   loading="lazy" />
-                
               </div>
             </div>
           </div>
@@ -134,14 +136,14 @@ const Home = () => {
       {/* Philosophy Preview */}
       <section className="section-padding bg-primary text-primary-foreground">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-display">
-            Better performance.
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
+            BETTER PERFORMANCE
           </h2>
-          <p className="mt-6 text-[17px] text-primary-foreground/80 leading-relaxed">
+          <p className="mt-6 text-[17px] font-body text-primary-foreground/80 leading-relaxed">
             Every ingredient earns its place.
           </p>
-          <Link to="/about" className="inline-flex items-center mt-8 text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
-            Read Our Story
+          <Link to="/about" className="inline-flex items-center mt-8 font-typewriter text-sm uppercase tracking-wider border-b border-primary-foreground/50 pb-1 hover:border-primary-foreground transition-colors">
+            READ OUR STORY
             <ArrowRight className="ml-2 w-4 h-4" />
           </Link>
         </div>
@@ -150,10 +152,10 @@ const Home = () => {
       {/* Newsletter */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-display">
-            Updates only. No noise.
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
+            UPDATES ONLY. NO NOISE.
           </h2>
-          <p className="mt-4 text-[17px] text-muted-foreground">
+          <p className="mt-4 text-[17px] font-body text-muted-foreground">
             New products, restocks, and nothing else.
           </p>
           <form onSubmit={handleNewsletterSubmit} className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -164,15 +166,14 @@ const Home = () => {
               onChange={(e) => setNewsletterEmail(e.target.value)}
               className="input-field flex-1"
               required />
-            
             <button type="submit" disabled={isSubscribing} className="btn-primary whitespace-nowrap disabled:opacity-50">
-              {isSubscribing ? "..." : "Subscribe"}
+              {isSubscribing ? "..." : "SUBSCRIBE"}
             </button>
           </form>
         </div>
       </section>
-    </main>);
-
+    </main>
+  );
 };
 
 export default Home;
