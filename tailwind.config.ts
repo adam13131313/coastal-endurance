@@ -19,9 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Special Elite"', '"Courier New"', 'monospace'],
+        display: ['"IBM Plex Mono"', '"Courier New"', 'monospace'],
         body: ['"Inter"', 'system-ui', 'sans-serif'],
-        typewriter: ['"Special Elite"', '"Courier New"', 'monospace'],
+        typewriter: ['"IBM Plex Mono"', '"Courier New"', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",

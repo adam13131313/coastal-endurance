@@ -104,7 +104,7 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-typewriter text-sm tracking-wide uppercase transition-all duration-300 hover:bg-primary/90;
+    @apply inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-typewriter text-sm tracking-wider uppercase transition-all duration-300 hover:bg-primary/90;
   }
 
   .btn-outline {
