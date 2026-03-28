@@ -80,7 +80,7 @@
 
 @layer components {
   .text-display {
-    font-family: 'Special Elite', 'Courier New', monospace;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
   }
 
   .text-body {
