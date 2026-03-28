@@ -44,7 +44,7 @@ const FieldTeam = () => {
           <ol className="space-y-4 text-[17px] text-muted-foreground leading-relaxed">
             <li className="flex gap-4">
               <span className="text-foreground font-semibold shrink-0">1.</span>
-              <span>Apply 3–4 drops to damp skin (not dry)</span>
+              <span>Apply ≈0.4ml to damp skin daily (not dry)</span>
             </li>
             <li className="flex gap-4">
               <span className="text-foreground font-semibold shrink-0">2.</span>
@@ -102,7 +102,7 @@ const FieldTeam = () => {
               </h3>
               <p>
                 Should absorb completely. If it feels greasy after 5 minutes,
-                you've used too much — try 2–3 drops instead of 4.
+                you've used too much — try ≈0.3ml instead.
               </p>
             </div>
           </div>
