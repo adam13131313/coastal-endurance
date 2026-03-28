@@ -40,7 +40,7 @@ const Product = () => {
 
   const variant = shopifyProduct?.node.variants.edges[0]?.node;
   const subVariant = subscriptionProduct?.node.variants.edges[0]?.node;
-  const price = variant ? parseFloat(variant.price.amount) : 78;
+  const price = variant ? parseFloat(variant.price.amount) : 68;
   const currencyCode = variant?.price.currencyCode || "AUD";
   const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
   const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 5;
@@ -84,7 +84,7 @@ const Product = () => {
     <main className="pt-20" id="top">
       <Helmet>
         <title>Field Oil — Daily Barrier Face Oil for Outdoor Men | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $78 AUD. Made in Australia." />
+        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $68 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
       </Helmet>
 
