@@ -21,6 +21,7 @@ export default {
       fontFamily: {
         display: ['"Playfair Display"', 'Georgia', 'serif'],
         body: ['"Inter"', 'system-ui', 'sans-serif'],
+        typewriter: ['"Special Elite"', '"Courier New"', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
