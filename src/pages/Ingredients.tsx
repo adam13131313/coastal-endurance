@@ -9,49 +9,49 @@ import { Helmet } from "react-helmet-async";
 const Ingredients = () => {
   const ingredients = [
     {
-      name: "Rosehip Oil",
+      name: "ROSEHIP OIL",
       origin: "Chilean/European origin, cold-pressed from seeds",
       function:
         "Essential fatty acids (the building blocks your skin uses to maintain itself) support barrier function. Contains vitamin A precursors. Used extensively in formulations for environmentally exposed skin.",
       why: "Primary active ingredient at clinical dose. High concentration of barrier-supporting lipids (your skin's natural oils that hold its protective layer together). At 35%, this addresses cumulative environmental damage from prolonged outdoor exposure.",
     },
     {
-      name: "Jojoba Oil",
+      name: "JOJOBA OIL",
       origin: "Australian-grown, Western Australia/South Australia/NSW",
       function:
         "Structurally similar to human sebum (your skin's natural oil). Helps regulate skin's natural oil balance. Lightweight, non-comedogenic (won't clog pores) wax ester.",
       why: "Australian-sourced at clinical dose. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat — helps maintain balanced skin without heaviness. Primary component of our 59% Australian-grown content.",
     },
     {
-      name: "Hemp Seed Oil",
+      name: "HEMP SEED OIL",
       origin: "Tasmanian-grown, cold-pressed, THC-free",
       function:
         "Balanced anti-inflammatory oil containing both gamma-linolenic acid (GLA, omega-6) and alpha-linolenic acid (ALA, omega-3). Optimal 3:1 ratio of omega-6 to omega-3 fatty acids helps regulate inflammation and support barrier function.",
       why: "Tasmanian-grown premium hemp. One of the few plant oils containing both omega-6 and omega-3 in balanced proportions. GLA provides anti-inflammatory support while omega-3 helps regulate sebum production (your skin's natural oil). Lighter texture than most seed oils — absorbs quickly without heaviness. Ideal for outdoor-exposed skin that needs inflammation control without excess oil. Part of our 59% Australian-grown content.",
     },
     {
-      name: "Macadamia Oil",
+      name: "MACADAMIA OIL",
       origin: "Australian-grown, Queensland/Northern NSW",
       function:
         "Contains palmitoleic acid (omega-7, a fatty acid that naturally occurs in younger skin but decreases with age and sun exposure). Lightweight despite being nourishing.",
       why: "Australian native tree at clinically meaningful dose. Provides fatty acids that help maintain skin's lipid barrier (your skin's natural oil layer). Contains omega-7, found in few other plant sources. Addresses age-related lipid depletion accelerated by environmental exposure. Part of our 59% Australian-grown content.",
     },
     {
-      name: "Meadowfoam Seed Oil",
+      name: "MEADOWFOAM SEED OIL",
       origin: "Oregon, USA (only region where it grows)",
       function:
         "Exceptionally stable plant oil with long-chain fatty acids (meaning it doesn't break down or go rancid easily). Helps protect other oils from degradation. Forms a breathable protective layer on skin.",
       why: "Acts as natural stabilizer, extending product shelf life without synthetic additives. Helps formula remain stable under sun exposure and temperature changes. Critical for protecting the 50% oxidation-prone oils in this formula from Australian sun.",
     },
     {
-      name: "Vitamin E",
+      name: "VITAMIN E",
       origin: "Natural d-alpha tocopherol, plant-derived",
       function:
         "Antioxidant (protects against damage from environmental exposure) that helps protect skin from environmental stressors. Supports skin's natural lipid barrier (your skin's natural oil layer). Helps maintain product stability.",
       why: "Natural form for better skin compatibility. Provides antioxidant protection without common allergen concerns. Works with Rosemary CO2 Extract and Meadowfoam to create a triple-layer antioxidant system for 12-18 month shelf life.",
     },
     {
-      name: "Rosemary CO2 Extract",
+      name: "ROSEMARY CO2 EXTRACT",
       origin: "Mediterranean origin, supercritical CO2 extraction",
       function:
         "Contains carnosic acid (a natural antioxidant compound) with natural antioxidant and antimicrobial (keeps bacteria/fungi from growing) properties. Helps prevent product oxidation (going rancid). Maintains freshness without synthetic preservatives.",
@@ -132,20 +132,20 @@ const Ingredients = () => {
       {/* Header */}
       <section className="section-padding border-b border-border">
         <div className="max-w-[700px] mx-auto px-6">
-          <p className="text-sm uppercase tracking-widest text-muted-foreground mb-3">
-            What's In It
+          <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-3">
+            WHAT'S IN IT
           </p>
-          <h1 className="text-4xl md:text-5xl font-display">Ingredients</h1>
+          <h1 className="text-4xl md:text-5xl font-typewriter uppercase">INGREDIENTS</h1>
         </div>
       </section>
 
       {/* Product Overview */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
-          <p className="text-lg md:text-xl font-medium text-foreground leading-relaxed">
+          <p className="text-lg md:text-xl font-body font-medium text-foreground leading-relaxed">
             100% Natural Ingredients. Zero Synthetic Ingredients. Zero Essential Oils. Zero Fragrance.
           </p>
-          <p className="mt-4 text-muted-foreground leading-relaxed text-[17px]">
+          <p className="mt-4 font-body text-muted-foreground leading-relaxed text-[17px]">
             Built for men with significant outdoor exposure — those who've been doing the thing long enough that the environmental damage shows.
           </p>
 
@@ -153,16 +153,16 @@ const Ingredients = () => {
           <div className="mt-10 border-t border-border">
             {characteristics.map((item, i) => (
               <div key={i} className="flex flex-col sm:flex-row py-3 border-b border-border text-sm">
-                <span className="text-muted-foreground sm:w-36 flex-shrink-0 uppercase tracking-wider text-xs font-medium">
+                <span className="font-typewriter text-muted-foreground sm:w-36 flex-shrink-0 uppercase tracking-wider text-xs">
                   {item.label}
                 </span>
-                <span className="text-foreground mt-1 sm:mt-0">{item.value}</span>
+                <span className="font-body text-foreground mt-1 sm:mt-0">{item.value}</span>
               </div>
             ))}
           </div>
 
           {/* Key stat callout */}
-          <p className="mt-10 text-lg font-medium text-foreground">
+          <p className="mt-10 text-lg font-body font-medium text-foreground">
             59% active barrier-repair oils. 59% Australian-grown. Not anti-aging — equipment maintenance.
           </p>
         </div>
@@ -171,8 +171,8 @@ const Ingredients = () => {
       {/* Ingredients List */}
       <section className="pb-20 md:pb-32">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-2xl md:text-3xl font-display mb-12">
-            Full Ingredient List (7 Ingredients)
+          <h2 className="text-2xl md:text-3xl font-typewriter uppercase mb-12">
+            FULL INGREDIENT LIST (7 INGREDIENTS)
           </h2>
 
           <div className="space-y-0">
@@ -181,23 +181,23 @@ const Ingredients = () => {
                 key={index}
                 className="py-10 border-t border-border first:border-t-0 first:pt-0"
               >
-                <h3 className="text-xl md:text-2xl font-display">{ingredient.name}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{ingredient.origin}</p>
+                <h3 className="text-xl md:text-2xl font-typewriter uppercase">{ingredient.name}</h3>
+                <p className="mt-1 text-sm font-body text-muted-foreground">{ingredient.origin}</p>
 
                 <div className="mt-6 space-y-5">
                   <div>
-                    <h4 className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-2">
-                      Function
+                    <h4 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                      FUNCTION
                     </h4>
-                    <p className="text-foreground leading-relaxed text-[17px]">
+                    <p className="font-body text-foreground leading-relaxed text-[17px]">
                       {ingredient.function}
                     </p>
                   </div>
                   <div>
-                    <h4 className="text-xs uppercase tracking-widest text-muted-foreground font-medium mb-2">
-                      Why We Use It
+                    <h4 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                      WHY WE USE IT
                     </h4>
-                    <p className="text-foreground leading-relaxed text-[17px]">
+                    <p className="font-body text-foreground leading-relaxed text-[17px]">
                       {ingredient.why}
                     </p>
                   </div>
@@ -211,7 +211,7 @@ const Ingredients = () => {
       {/* Storage & Shelf Life */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-display mb-6">Storage & Shelf Life</h2>
+          <h2 className="text-xl font-typewriter uppercase mb-6">STORAGE & SHELF LIFE</h2>
           <div className="border-t border-border">
             {[
               { label: "Shelf life", value: "12-18 months from manufacture date" },
@@ -219,23 +219,23 @@ const Ingredients = () => {
               { label: "Packaging", value: "Amber glass bottle with dropper provides UV protection" },
             ].map((item, i) => (
               <div key={i} className="flex flex-col sm:flex-row py-3 border-b border-border text-sm">
-                <span className="text-muted-foreground sm:w-36 flex-shrink-0 uppercase tracking-wider text-xs font-medium">
+                <span className="font-typewriter text-muted-foreground sm:w-36 flex-shrink-0 uppercase tracking-wider text-xs">
                   {item.label}
                 </span>
-                <span className="text-foreground mt-1 sm:mt-0">{item.value}</span>
+                <span className="font-body text-foreground mt-1 sm:mt-0">{item.value}</span>
               </div>
             ))}
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">Keep lid tightly closed after each use.</p>
+          <p className="mt-4 text-sm font-body text-muted-foreground">Keep lid tightly closed after each use.</p>
         </div>
       </section>
 
       {/* Origin */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-display mb-3">Origin</h2>
-          <p className="text-lg font-medium text-foreground">59% Australian-grown by volume</p>
-          <p className="mt-2 text-[17px] text-muted-foreground">
+          <h2 className="text-xl font-typewriter uppercase mb-3">ORIGIN</h2>
+          <p className="text-lg font-body font-medium text-foreground">59% Australian-grown by volume</p>
+          <p className="mt-2 text-[17px] font-body text-muted-foreground">
             Tasmanian Hemp, Australian Jojoba, and Australian Macadamia sourced from Australian farms.
           </p>
         </div>
@@ -248,11 +248,11 @@ const Ingredients = () => {
       {/* Built For */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-display mb-3">Built For</h2>
-          <p className="text-muted-foreground leading-relaxed text-[17px]">
+          <h2 className="text-xl font-typewriter uppercase mb-3">BUILT FOR</h2>
+          <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
             Men with significant outdoor exposure — surfers with 15+ years in the water, tradies with decades on the tools, cyclists doing serious miles, outdoor workers exposed to the elements.
           </p>
-          <p className="mt-4 text-[17px] font-medium text-foreground">
+          <p className="mt-4 text-[17px] font-body font-medium text-foreground">
             Not anti-aging. Barrier maintenance for cumulative environmental damage from prolonged outdoor conditions.
           </p>
         </div>
@@ -261,11 +261,11 @@ const Ingredients = () => {
       {/* INCI List */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-display mb-4">Full INCI List</h2>
-          <p className="text-[17px] text-muted-foreground leading-relaxed">
+          <h2 className="text-xl font-typewriter uppercase mb-4">FULL INCI LIST</h2>
+          <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
             Rosa Canina Fruit Oil (Rosehip), Simmondsia Chinensis Seed Oil (Jojoba), Cannabis Sativa Seed Oil (Hemp Seed), Macadamia Ternifolia Seed Oil (Macadamia), Limnanthes Alba Seed Oil (Meadowfoam), Tocopherol (Vitamin E), Rosmarinus Officinalis Leaf Extract (Rosemary)
           </p>
-          <p className="mt-4 text-[17px] font-medium text-foreground">
+          <p className="mt-4 text-[17px] font-body font-medium text-foreground">
             Contains: Tree nut derivatives (Macadamia)
           </p>
         </div>
@@ -274,10 +274,10 @@ const Ingredients = () => {
       {/* What It Doesn't Contain */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-display mb-6">What It Doesn't Contain</h2>
+          <h2 className="text-xl font-typewriter uppercase mb-6">WHAT IT DOESN'T CONTAIN</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
             {excludedItems.map((item, index) => (
-              <div key={index} className="flex items-center gap-3 text-[17px] py-1">
+              <div key={index} className="flex items-center gap-3 text-[17px] font-body py-1">
                 <span className="text-muted-foreground">❌</span>
                 <span className="text-foreground">{item}</span>
               </div>
@@ -289,15 +289,15 @@ const Ingredients = () => {
       {/* FAQ */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-display mb-6">Frequently Asked Questions</h2>
+          <h2 className="text-xl font-typewriter uppercase mb-6">FREQUENTLY ASKED QUESTIONS</h2>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`faq-${index}`}>
-                <AccordionTrigger className="text-left text-[17px] font-medium">
+                <AccordionTrigger className="text-left text-[17px] font-body font-medium">
                   {faq.q}
                 </AccordionTrigger>
                 <AccordionContent>
-                  <p className="text-muted-foreground leading-relaxed text-[17px]">
+                  <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
                     {faq.a}
                   </p>
                 </AccordionContent>
@@ -310,7 +310,7 @@ const Ingredients = () => {
       {/* Disclaimer */}
       <section className="py-10">
         <div className="max-w-[700px] mx-auto px-6">
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs font-body text-muted-foreground leading-relaxed">
             This product is a cosmetic, not a therapeutic good. It is designed to support barrier function and help maintain skin's natural moisture barrier. It is not intended to diagnose, treat, cure, or prevent any disease. Australian Certified Organic ingredients where specified. For external use only.
           </p>
         </div>
@@ -319,7 +319,7 @@ const Ingredients = () => {
       {/* Contact */}
       <section className="py-8 border-t border-border">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <p className="text-[17px] text-muted-foreground">
+          <p className="text-[17px] font-body text-muted-foreground">
             Questions?{" "}
             <a
               href="mailto:hello@coastalendurance.com"

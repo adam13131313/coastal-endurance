@@ -50,11 +50,11 @@ const Cart = () => {
       <main className="pt-20">
         <section className="section-padding">
           <div className="container-narrow text-center">
-            <h1 className="text-4xl md:text-5xl font-display">Your Cart</h1>
-            <p className="mt-6 text-muted-foreground">Your cart is empty.</p>
+            <h1 className="text-4xl md:text-5xl font-typewriter uppercase">YOUR CART</h1>
+            <p className="mt-6 font-body text-muted-foreground">Your cart is empty.</p>
             <Link to="/product" className="btn-primary mt-8 inline-flex">
               <ArrowLeft className="mr-2 w-4 h-4" />
-              Continue Shopping
+              CONTINUE SHOPPING
             </Link>
           </div>
         </section>
@@ -66,8 +66,8 @@ const Cart = () => {
     <main className="pt-20">
       <section className="section-padding">
         <div className="container-narrow">
-          <h1 className="text-4xl md:text-5xl font-display text-center mb-12">
-            Your Cart
+          <h1 className="text-4xl md:text-5xl font-typewriter uppercase text-center mb-12">
+            YOUR CART
           </h1>
 
           <div className="space-y-6">
@@ -86,8 +86,8 @@ const Cart = () => {
                 <div className="flex-1 flex flex-col">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-display text-lg">{item.product.node.title}</h3>
-                      <p className="text-sm text-muted-foreground">{item.selectedOptions.map(o => o.value).join(' · ')}</p>
+                      <h3 className="font-typewriter text-lg uppercase">{item.product.node.title}</h3>
+                      <p className="text-sm font-body text-muted-foreground">{item.selectedOptions.map(o => o.value).join(' · ')}</p>
                     </div>
                     <button
                       onClick={() => removeItem(item.variantId)}
@@ -107,7 +107,7 @@ const Cart = () => {
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm">
+                      <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-body">
                         {item.quantity}
                       </span>
                       <button
@@ -119,7 +119,7 @@ const Cart = () => {
                       </button>
                     </div>
 
-                    <p className="font-medium">
+                    <p className="font-body font-medium">
                       ${(parseFloat(item.price.amount) * item.quantity).toFixed(2)} <span className="text-sm text-muted-foreground">{item.price.currencyCode}</span>
                     </p>
                   </div>
@@ -130,21 +130,21 @@ const Cart = () => {
 
           <div className="mt-12 pt-6 border-t border-border">
             <div className="flex justify-between items-center text-lg">
-              <span>Subtotal</span>
-              <span className="font-display text-2xl">${totalPrice.toFixed(2)} {items[0]?.price.currencyCode}</span>
+              <span className="font-body">Subtotal</span>
+              <span className="font-typewriter text-2xl">${totalPrice.toFixed(2)} {items[0]?.price.currencyCode}</span>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm font-body text-muted-foreground">
               Free postage within Australia. International shipping calculated at checkout.
             </p>
 
             {authChecked && !user && (
-              <div className="p-4 border border-border bg-muted/30 rounded-md space-y-3">
-                <p className="text-sm font-medium">Sign in to save your details for faster checkout</p>
+              <div className="p-4 border border-border bg-muted/30 space-y-3">
+                <p className="text-sm font-body font-medium">Sign in to save your details for faster checkout</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleSignIn("google")}
                     disabled={!!signingIn}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-border rounded-md text-sm transition-colors hover:bg-accent disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-border text-sm font-body transition-colors hover:bg-accent disabled:opacity-50"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
                       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -157,7 +157,7 @@ const Cart = () => {
                   <button
                     onClick={() => handleSignIn("apple")}
                     disabled={!!signingIn}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-border rounded-md text-sm transition-colors hover:bg-accent disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 border border-border text-sm font-body transition-colors hover:bg-accent disabled:opacity-50"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
@@ -178,12 +178,12 @@ const Cart = () => {
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    Checkout
+                    CHECKOUT
                     <ExternalLink className="ml-2 w-4 h-4" />
                   </>
                 )}
               </button>
-              <p className="text-xs text-center text-muted-foreground">
+              <p className="text-xs text-center font-body text-muted-foreground">
                 Discount codes can be applied at checkout
               </p>
               <Link
@@ -191,7 +191,7 @@ const Cart = () => {
                 className="btn-outline w-full flex items-center justify-center"
               >
                 <ArrowLeft className="mr-2 w-4 h-4" />
-                Continue Shopping
+                CONTINUE SHOPPING
               </Link>
             </div>
           </div>

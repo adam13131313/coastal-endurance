@@ -21,10 +21,10 @@ const Header = () => {
   }, []);
 
   const navLinks = [
-    { name: "Shop", path: "/product" },
-    { name: "Ingredients", path: "/ingredients" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: "SHOP", path: "/product" },
+    { name: "INGREDIENTS", path: "/ingredients" },
+    { name: "ABOUT", path: "/about" },
+    { name: "CONTACT", path: "/contact" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -33,7 +33,7 @@ const Header = () => {
     <header className="fixed top-8 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
       <div className="container-wide">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <Link to="/" className="font-display text-xl md:text-2xl font-medium tracking-tight">
+          <Link to="/" className="font-typewriter text-sm tracking-widest uppercase">
             Coastal Endurance
           </Link>
 
@@ -42,7 +42,7 @@ const Header = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-body tracking-wide transition-colors link-underline ${
+                className={`text-xs font-typewriter tracking-wider transition-colors link-underline ${
                   isActive(link.path)
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -88,7 +88,7 @@ const Header = () => {
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-lg font-body py-2 transition-colors ${
+                  className={`text-base font-typewriter py-2 transition-colors ${
                     isActive(link.path)
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground"

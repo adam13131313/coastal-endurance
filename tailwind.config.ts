@@ -19,9 +19,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        display: ['"Special Elite"', '"Courier New"', 'monospace'],
         body: ['"Inter"', 'system-ui', 'sans-serif'],
         typewriter: ['"Special Elite"', '"Courier New"', 'monospace'],
+      },
       },
       colors: {
         border: "hsl(var(--border))",

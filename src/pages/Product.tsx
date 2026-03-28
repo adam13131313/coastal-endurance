@@ -87,16 +87,17 @@ const Product = () => {
         <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $78 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
       </Helmet>
+
       {/* Header Banner */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <p className="text-sm uppercase tracking-widest text-muted-foreground mb-4">
-            100% Natural Ingredients
+          <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-4">
+            100% NATURAL INGREDIENTS
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display">
-            7 Natural Ingredients. Zero Compromises.
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
+            7 NATURAL INGREDIENTS. ZERO COMPROMISES.
           </h1>
-          <p className="mt-6 text-[17px] text-muted-foreground leading-relaxed">
+          <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
             100% natural. Every ingredient has a job. No synthetics. No filler. 
             59% Australian-grown. Just functional compounds chosen for performance.
           </p>
@@ -107,35 +108,28 @@ const Product = () => {
       <section className="section-padding">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            {/* Images */}
             <div className="space-y-4">
               <div className="aspect-square bg-muted overflow-hidden">
-                <img
-                  src={productImage}
-                  alt="Field Oil 30ml bottle"
-                  className="w-full h-full object-cover"
-                />
+                <img src={productImage} alt="Field Oil 30ml bottle" className="w-full h-full object-cover" />
               </div>
             </div>
 
-            {/* Product Info */}
             <div className="lg:sticky lg:top-32 lg:self-start">
-              <span className="text-sm uppercase tracking-widest text-muted-foreground">
-                Daily Barrier Oil For Your Face
+              <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
+                DAILY BARRIER OIL FOR YOUR FACE
               </span>
-              <h2 className="mt-4 text-4xl md:text-5xl font-display">
-                Field Oil
+              <h2 className="mt-4 text-4xl md:text-5xl font-typewriter uppercase">
+                FIELD OIL
               </h2>
               <p className="mt-2 text-2xl font-body">
                 ${price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
               </p>
 
-              <p className="mt-6 text-muted-foreground leading-relaxed text-[17px]">
+              <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
                 A lightweight daily oil that supports and maintains your skin barrier. 
                 Formulated for those who face sun, wind, salt, and sweat — every day.
               </p>
 
-              {/* Features */}
               <ul className="mt-8 space-y-3">
                 {[
                   "30ml — approximately 2 months of daily use",
@@ -144,8 +138,8 @@ const Product = () => {
                   "Free postage within Australia",
                   "Made in Australia",
                 ].map((feature, index) => (
-                  <li key={index} className="flex items-center gap-3 text-sm">
-                    <Check className="w-4 h-4 text-ocean-slate flex-shrink-0" />
+                  <li key={index} className="flex items-center gap-3 text-sm font-body">
+                    <Check className="w-4 h-4 text-foreground flex-shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -153,7 +147,6 @@ const Product = () => {
 
               {/* Purchase Options */}
               <div className="mt-10 space-y-6">
-                {/* One-Time Purchase Option */}
                 <div
                   onClick={() => setPurchaseType("one-time")}
                   className={`p-5 border cursor-pointer transition-all ${
@@ -164,8 +157,8 @@ const Product = () => {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="block text-base font-medium">One-Time Purchase</span>
-                      <span className="block text-sm text-muted-foreground mt-1">
+                      <span className="block text-base font-body font-medium">One-Time Purchase</span>
+                      <span className="block text-sm font-body text-muted-foreground mt-1">
                         Single bottle — ${price.toFixed(2)} {currencyCode}
                       </span>
                     </div>
@@ -178,10 +171,9 @@ const Product = () => {
                     </div>
                   </div>
 
-                  {/* Quantity Selector */}
                   {purchaseType === "one-time" && (
                     <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
-                      <span className="text-sm text-muted-foreground">Quantity</span>
+                      <span className="text-sm font-body text-muted-foreground">Quantity</span>
                       <div className="flex items-center border border-border">
                         <button
                           onClick={(e) => { e.stopPropagation(); setQuantity(Math.max(1, quantity - 1)); }}
@@ -190,7 +182,7 @@ const Product = () => {
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-medium">
+                        <span className="px-3 py-2 min-w-[2.5rem] text-center text-sm font-body font-medium">
                           {quantity}
                         </span>
                         <button
@@ -210,36 +202,36 @@ const Product = () => {
                   onClick={() => setPurchaseType("subscription")}
                   className={`relative p-6 border cursor-pointer transition-all ${
                     purchaseType === "subscription"
-                      ? "border-ocean-slate ring-2 ring-ocean-slate bg-ocean-slate/5"
-                      : "border-border hover:border-ocean-slate/50"
+                      ? "border-foreground ring-2 ring-foreground bg-muted/30"
+                      : "border-border hover:border-foreground/50"
                   }`}
                 >
-                  <div className="absolute -top-3 left-6 bg-ocean-slate text-background text-xs font-medium px-3 py-1 uppercase tracking-wider">
-                    Best Value
+                  <div className="absolute -top-3 left-6 bg-foreground text-background text-xs font-typewriter px-3 py-1 uppercase tracking-wider">
+                    BEST VALUE
                   </div>
 
                   <div className="flex items-start justify-between mt-1">
                     <div className="flex-1">
-                      <h4 className="text-lg font-display">12-Month Subscription</h4>
-                      <p className="text-base font-medium mt-1">
+                      <h4 className="text-lg font-typewriter uppercase">12-MONTH SUBSCRIPTION</h4>
+                      <p className="text-base font-body font-medium mt-1">
                         One bottle delivered every 2 months
                       </p>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
-                      purchaseType === "subscription" ? "border-ocean-slate" : "border-muted-foreground/40"
+                      purchaseType === "subscription" ? "border-foreground" : "border-muted-foreground/40"
                     }`}>
                       {purchaseType === "subscription" && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-ocean-slate" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-foreground" />
                       )}
                     </div>
                   </div>
 
                   <div className="mt-4 pt-4 border-t border-border">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-display">${subscriptionPrice.toFixed(2)}</span>
-                      <span className="text-muted-foreground">{currencyCode} total</span>
+                      <span className="text-3xl font-typewriter">${subscriptionPrice.toFixed(2)}</span>
+                      <span className="font-body text-muted-foreground">{currencyCode} total</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm font-body text-muted-foreground mt-1">
                       6 bottles for the price of 5 — save ${savingsAmount.toFixed(2)}
                     </p>
                   </div>
@@ -250,8 +242,8 @@ const Product = () => {
                       "Delivered every 2 months",
                       "Cancel anytime — no lock-in",
                     ].map((benefit, index) => (
-                      <li key={index} className="flex items-center gap-3 text-sm">
-                        <Check className="w-4 h-4 text-ocean-slate flex-shrink-0" />
+                      <li key={index} className="flex items-center gap-3 text-sm font-body">
+                        <Check className="w-4 h-4 text-foreground flex-shrink-0" />
                         {benefit}
                       </li>
                     ))}
@@ -266,19 +258,19 @@ const Product = () => {
                   {cartLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : purchaseType === "subscription" ? (
-                    `Subscribe — $${subscriptionPrice.toFixed(2)} ${currencyCode}`
+                    `SUBSCRIBE — $${subscriptionPrice.toFixed(2)} ${currencyCode}`
                   ) : (
-                    `Add to Cart — $${currentPrice.toFixed(2)} ${currencyCode}`
+                    `ADD TO CART — $${currentPrice.toFixed(2)} ${currencyCode}`
                   )}
                 </button>
               </div>
 
               {/* How to Use */}
               <div className="mt-12 pt-8 border-t border-border">
-                <h3 className="text-sm uppercase tracking-widest font-medium mb-4">
-                  How to Use
+                <h3 className="font-typewriter text-sm uppercase tracking-widest mb-4">
+                  HOW TO USE
                 </h3>
-                <p className="text-muted-foreground leading-relaxed text-[17px]">
+                <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
                   Apply ≈0.4ml to clean, slightly damp skin. Morning or evening. 
                   Massage into face and neck. That's it. One product. Daily.
                 </p>
@@ -286,10 +278,10 @@ const Product = () => {
 
               {/* Suitable For */}
               <div className="mt-8 pt-8 border-t border-border">
-                <h3 className="text-sm uppercase tracking-widest font-medium mb-4">
-                  Suitable For
+                <h3 className="font-typewriter text-sm uppercase tracking-widest mb-4">
+                  SUITABLE FOR
                 </h3>
-                <p className="text-muted-foreground leading-relaxed text-[17px]">
+                <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
                   Normal, dry, mature, and outdoor-exposed skin.
                 </p>
               </div>
@@ -301,10 +293,10 @@ const Product = () => {
       {/* Who It's For */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-display text-center">
-            Who It's For
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase text-center">
+            WHO IT'S FOR
           </h2>
-          <p className="mt-6 text-center text-muted-foreground leading-relaxed text-[17px]">
+          <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px] text-left">
             Field Oil is built for those who spend real time outside. Surfers, runners, cyclists, 
             builders, professionals who train before or after work. If your skin faces the elements daily, 
             this is your maintenance tool.
@@ -315,30 +307,30 @@ const Product = () => {
       {/* How It Works */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-display text-center">
-            How It Works
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase text-center">
+            HOW IT WORKS
           </h2>
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: "Support",
+                title: "SUPPORT",
                 description: "Helps maintain essential lipids that sun, wind, and water strip away.",
               },
               {
-                title: "Protect",
+                title: "PROTECT",
                 description: "Reinforces the skin barrier against environmental stress.",
               },
               {
-                title: "Maintain",
+                title: "MAINTAIN",
                 description: "Supports natural barrier function while you rest.",
               },
             ].map((step, index) => (
               <div key={index} className="text-center">
-                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted text-lg font-display">
+                <span className="inline-flex items-center justify-center w-12 h-12 bg-muted text-lg font-typewriter">
                   {index + 1}
                 </span>
-                <h3 className="mt-4 text-xl font-display">{step.title}</h3>
-                <p className="mt-2 text-muted-foreground text-[17px]">{step.description}</p>
+                <h3 className="mt-4 text-xl font-typewriter uppercase">{step.title}</h3>
+                <p className="mt-2 font-body text-muted-foreground text-[17px]">{step.description}</p>
               </div>
             ))}
           </div>
@@ -350,7 +342,7 @@ const Product = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
             <div>
-              <h2 className="text-2xl font-display mb-8">Product Characteristics</h2>
+              <h2 className="text-2xl font-typewriter uppercase mb-8">PRODUCT CHARACTERISTICS</h2>
               <div className="space-y-4">
                 {[
                   { label: "Appearance", value: "Clear to pale amber oil with golden hue" },
@@ -360,15 +352,15 @@ const Product = () => {
                   { label: "Viscosity", value: "Medium (pours easily, not too thick or thin)" },
                 ].map((item, index) => (
                   <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
-                    <span className="text-sm uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
-                    <span className="text-foreground text-[17px]">{item.value}</span>
+                    <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
+                    <span className="font-body text-foreground text-[17px]">{item.value}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <h2 className="text-2xl font-display mb-8">Shelf Life & Storage</h2>
+              <h2 className="text-2xl font-typewriter uppercase mb-8">SHELF LIFE & STORAGE</h2>
               <div className="space-y-4">
                 {[
                   { label: "Shelf Life", value: "12–18 months from manufacture date" },
@@ -376,8 +368,8 @@ const Product = () => {
                   { label: "Packaging", value: "Amber glass bottle (UV protection)" },
                 ].map((item, index) => (
                   <div key={index} className="flex flex-col sm:flex-row sm:gap-6 pb-4 border-b border-border last:border-0">
-                    <span className="text-sm uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
-                    <span className="text-foreground text-[17px]">{item.value}</span>
+                    <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground sm:w-32 flex-shrink-0">{item.label}</span>
+                    <span className="font-body text-foreground text-[17px]">{item.value}</span>
                   </div>
                 ))}
               </div>
