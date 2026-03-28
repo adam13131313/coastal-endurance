@@ -102,7 +102,7 @@ const FieldTeam = () => {
               </h3>
               <p>
                 Should absorb completely. If it feels greasy after 5 minutes,
-                you've used too much — try ≈0.3ml instead.
+                you've used too much — try a little less next time.
               </p>
             </div>
           </div>
