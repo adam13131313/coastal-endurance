@@ -66,7 +66,7 @@ const About = () => {
               <p>
                 Most face oils target chronological aging ("look younger") or are built around luxury 
                 rituals (10-step routines, aromatherapy, self-care). Neither works for men who spend 
-                real time outdoors.
+                real time outdoors and care primarily about function and practical maintenance.
               </p>
               <p>
                 If you're surfing daily, riding 12+ hours a week, or working outside year-round, your skin is 
