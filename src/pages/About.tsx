@@ -159,7 +159,7 @@ const About = () => {
             <p className="text-foreground font-medium">Men who love the outdoors:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Surfers — whether it's dawn patrol every day or weekend sessions</li>
-              <li>Swimmers — ocean dips, wild swimming, laps in salt or chlorine</li>
+              <li>Swimmers — ocean dips, wild swimming, or daily lap sessions in the pool</li>
               <li>Cyclists putting in miles on the road or the trail</li>
               <li>Outdoor workers — tradies, builders, farmers</li>
               <li>Dads who spend every spare hour outside with their kids</li>
