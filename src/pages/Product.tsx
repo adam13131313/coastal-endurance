@@ -227,9 +227,8 @@ const Product = () => {
                   </div>
 
                   <div className="mt-4 pt-4 border-t border-border">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-typewriter">${subscriptionPrice.toFixed(2)}</span>
-                      <span className="font-body text-muted-foreground">{currencyCode} total</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-base font-body font-medium">${subscriptionPrice.toFixed(2)} {currencyCode} total</span>
                     </div>
                     <p className="text-sm font-body text-muted-foreground mt-1">
                       6 bottles for the price of 5 — save ${savingsAmount.toFixed(2)}
