@@ -161,7 +161,7 @@ const About = () => {
               <li>Surfers — whether it's dawn patrol every day or weekend sessions</li>
               <li>Swimmers — open water, wild swimming, or daily lap sessions in the pool</li>
               <li>Cyclists putting in miles on the road or the trail</li>
-              <li>Outdoor workers — tradies, builders, farmers</li>
+              <li>Outdoor workers — tradies, builders, farmers, utility and municipal crews</li>
               <li>Dads who spend every spare hour outside with their kids</li>
               <li>Anyone whose outdoor time adds up, week after week</li>
             </ul>
