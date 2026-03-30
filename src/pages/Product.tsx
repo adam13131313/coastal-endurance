@@ -212,10 +212,10 @@ const Product = () => {
 
                   <div className="flex items-start justify-between mt-1">
                     <div className="flex-1">
-                      <h4 className="text-lg font-typewriter uppercase">12-MONTH SUBSCRIPTION</h4>
-                      <p className="text-base font-body font-medium mt-1">
+                      <span className="block text-base font-body font-medium">12-Month Subscription</span>
+                      <span className="block text-sm font-body text-muted-foreground mt-1">
                         One bottle delivered every 2 months
-                      </p>
+                      </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
                       purchaseType === "subscription" ? "border-foreground" : "border-muted-foreground/40"
