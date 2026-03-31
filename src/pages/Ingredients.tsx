@@ -278,8 +278,8 @@ const Ingredients = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
             {excludedItems.map((item, index) => (
               <div key={index} className="flex items-center gap-3 text-[17px] font-body py-1">
-                <span className="text-muted-foreground">❌</span>
-                <span className="text-foreground">{item}</span>
+                <span className="text-xs font-typewriter text-muted-foreground tracking-widest">—</span>
+                <span className="text-muted-foreground line-through decoration-muted-foreground/40">{item}</span>
               </div>
             ))}
           </div>
