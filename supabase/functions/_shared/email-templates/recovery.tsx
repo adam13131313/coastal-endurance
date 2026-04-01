@@ -8,8 +8,10 @@ import {
   Container,
   Head,
   Heading,
+  Hr,
   Html,
   Preview,
+  Section,
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
@@ -24,12 +26,16 @@ export const RecoveryEmail = ({
 }: RecoveryEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Reset your password for {siteName}</Preview>
+    <Preview>Reset your password for Coastal Endurance</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Section style={header}>
+          <Text style={brand}>COASTAL ENDURANCE</Text>
+        </Section>
+        <Hr style={divider} />
         <Heading style={h1}>Reset your password</Heading>
         <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
+          We received a request to reset your password for Coastal Endurance. Click
           the button below to choose a new password.
         </Text>
         <Button style={button} href={confirmationUrl}>
@@ -46,26 +52,38 @@ export const RecoveryEmail = ({
 
 export default RecoveryEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
+const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
+const container = { padding: '32px 28px', maxWidth: '520px', margin: '0 auto' }
+const header = { padding: '0 0 8px' }
+const brand = {
+  fontSize: '13px',
+  fontWeight: '600' as const,
+  letterSpacing: '3px',
+  color: '#000000',
+  margin: '0',
+}
+const divider = { borderColor: '#d6cfc4', margin: '16px 0 28px' }
 const h1 = {
   fontSize: '22px',
-  fontWeight: 'bold' as const,
+  fontWeight: '600' as const,
   color: '#000000',
   margin: '0 0 20px',
+  letterSpacing: '-0.3px',
 }
 const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
+  fontSize: '15px',
+  color: '#333333',
+  lineHeight: '1.6',
+  margin: '0 0 20px',
 }
 const button = {
   backgroundColor: '#000000',
-  color: '#ffffff',
+  color: '#f7f3ef',
   fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
+  fontWeight: '500' as const,
+  borderRadius: '0px',
+  padding: '12px 24px',
   textDecoration: 'none',
+  letterSpacing: '0.5px',
 }
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const footer = { fontSize: '13px', color: '#999999', margin: '32px 0 0', lineHeight: '1.5' }
