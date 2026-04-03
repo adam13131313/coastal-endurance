@@ -14,6 +14,7 @@ const Home = () => {
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubscribing(true);
+    const { supabase } = await import("@/integrations/supabase/client");
     const { error } = await supabase.from("newsletter_signups").insert({
       email: newsletterEmail,
       source: "homepage"
