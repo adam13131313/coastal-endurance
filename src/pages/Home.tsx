@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
-import { supabase } from "@/integrations/supabase/client";
+
 import heroImage from "@/assets/hero-product.jpg";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 

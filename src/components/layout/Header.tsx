@@ -1,36 +1,58 @@
-import { lazy, Suspense, useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User, ShoppingBag } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import type { User as SupaUser } from "@supabase/supabase-js";
 
 const CartDrawer = lazy(() =>
   import("@/components/CartDrawer").then((module) => ({ default: module.CartDrawer }))
 );
 
+const navLinks = [
+  { name: "SHOP", path: "/product" },
+  { name: "INGREDIENTS", path: "/ingredients" },
+  { name: "ABOUT", path: "/about" },
+  { name: "CONTACT", path: "/contact" },
+];
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState<SupaUser | null>(null);
+  const [user, setUser] = useState<{ avatar_url?: string } | null>(null);
   const location = useLocation();
 
+  // Defer auth check so it doesn't block first paint
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user ?? null);
-    });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-    return () => subscription.unsubscribe();
+    let cancelled = false;
+    const init = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      if (cancelled) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!cancelled) {
+        setUser(session?.user ? { avatar_url: session.user.user_metadata?.avatar_url } : null);
+      }
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => {
+        setUser(s?.user ? { avatar_url: s.user.user_metadata?.avatar_url } : null);
+      });
+      if (cancelled) subscription.unsubscribe();
+      else {
+        // Store cleanup ref
+        (init as any)._unsub = () => subscription.unsubscribe();
+      }
+    };
+
+    // Use requestIdleCallback if available, else setTimeout
+    const id = typeof requestIdleCallback !== "undefined"
+      ? requestIdleCallback(() => init())
+      : setTimeout(() => init(), 50);
+
+    return () => {
+      cancelled = true;
+      typeof requestIdleCallback !== "undefined"
+        ? cancelIdleCallback(id as number)
+        : clearTimeout(id as number);
+      (init as any)._unsub?.();
+    };
   }, []);
 
-  const navLinks = [
-    { name: "SHOP", path: "/product" },
-    { name: "INGREDIENTS", path: "/ingredients" },
-    { name: "ABOUT", path: "/about" },
-    { name: "CONTACT", path: "/contact" },
-  ];
-
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = useCallback((path: string) => location.pathname === path, [location.pathname]);
 
   return (
     <header className="fixed top-8 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm">
@@ -74,8 +96,8 @@ const Header = () => {
 
             {user ? (
               <Link to="/account" className="p-2 transition-colors hover:text-muted-foreground" aria-label="My Account">
-                {user.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover" />
+                {user.avatar_url ? (
+                  <img src={user.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover" />
                 ) : (
                   <User className="w-5 h-5" />
                 )}
