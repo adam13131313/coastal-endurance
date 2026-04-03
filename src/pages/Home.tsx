@@ -4,7 +4,6 @@ import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 
-import heroImage from "@/assets/hero-product.jpg";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
 const Home = () => {
@@ -37,14 +36,12 @@ const Home = () => {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-background">
         <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Field Oil product on sand"
-            className="w-full h-full object-cover"
-            fetchPriority="high" />
-          <div className="absolute inset-0 bg-background/80 md:bg-gradient-to-r md:from-background/92 md:via-background/75 md:to-background/30" />
+          <div className="absolute inset-0 bg-background" />
+          <div className="absolute inset-x-0 top-0 h-[65%] bg-[radial-gradient(circle_at_top,hsl(var(--accent)/0.18),transparent_68%)]" />
+          <div className="absolute inset-y-0 right-[-12%] hidden w-[42%] md:block bg-[radial-gradient(circle,hsl(var(--muted)/0.55),transparent_70%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-[linear-gradient(180deg,transparent,hsl(var(--background)))]" />
         </div>
         
         <div className="container-wide relative z-10 pt-20">
