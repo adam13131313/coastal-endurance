@@ -41,7 +41,8 @@ const Home = () => {
           <img
             src={heroImage}
             alt="Field Oil product on sand"
-            className="w-full h-full object-cover" />
+            className="w-full h-full object-cover"
+            fetchPriority="high" />
           <div className="absolute inset-0 bg-background/80 md:bg-gradient-to-r md:from-background/92 md:via-background/75 md:to-background/30" />
         </div>
         
