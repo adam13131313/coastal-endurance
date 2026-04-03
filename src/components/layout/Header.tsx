@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User } from "lucide-react";
-import { CartDrawer } from "@/components/CartDrawer";
+import { Menu, X, User, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupaUser } from "@supabase/supabase-js";
+
+const CartDrawer = lazy(() =>
+  import("@/components/CartDrawer").then((module) => ({ default: module.CartDrawer }))
+);
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,7 +57,20 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
-            <CartDrawer />
+            <Suspense
+              fallback={
+                <button
+                  type="button"
+                  disabled
+                  aria-label="Cart"
+                  className="relative p-2 text-muted-foreground/60"
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                </button>
+              }
+            >
+              <CartDrawer />
+            </Suspense>
 
             {user ? (
               <Link to="/account" className="p-2 transition-colors hover:text-muted-foreground" aria-label="My Account">

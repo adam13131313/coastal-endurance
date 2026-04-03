@@ -1,3 +1,4 @@
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,31 +6,47 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { CurrencyProvider } from "@/context/CurrencyContext";
-import { useCartSync } from "@/hooks/useCartSync";
 import ScrollToTop from "@/components/ScrollToTop";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Home from "./pages/Home";
-import Product from "./pages/Product";
-import Ingredients from "./pages/Ingredients";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Cart from "./pages/Cart";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
-import Account from "./pages/Account";
-import FieldTeam from "./pages/FieldTeam";
+
+const Product = lazy(() => import("./pages/Product"));
+const Ingredients = lazy(() => import("./pages/Ingredients"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Account = lazy(() => import("./pages/Account"));
+const FieldTeam = lazy(() => import("./pages/FieldTeam"));
+const CartSyncInitializer = lazy(() => import("@/components/CartSyncInitializer"));
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  useCartSync();
+  const [shouldLoadCartSync, setShouldLoadCartSync] = useState(false);
+
+  useEffect(() => {
+    if (!window.localStorage.getItem("shopify-cart")) return;
+
+    const timer = window.setTimeout(() => {
+      setShouldLoadCartSync(true);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   return (
     <BrowserRouter>
       <ScrollToTop />
+      {shouldLoadCartSync ? (
+        <Suspense fallback={null}>
+          <CartSyncInitializer />
+        </Suspense>
+      ) : null}
       <div className="flex flex-col min-h-screen">
         <div className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-center py-2 text-sm font-medium tracking-wide">
           Launching April 2026
@@ -37,20 +54,22 @@ const AppContent = () => {
         <div className="h-8" />
         <Header />
         <div className="flex-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/product" element={<Product />} />
-            <Route path="/ingredients" element={<Ingredients />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/field-team" element={<FieldTeam />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<main className="min-h-[40vh] bg-background" aria-busy="true" />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/product" element={<Product />} />
+              <Route path="/ingredients" element={<Ingredients />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/field-team" element={<FieldTeam />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </div>
         <Footer />
       </div>
