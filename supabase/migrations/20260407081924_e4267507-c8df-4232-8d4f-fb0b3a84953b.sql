@@ -1,0 +1,1 @@
+ALTER TABLE public.approved_field_team_members ADD COLUMN discount_code text;
