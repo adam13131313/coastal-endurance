@@ -40,11 +40,11 @@ const Product = () => {
 
   const variant = shopifyProduct?.node.variants.edges[0]?.node;
   const subVariant = subscriptionProduct?.node.variants.edges[0]?.node;
-  const price = variant ? parseFloat(variant.price.amount) : 68;
+  const price = variant ? parseFloat(variant.price.amount) : 85;
   const currencyCode = variant?.price.currencyCode || "AUD";
   const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
-  const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 5;
-  const savingsAmount = (price * 6) - subscriptionPrice;
+  const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 3;
+  const savingsAmount = (price * 4) - subscriptionPrice;
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
 
   const handleAddToCart = async () => {
@@ -61,7 +61,7 @@ const Product = () => {
         quantity: 1,
         selectedOptions: subVariant.selectedOptions || [],
       });
-      toast.success("Added 12-month subscription to cart");
+      toast.success("Added 12-month supply to cart");
     } else {
       if (!shopifyProduct || !variant) {
         toast.error("Product not available");
@@ -84,7 +84,7 @@ const Product = () => {
     <main className="pt-20" id="top">
       <Helmet>
         <title>Field Oil — Daily Barrier Face Oil for Outdoor Men | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $68 AUD. Made in Australia." />
+        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $85 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
       </Helmet>
 
@@ -132,10 +132,11 @@ const Product = () => {
 
               <ul className="mt-8 space-y-3">
                 {[
-                  "30ml — approximately 2 months of daily use",
+                  "30ml — approximately 3 months of daily use",
                   "Fast-absorbing, non-greasy finish",
                   "No fragrance or essential oils",
-                  "Free postage within Australia",
+                  "Free delivery within Australia",
+                  "International shipping costs apply outside Australia",
                   "Made in Australia",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-sm font-body">
@@ -212,9 +213,9 @@ const Product = () => {
 
                   <div className="flex items-start justify-between mt-1">
                     <div className="flex-1">
-                      <span className="block text-base font-body font-medium">12-Month Subscription</span>
+                       <span className="block text-base font-body font-medium">12-Month Supply</span>
                       <span className="block text-sm font-body text-muted-foreground mt-1">
-                        One bottle delivered every 2 months
+                        4 bottles delivered every 3 months
                       </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
@@ -230,15 +231,15 @@ const Product = () => {
                     <div className="flex items-baseline gap-1">
                       <span className="text-base font-body font-medium">${subscriptionPrice.toFixed(2)} {currencyCode} total</span>
                     </div>
-                    <p className="text-sm font-body text-muted-foreground mt-1">
-                      6 bottles for the price of 5 — save ${savingsAmount.toFixed(2)}
+                     <p className="text-sm font-body text-muted-foreground mt-1">
+                      4 bottles for the price of 3 — save ${savingsAmount.toFixed(2)}
                     </p>
                   </div>
 
                   <ul className="mt-5 space-y-2.5">
-                    {[
-                      "Free shipping on every delivery",
-                      "Delivered every 2 months",
+                     {[
+                      "Free delivery within Australia",
+                      "Delivered every 3 months",
                       "Cancel anytime — no lock-in",
                     ].map((benefit, index) => (
                       <li key={index} className="flex items-center gap-3 text-sm font-body">

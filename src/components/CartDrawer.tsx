@@ -93,7 +93,7 @@ export const CartDrawer = () => {
                   <span className="font-display text-xl">${totalPrice.toFixed(2)} {items[0]?.price.currencyCode}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Free postage within Australia. International shipping calculated at checkout.
+                  Free delivery within Australia. International shipping calculated at checkout.
                 </p>
                 <button
                   onClick={handleCheckout}
