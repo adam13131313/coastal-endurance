@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Separator } from "@/components/ui/separator";
+import FieldTeamDiscount from "@/components/FieldTeamDiscount";
 
 const FieldTeam = () => {
   return (
