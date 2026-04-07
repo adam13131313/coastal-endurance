@@ -239,7 +239,7 @@ const Product = () => {
                   <ul className="mt-5 space-y-2.5">
                      {[
                       "Free delivery within Australia",
-                      "Delivered every 3 months",
+                      "1 bottle delivered every 3 months",
                       "Cancel anytime — no lock-in",
                     ].map((benefit, index) => (
                       <li key={index} className="flex items-center gap-3 text-sm font-body">
