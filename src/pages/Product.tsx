@@ -231,8 +231,8 @@ const Product = () => {
                     <div className="flex items-baseline gap-1">
                       <span className="text-base font-body font-medium">${subscriptionPrice.toFixed(2)} {currencyCode} total</span>
                     </div>
-                    <p className="text-sm font-body text-muted-foreground mt-1">
-                      6 bottles for the price of 5 — save ${savingsAmount.toFixed(2)}
+                     <p className="text-sm font-body text-muted-foreground mt-1">
+                      4 bottles for the price of 3 — save ${savingsAmount.toFixed(2)}
                     </p>
                   </div>
 
