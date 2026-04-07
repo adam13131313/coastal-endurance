@@ -322,6 +322,16 @@ const FieldTeam = () => {
         </div>
       </section>
 
+      {/* Discount Code */}
+      <section className="section-padding">
+        <div className="max-w-[700px] mx-auto px-6">
+          <h2 className="text-xl md:text-2xl font-typewriter uppercase tracking-wide mb-8">
+            YOUR DISCOUNT
+          </h2>
+          <FieldTeamDiscount />
+        </div>
+      </section>
+
       <Separator className="max-w-[700px] mx-auto" />
 
       {/* Closing */}
