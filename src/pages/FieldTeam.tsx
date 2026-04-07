@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Separator } from "@/components/ui/separator";
+import FieldTeamDiscount from "@/components/FieldTeamDiscount";
 
 const FieldTeam = () => {
   return (
@@ -318,6 +319,16 @@ const FieldTeam = () => {
             If you experience any skin irritation, stop use immediately and let
             me know.
           </p>
+        </div>
+      </section>
+
+      {/* Discount Code */}
+      <section className="section-padding">
+        <div className="max-w-[700px] mx-auto px-6">
+          <h2 className="text-xl md:text-2xl font-typewriter uppercase tracking-wide mb-8">
+            YOUR DISCOUNT
+          </h2>
+          <FieldTeamDiscount />
         </div>
       </section>
 
