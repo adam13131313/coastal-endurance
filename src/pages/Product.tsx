@@ -213,9 +213,9 @@ const Product = () => {
 
                   <div className="flex items-start justify-between mt-1">
                     <div className="flex-1">
-                      <span className="block text-base font-body font-medium">12-Month Subscription</span>
+                       <span className="block text-base font-body font-medium">12-Month Supply</span>
                       <span className="block text-sm font-body text-muted-foreground mt-1">
-                        One bottle delivered every 2 months
+                        4 bottles delivered every 3 months
                       </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
