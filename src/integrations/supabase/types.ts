@@ -17,16 +17,19 @@ export type Database = {
       approved_field_team_members: {
         Row: {
           created_at: string
+          discount_code: string | null
           email: string
           id: string
         }
         Insert: {
           created_at?: string
+          discount_code?: string | null
           email: string
           id?: string
         }
         Update: {
           created_at?: string
+          discount_code?: string | null
           email?: string
           id?: string
         }
