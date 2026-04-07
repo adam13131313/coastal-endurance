@@ -21,7 +21,7 @@ const Terms = () => {
             </p>
             <h2 className="text-2xl font-display text-foreground">Orders & Shipping</h2>
             <p>
-              Orders are processed within 1-3 business days. Free postage within Australia. International shipping rates calculated at checkout. We reserve the right to limit quantities.
+              Orders are processed within 1-3 business days. Free delivery within Australia. International shipping rates calculated at checkout. We reserve the right to limit quantities.
             </p>
             <h2 className="text-2xl font-display text-foreground">Returns</h2>
             <p>
