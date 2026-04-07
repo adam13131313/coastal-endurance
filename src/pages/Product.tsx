@@ -61,7 +61,7 @@ const Product = () => {
         quantity: 1,
         selectedOptions: subVariant.selectedOptions || [],
       });
-      toast.success("Added 12-month subscription to cart");
+      toast.success("Added 12-month supply to cart");
     } else {
       if (!shopifyProduct || !variant) {
         toast.error("Product not available");
