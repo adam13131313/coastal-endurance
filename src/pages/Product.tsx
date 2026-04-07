@@ -215,8 +215,8 @@ const Product = () => {
                     <div className="flex-1">
                        <span className="block text-base font-body font-medium">12-Month Supply</span>
                       <span className="block text-sm font-body text-muted-foreground mt-1">
-                        4 bottles delivered every 3 months
-                      </span>
+                        4 bottles — one delivered every 3 months
+                       </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
                       purchaseType === "subscription" ? "border-foreground" : "border-muted-foreground/40"
@@ -239,7 +239,7 @@ const Product = () => {
                   <ul className="mt-5 space-y-2.5">
                      {[
                       "Free delivery within Australia",
-                      "Delivered every 3 months",
+                      "1 bottle delivered every 3 months",
                       "Cancel anytime — no lock-in",
                     ].map((benefit, index) => (
                       <li key={index} className="flex items-center gap-3 text-sm font-body">
