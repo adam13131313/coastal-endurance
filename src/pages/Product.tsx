@@ -43,8 +43,8 @@ const Product = () => {
   const price = variant ? parseFloat(variant.price.amount) : 85;
   const currencyCode = variant?.price.currencyCode || "AUD";
   const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
-  const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 5;
-  const savingsAmount = (price * 6) - subscriptionPrice;
+  const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 3;
+  const savingsAmount = (price * 4) - subscriptionPrice;
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
 
   const handleAddToCart = async () => {
