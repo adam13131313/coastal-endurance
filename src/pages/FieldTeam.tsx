@@ -56,7 +56,7 @@ const FieldTeam = () => {
             </li>
             <li className="flex gap-4">
               <span className="text-foreground font-semibold shrink-0">4.</span>
-              <span>One 30ml bottle = ~2 months supply</span>
+              <span>One 30ml bottle = ~3 months supply</span>
             </li>
           </ol>
           <div className="mt-8 border border-border bg-secondary/50 p-5">
