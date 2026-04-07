@@ -106,7 +106,7 @@ const Home = () => {
                 "Supports and maintains the skin barrier",
                 "59% Australian-grown actives",
                 "No fragrance, no essential oils",
-                "30ml — 2-month supply"].
+                "30ml — approximately 3 months supply"].
                 map((feature, index) =>
                 <li key={index} className="flex items-start gap-3 font-body text-muted-foreground text-[17px]">
                     <span className="w-1.5 h-1.5 rounded-full bg-foreground mt-2 flex-shrink-0" />
