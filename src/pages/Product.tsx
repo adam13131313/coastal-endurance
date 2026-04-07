@@ -40,7 +40,7 @@ const Product = () => {
 
   const variant = shopifyProduct?.node.variants.edges[0]?.node;
   const subVariant = subscriptionProduct?.node.variants.edges[0]?.node;
-  const price = variant ? parseFloat(variant.price.amount) : 68;
+  const price = variant ? parseFloat(variant.price.amount) : 85;
   const currencyCode = variant?.price.currencyCode || "AUD";
   const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
   const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 5;
