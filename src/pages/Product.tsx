@@ -132,10 +132,11 @@ const Product = () => {
 
               <ul className="mt-8 space-y-3">
                 {[
-                  "30ml — approximately 2 months of daily use",
+                  "30ml — approximately 3 months of daily use",
                   "Fast-absorbing, non-greasy finish",
                   "No fragrance or essential oils",
-                  "Free postage within Australia",
+                  "Free delivery within Australia",
+                  "International shipping costs apply outside Australia",
                   "Made in Australia",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-sm font-body">
