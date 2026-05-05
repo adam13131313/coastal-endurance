@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
+import heroVideo from "@/assets/hero-video.mp4.asset.json";
 
 const Home = () => {
   const [newsletterEmail, setNewsletterEmail] = useState("");
