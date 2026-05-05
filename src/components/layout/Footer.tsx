@@ -41,6 +41,14 @@ const Footer = () => {
               <a href="mailto:hello@coastalendurance.com" className="text-sm font-body text-primary-foreground/70 hover:text-primary-foreground transition-colors">
                 hello@coastalendurance.com
               </a>
+              <a
+                href="https://instagram.com/coastal_endurance"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-body text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+              >
+                Instagram ↗
+              </a>
             </div>
           </div>
         </div>
