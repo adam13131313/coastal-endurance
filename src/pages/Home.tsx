@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
-import heroVideo from "@/assets/hero-video.mp4.asset.json";
+import heroImage from "@/assets/hero-ocean.jpg";
 
 const Home = () => {
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -39,17 +39,16 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden bg-background">
         <div className="absolute inset-0">
-          <video
-            src={heroVideo.url}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
+          <img
+            src={heroImage}
+            alt="Wild Australian coastal headland with crashing ocean swell at dawn"
+            width={1920}
+            height={1080}
+            fetchPriority="high"
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Dark overlay for text legibility */}
-          <div className="absolute inset-0 bg-black/45" />
+          <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-x-0 bottom-0 h-48 bg-[linear-gradient(180deg,transparent,hsl(var(--background)))]" />
         </div>
 
