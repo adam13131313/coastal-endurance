@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
+import heroVideo from "@/assets/hero-video.mp4.asset.json";
 
 const Home = () => {
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -38,34 +39,42 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden bg-background">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-background" />
-          <div className="absolute inset-x-0 top-0 h-[65%] bg-[radial-gradient(circle_at_top,hsl(var(--accent)/0.18),transparent_68%)]" />
-          <div className="absolute inset-y-0 right-[-12%] hidden w-[42%] md:block bg-[radial-gradient(circle,hsl(var(--muted)/0.55),transparent_70%)]" />
+          <video
+            src={heroVideo.url}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Dark overlay for text legibility */}
+          <div className="absolute inset-0 bg-black/45" />
           <div className="absolute inset-x-0 bottom-0 h-48 bg-[linear-gradient(180deg,transparent,hsl(var(--background)))]" />
         </div>
-        
+
         <div className="container-wide relative z-10 pt-20">
-          <div className="max-w-2xl">
-            <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
+          <div className="max-w-2xl text-white">
+            <p className="font-typewriter text-xs uppercase tracking-widest text-white/80 mb-4 animate-slide-up">
               100% NATURAL INGREDIENTS
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-tight animate-slide-up" style={{ animationDelay: "0.05s" }}>
               FIELD OIL
             </h1>
-            <p className="mt-4 text-xl md:text-2xl font-typewriter text-foreground animate-slide-up" style={{ animationDelay: "0.08s" }}>
+            <p className="mt-4 text-xl md:text-2xl font-typewriter animate-slide-up" style={{ animationDelay: "0.08s" }}>
               For Sun, Salt, Wind, & Time
             </p>
             <p
-              className="mt-6 text-lg font-body text-foreground/80 leading-relaxed animate-slide-up max-w-lg"
+              className="mt-6 text-lg font-body text-white/85 leading-relaxed animate-slide-up max-w-lg"
               style={{ animationDelay: "0.1s" }}>
               Field Oil maintains what the elements wear down.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
-              <Link to="/product" className="btn-primary">
+              <Link to="/product" className="inline-flex items-center justify-center px-6 py-3 bg-white text-black font-typewriter text-sm uppercase tracking-wider hover:bg-white/90 transition-colors">
                 MAINTAIN YOUR BARRIER
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
-              <Link to="/about" className="btn-outline">
+              <Link to="/about" className="inline-flex items-center justify-center px-6 py-3 border border-white text-white font-typewriter text-sm uppercase tracking-wider hover:bg-white hover:text-black transition-colors">
                 ABOUT US
               </Link>
             </div>
