@@ -107,12 +107,15 @@ const Ingredients = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Ingredients — 7 Natural Barrier-Repair Oils | Field Oil by Coastal Endurance</title>
+        <title>Field Oil Ingredients — 7 Natural Barrier-Repair Oils</title>
         <meta
           name="description"
-          content="Full ingredient breakdown for Field Oil. 7 natural ingredients: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. 59% active barrier-repair oils. 59% Australian-grown. Zero synthetics."
+          content="Field Oil's 7 natural ingredients: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. 59% Australian-grown."
         />
         <link rel="canonical" href="https://coastalendurance.com/ingredients" />
+        <meta property="og:title" content="Field Oil Ingredients — 7 Natural Barrier-Repair Oils" />
+        <meta property="og:description" content="Full ingredient breakdown: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. 59% Australian-grown." />
+        <meta property="og:url" content="https://coastalendurance.com/ingredients" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

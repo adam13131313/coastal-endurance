@@ -24,7 +24,7 @@ export const CartDrawer = () => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <button className="relative p-2 transition-colors hover:text-muted-foreground">
+        <button aria-label="Open cart" className="relative p-2 transition-colors hover:text-muted-foreground">
           <ShoppingBag className="w-5 h-5" />
           {totalItems > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-xs font-medium bg-primary text-primary-foreground rounded-full">
@@ -70,15 +70,15 @@ export const CartDrawer = () => {
                         <p className="text-sm font-medium mt-1">${parseFloat(item.price.amount).toFixed(2)} {item.price.currencyCode}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                        <button onClick={() => removeItem(item.variantId)} className="p-1 text-muted-foreground hover:text-foreground">
+                        <button aria-label="Remove item from cart" onClick={() => removeItem(item.variantId)} className="p-1 text-muted-foreground hover:text-foreground">
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                         <div className="flex items-center border border-border">
-                          <button className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}>
+                          <button aria-label="Decrease quantity" className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}>
                             <Minus className="h-3 w-3" />
                           </button>
                           <span className="w-7 text-center text-xs">{item.quantity}</span>
-                          <button className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}>
+                          <button aria-label="Increase quantity" className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}>
                             <Plus className="h-3 w-3" />
                           </button>
                         </div>

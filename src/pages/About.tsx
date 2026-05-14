@@ -10,9 +10,18 @@ const About = () => {
   return (
     <main id="top" className="pt-20">
       <Helmet>
-        <title>Built Different — Field Oil by Coastal Endurance</title>
-        <meta name="description" content="Field Oil is barrier maintenance for men serious about outdoor activity. 59% active barrier-repair oils. 59% Australian-grown. Seven ingredients, each with a purpose." />
+        <title>About Field Oil — Coastal Endurance</title>
+        <meta name="description" content="Barrier maintenance face oil for outdoor men. 59% active barrier-repair oils, 59% Australian-grown. Seven ingredients with a purpose." />
         <link rel="canonical" href="https://coastalendurance.com/about" />
+        <meta property="og:title" content="About Field Oil — Coastal Endurance" />
+        <meta property="og:description" content="Equipment maintenance for outdoor-exposed skin. 59% active barrier-repair oils, 59% Australian-grown. Seven ingredients with a purpose." />
+        <meta property="og:url" content="https://coastalendurance.com/about" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: "About Field Oil",
+          url: "https://coastalendurance.com/about",
+        })}</script>
       </Helmet>
 
       {/* Hero */}
@@ -23,7 +32,7 @@ const About = () => {
         </div>
         <div className="container-narrow relative z-10 py-24 md:py-32">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
-            BUILT DIFFERENT
+            ABOUT FIELD OIL
           </h1>
           <p className="mt-8 text-xl md:text-2xl font-body text-muted-foreground leading-relaxed max-w-xl">
             Equipment maintenance for outdoor-exposed skin.

@@ -83,9 +83,30 @@ const Product = () => {
   return (
     <main className="pt-20" id="top">
       <Helmet>
-        <title>Field Oil — Daily Barrier Face Oil for Outdoor Men | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. A daily face oil built for surfers, cyclists, tradies, and outdoor workers. $85 AUD. Made in Australia." />
+        <title>Field Oil — Daily Barrier Face Oil | Coastal Endurance</title>
+        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for surfers, cyclists, tradies. $85 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
+        <meta property="og:title" content="Field Oil — Daily Barrier Face Oil" />
+        <meta property="og:description" content="7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for outdoor men. $85 AUD. Made in Australia." />
+        <meta property="og:url" content="https://coastalendurance.com/product" />
+        <meta property="og:type" content="product" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "Field Oil",
+          description: "A daily barrier maintenance face oil for men with outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance, zero essential oils. 30ml. Made in Australia.",
+          image: "https://coastalendurance.com/og-image.png",
+          brand: { "@type": "Brand", name: "Coastal Endurance" },
+          offers: {
+            "@type": "Offer",
+            price: price.toFixed(2),
+            priceCurrency: currencyCode,
+            priceValidUntil: "2026-12-31",
+            availability: "https://schema.org/InStock",
+            url: "https://coastalendurance.com/product",
+          },
+          countryOfOrigin: { "@type": "Country", name: "Australia" },
+        })}</script>
       </Helmet>
 
       {/* Header Banner */}
@@ -95,7 +116,7 @@ const Product = () => {
             100% NATURAL INGREDIENTS
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
-            7 NATURAL INGREDIENTS. ZERO COMPROMISES.
+            FIELD OIL
           </h1>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
             100% natural. Every ingredient has a job. No synthetics. No filler. 
