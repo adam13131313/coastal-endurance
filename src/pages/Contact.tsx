@@ -49,9 +49,18 @@ const Contact = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Contact Coastal Endurance — Questions, Feedback & Wholesale | Australia</title>
+        <title>Contact — Coastal Endurance</title>
         <meta name="description" content="Get in touch with Coastal Endurance. Questions about Field Oil, wholesale inquiries, or feedback. We respond within 24-48 hours." />
         <link rel="canonical" href="https://coastalendurance.com/contact" />
+        <meta property="og:title" content="Contact — Coastal Endurance" />
+        <meta property="og:description" content="Questions about Field Oil, wholesale, or feedback. We respond within 24-48 hours." />
+        <meta property="og:url" content="https://coastalendurance.com/contact" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contact Coastal Endurance",
+          url: "https://coastalendurance.com/contact",
+        })}</script>
       </Helmet>
 
       {/* Hero */}
@@ -170,6 +179,7 @@ const Contact = () => {
             <input
               type="email"
               placeholder="Your email"
+              aria-label="Email address for newsletter"
               value={newsletterEmail}
               onChange={(e) => setNewsletterEmail(e.target.value)}
               className="flex-1 px-4 py-3 bg-transparent border border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-primary-foreground transition-colors"

@@ -30,9 +30,12 @@ const Home = () => {
   return (
     <main>
       <Helmet>
-        <title>Field Oil by Coastal Endurance — Barrier Maintenance for Outdoor Men | Australia</title>
-        <meta name="description" content="Field Oil is a daily face oil built for Australian men with years of outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Equipment maintenance for your skin." />
+        <title>Field Oil — Barrier Maintenance for Outdoor Men</title>
+        <meta name="description" content="Daily face oil for Australian men with serious outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance." />
         <link rel="canonical" href="https://coastalendurance.com/" />
+        <meta property="og:title" content="Field Oil — Barrier Maintenance for Outdoor Men" />
+        <meta property="og:description" content="Daily face oil for Australian men with serious outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance." />
+        <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
 
       {/* Hero Section */}
@@ -43,7 +46,7 @@ const Home = () => {
               100% NATURAL INGREDIENTS
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-tight animate-slide-up text-foreground" style={{ animationDelay: "0.05s" }}>
-              FIELD OIL
+              FIELD OIL — BARRIER MAINTENANCE FOR OUTDOOR MEN
             </h1>
             <p className="mt-4 text-xl md:text-2xl font-typewriter animate-slide-up text-foreground" style={{ animationDelay: "0.08s" }}>
               For Sun, Salt, Wind, & Time
@@ -108,7 +111,7 @@ const Home = () => {
                 )}
               </ul>
               <Link to="/product" className="btn-primary mt-10 inline-flex">
-                LEARN MORE
+                DISCOVER FIELD OIL
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </div>
@@ -154,6 +157,7 @@ const Home = () => {
             <input
               type="email"
               placeholder="Your email"
+              aria-label="Email address for newsletter"
               value={newsletterEmail}
               onChange={(e) => setNewsletterEmail(e.target.value)}
               className="input-field flex-1"

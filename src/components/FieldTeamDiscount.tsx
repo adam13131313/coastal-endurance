@@ -66,6 +66,7 @@ const FieldTeamDiscount = () => {
               variant="outline"
               size="icon"
               onClick={handleCopy}
+              aria-label="Copy discount code"
               className="h-12 w-12 shrink-0"
             >
               {copied ? (
@@ -92,6 +93,7 @@ const FieldTeamDiscount = () => {
         <Input
           type="email"
           placeholder="your@email.com"
+          aria-label="Field team email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
