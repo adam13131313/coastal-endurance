@@ -2,16 +2,13 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Copy, Check, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { Loader2, MailCheck } from "lucide-react";
 
 const FieldTeamDiscount = () => {
   const [email, setEmail] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [discountCode, setDiscountCode] = useState("");
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +16,7 @@ const FieldTeamDiscount = () => {
     setIsLoading(true);
 
     try {
-      const { data, error: fnError } = await supabase.functions.invoke(
+      const { error: fnError } = await supabase.functions.invoke(
         "verify-field-team-member",
         { body: { email: email.trim().toLowerCase() } },
       );
@@ -29,13 +26,7 @@ const FieldTeamDiscount = () => {
         return;
       }
 
-      if (!data?.verified || !data?.discount_code) {
-        setError("This email is not on the approved list. Contact adam@coastalendurance.com if you think this is a mistake.");
-        return;
-      }
-
-      setDiscountCode(data.discount_code);
-      setIsVerified(true);
+      setIsSubmitted(true);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -43,41 +34,24 @@ const FieldTeamDiscount = () => {
     }
   };
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(discountCode);
-    setCopied(true);
-    toast.success("Discount code copied!");
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  if (isVerified) {
+  if (isSubmitted) {
     return (
       <div className="space-y-6">
         <div className="border border-border bg-secondary/50 p-6">
-          <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-4">
-            YOUR DISCOUNT CODE
-          </p>
-          <div className="flex items-center gap-3">
-            <code className="text-2xl md:text-3xl font-typewriter tracking-wider text-foreground bg-background border border-border px-4 py-3 flex-1 text-center select-all">
-              {discountCode}
-            </code>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleCopy}
-              aria-label="Copy discount code"
-              className="h-12 w-12 shrink-0"
-            >
-              {copied ? (
-                <Check className="h-5 w-5" />
-              ) : (
-                <Copy className="h-5 w-5" />
-              )}
-            </Button>
+          <div className="flex items-start gap-3">
+            <MailCheck className="h-6 w-6 shrink-0 text-foreground" />
+            <div>
+              <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                CHECK YOUR EMAIL
+              </p>
+              <p className="text-[15px] font-body text-muted-foreground leading-relaxed">
+                If <span className="text-foreground">{email.trim().toLowerCase()}</span> is on our approved
+                field team list, we've emailed your discount code there. It may take a few minutes to arrive —
+                check your spam folder if you don't see it. Contact adam@coastalendurance.com if you think
+                there's a mistake.
+              </p>
+            </div>
           </div>
-          <p className="mt-4 text-[15px] font-body text-muted-foreground leading-relaxed">
-            Apply this code at checkout for 100% off. This code is for approved field team members only.
-          </p>
         </div>
       </div>
     );
@@ -86,7 +60,7 @@ const FieldTeamDiscount = () => {
   return (
     <form onSubmit={handleVerify} className="space-y-4">
       <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
-        Enter the email address you registered with to access your discount code.
+        Enter the email address you registered with and we'll send your discount code to your inbox.
       </p>
       <div className="flex gap-3">
         <Input
@@ -99,7 +73,7 @@ const FieldTeamDiscount = () => {
           className="font-body"
         />
         <Button type="submit" disabled={isLoading || !email.trim()} className="shrink-0">
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify"}
+          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send code"}
         </Button>
       </div>
       {error && (
