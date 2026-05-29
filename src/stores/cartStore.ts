@@ -75,14 +75,24 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>()(
   persist(
-    (set, get) => ({
+    (set, get) => {
+      // Serializes cart mutations so concurrent calls (e.g. rapid clicks) can't
+      // both take the "no cartId yet" branch and create duplicate Shopify carts.
+      let opQueue: Promise<void> = Promise.resolve();
+      const enqueue = (op: () => Promise<void>): Promise<void> => {
+        const run = opQueue.then(op, op);
+        opQueue = run.catch(() => {});
+        return run;
+      };
+
+      return {
       items: [],
       cartId: null,
       checkoutUrl: null,
       isLoading: false,
       isSyncing: false,
 
-      addItem: async (item) => {
+      addItem: (item) => enqueue(async () => {
         const { items, cartId, clearCart } = get();
         const existingItem = items.find(i => i.variantId === item.variantId);
 
@@ -125,7 +135,7 @@ export const useCartStore = create<CartStore>()(
         } finally {
           set({ isLoading: false });
         }
-      },
+      }),
 
       updateQuantity: async (variantId, quantity) => {
         if (quantity <= 0) {
@@ -201,14 +211,46 @@ export const useCartStore = create<CartStore>()(
           const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
           if (!data) return;
           const cart = data?.data?.cart;
-          if (!cart || cart.totalQuantity === 0) clearCart();
+          if (!cart || cart.totalQuantity === 0) {
+            clearCart();
+            return;
+          }
+
+          // Reconcile local lines against Shopify's source of truth: drop lines
+          // that no longer exist or sold out, and refresh price/quantity/lineId.
+          const linesByVariant = new Map<string, { lineId: string; quantity: number; price: CartItem['price'] }>();
+          for (const edge of cart.lines?.edges ?? []) {
+            const node = edge?.node;
+            const merchandise = node?.merchandise;
+            if (!node?.id || !merchandise?.id || !merchandise.availableForSale) continue;
+            linesByVariant.set(merchandise.id, {
+              lineId: node.id,
+              quantity: node.quantity,
+              price: merchandise.price,
+            });
+          }
+
+          const reconciled = get().items
+            .map(item => {
+              const line = linesByVariant.get(item.variantId);
+              if (!line) return null;
+              return { ...item, lineId: line.lineId, quantity: line.quantity, price: line.price };
+            })
+            .filter((item): item is CartItem => item !== null);
+
+          if (reconciled.length === 0) {
+            clearCart();
+          } else {
+            set({ items: reconciled });
+          }
         } catch (error) {
           console.error('Failed to sync cart with Shopify:', error);
         } finally {
           set({ isSyncing: false });
         }
       },
-    }),
+      };
+    },
     {
       name: 'shopify-cart',
       storage: createJSONStorage(() => localStorage),

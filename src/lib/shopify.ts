@@ -178,7 +178,25 @@ export const STOREFRONT_PRODUCT_BY_HANDLE_QUERY = `
 // Cart mutations & queries
 export const CART_QUERY = `
   query cart($id: ID!) {
-    cart(id: $id) { id totalQuantity }
+    cart(id: $id) {
+      id
+      totalQuantity
+      lines(first: 100) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+                availableForSale
+                price { amount currencyCode }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 `;
 
