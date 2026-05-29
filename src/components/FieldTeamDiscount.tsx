@@ -11,8 +11,7 @@ const FieldTeamDiscount = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
-
-  const DISCOUNT_CODE = "FIELD-TEAM-MEMBER";
+  const [discountCode, setDiscountCode] = useState("");
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,22 +19,22 @@ const FieldTeamDiscount = () => {
     setIsLoading(true);
 
     try {
-      const { data, error: queryError } = await supabase
-        .from("approved_field_team_members")
-        .select("id")
-        .eq("email", email.trim().toLowerCase())
-        .maybeSingle();
+      const { data, error: fnError } = await supabase.functions.invoke(
+        "verify-field-team-member",
+        { body: { email: email.trim().toLowerCase() } },
+      );
 
-      if (queryError) {
+      if (fnError) {
         setError("Something went wrong. Please try again.");
         return;
       }
 
-      if (!data) {
+      if (!data?.verified || !data?.discount_code) {
         setError("This email is not on the approved list. Contact adam@coastalendurance.com if you think this is a mistake.");
         return;
       }
 
+      setDiscountCode(data.discount_code);
       setIsVerified(true);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -45,7 +44,7 @@ const FieldTeamDiscount = () => {
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(DISCOUNT_CODE);
+    await navigator.clipboard.writeText(discountCode);
     setCopied(true);
     toast.success("Discount code copied!");
     setTimeout(() => setCopied(false), 2000);
@@ -60,7 +59,7 @@ const FieldTeamDiscount = () => {
           </p>
           <div className="flex items-center gap-3">
             <code className="text-2xl md:text-3xl font-typewriter tracking-wider text-foreground bg-background border border-border px-4 py-3 flex-1 text-center select-all">
-              {DISCOUNT_CODE}
+              {discountCode}
             </code>
             <Button
               variant="outline"
