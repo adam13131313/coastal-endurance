@@ -87,14 +87,14 @@ const Product = () => {
         <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for surfers, cyclists, tradies. $85 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
         <meta property="og:title" content="Field Oil — Daily Barrier Face Oil" />
-        <meta property="og:description" content="7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for outdoor men. $85 AUD. Made in Australia." />
+        <meta property="og:description" content="7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for life outdoors. $85 AUD. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/product" />
         <meta property="og:type" content="product" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
           name: "Field Oil",
-          description: "A daily barrier maintenance face oil for men with outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance, zero essential oils. 30ml. Made in Australia.",
+          description: "A daily barrier maintenance face oil for life outdoors. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance, zero essential oils. 30ml. Made in Australia.",
           image: "https://coastalendurance.com/og-image.png",
           brand: { "@type": "Brand", name: "Coastal Endurance" },
           offers: {

@@ -11,7 +11,7 @@ const About = () => {
     <main id="top" className="pt-20">
       <Helmet>
         <title>About Field Oil — Coastal Endurance</title>
-        <meta name="description" content="Barrier maintenance face oil for outdoor men. 59% active barrier-repair oils, 59% Australian-grown. Seven ingredients with a purpose." />
+        <meta name="description" content="Barrier maintenance face oil for life outdoors. 59% active barrier-repair oils, 59% Australian-grown. Seven ingredients with a purpose." />
         <link rel="canonical" href="https://coastalendurance.com/about" />
         <meta property="og:title" content="About Field Oil — Coastal Endurance" />
         <meta property="og:description" content="Equipment maintenance for outdoor-exposed skin. 59% active barrier-repair oils, 59% Australian-grown. Seven ingredients with a purpose." />
