@@ -1,73 +1,48 @@
-# Welcome to your Lovable project
+# Coastal Endurance
 
-## Project info
+Storefront for Field Oil — a daily barrier maintenance face oil. Vite + React + TypeScript single-page app, with Shopify for products/checkout and Supabase for auth, profiles, and orders.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Stack
 
-## How can I edit this code?
+- **Frontend:** Vite, React, TypeScript, shadcn/ui, Tailwind CSS
+- **Commerce:** Shopify Storefront API (cart + checkout)
+- **Backend:** Supabase (Postgres + RLS, Auth with Google/Apple OAuth, Edge Functions)
+- **Email:** Supabase native auth emails over Resend SMTP; transactional email sent via the Resend API from edge functions
+- **Hosting:** Vercel (frontend), Supabase (backend)
 
-There are several ways of editing your application.
+## Local development
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Requires Node.js & npm.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm install
+npm run dev      # dev server on http://localhost:8080
+npm run build    # production build to dist/
+npm run lint
+npm test
 ```
 
-**Edit a file directly in GitHub**
+### Environment
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Copy the Supabase project values into a local `.env` (git-ignored):
 
-**Use GitHub Codespaces**
+```sh
+VITE_SUPABASE_URL="https://<project-ref>.supabase.co"
+VITE_SUPABASE_PUBLISHABLE_KEY="<anon key>"
+VITE_SUPABASE_PROJECT_ID="<project-ref>"
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deployment
 
-## What technologies are used for this project?
+- **Frontend:** pushes to the connected Vercel project build and deploy automatically. Set the `VITE_SUPABASE_*` variables in the Vercel project settings.
+- **Backend:** edge functions and migrations deploy via the Supabase CLI:
 
-This project is built with:
+  ```sh
+  npx supabase link --project-ref <project-ref>
+  npx supabase db push                                   # apply migrations
+  npx supabase functions deploy verify-field-team-member # deploy functions
+  ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+  Edge function secrets (e.g. `RESEND_API_KEY`) are set with `npx supabase secrets set`.
+  Auth emails are sent by Supabase directly — configure custom SMTP (Resend) and
+  the email templates in the Supabase dashboard under Authentication → Emails.

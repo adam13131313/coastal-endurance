@@ -5,10 +5,10 @@ import { FieldTeamDiscountEmail } from "../_shared/email-templates/field-team-di
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 
 const SITE_NAME = "Coastal Endurance";
-const SENDER_DOMAIN = "notify.coastalendurance.com";
-const FROM_DOMAIN = "coastalendurance.com";
+const FROM_ADDRESS = "Coastal Endurance <noreply@coastalendurance.com>";
 const EMAIL_SUBJECT = "Your Coastal Endurance field team discount";
 
 // Don't re-send a discount email to the same address more than once per cooldown.
@@ -24,7 +24,7 @@ function corsHeadersFor(origin: string | null): Record<string, string> {
   const allowed =
     origin != null &&
     (ALLOWED_ORIGINS.includes(origin) ||
-      /^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(origin) ||
+      /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) ||
       /^http:\/\/localhost(:\d+)?$/.test(origin));
   return {
     "Access-Control-Allow-Origin": allowed ? origin! : ALLOWED_ORIGINS[0],
@@ -35,6 +35,21 @@ function corsHeadersFor(origin: string | null): Record<string, string> {
 
 function isValidEmail(s: string) {
   return typeof s === "string" && s.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+async function sendViaResend(to: string, subject: string, html: string, text: string) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ from: FROM_ADDRESS, to, subject, html, text }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`Resend send failed (${res.status}): ${detail.slice(0, 500)}`);
+  }
 }
 
 Deno.serve(async (req) => {
@@ -111,38 +126,22 @@ Deno.serve(async (req) => {
 
     const messageId = crypto.randomUUID();
 
-    await admin.from("email_send_log").insert({
-      message_id: messageId,
-      template_name: "field_team_discount",
-      recipient_email: email,
-      status: "pending",
-    });
-
-    const { error: enqueueError } = await admin.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        run_id: crypto.randomUUID(),
+    try {
+      await sendViaResend(email, EMAIL_SUBJECT, html, text);
+      await admin.from("email_send_log").insert({
         message_id: messageId,
-        to: email,
-        from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-        sender_domain: SENDER_DOMAIN,
-        subject: EMAIL_SUBJECT,
-        html,
-        text,
-        purpose: "transactional",
-        label: "field_team_discount",
-        queued_at: new Date().toISOString(),
-      },
-    });
-
-    if (enqueueError) {
-      console.error("Failed to enqueue field team discount email", enqueueError);
+        template_name: "field_team_discount",
+        recipient_email: email,
+        status: "sent",
+      });
+    } catch (sendErr) {
+      console.error("Failed to send field team discount email", sendErr);
       await admin.from("email_send_log").insert({
         message_id: messageId,
         template_name: "field_team_discount",
         recipient_email: email,
         status: "failed",
-        error_message: "Failed to enqueue email",
+        error_message: sendErr instanceof Error ? sendErr.message.slice(0, 1000) : "send failed",
       });
       return json({ error: "Failed to send code" }, 500);
     }
