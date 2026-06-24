@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.4"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -92,36 +92,6 @@ export type Database = {
         }
         Relationships: []
       }
-      email_send_state: {
-        Row: {
-          auth_email_ttl_minutes: number
-          batch_size: number
-          id: number
-          retry_after_until: string | null
-          send_delay_ms: number
-          transactional_email_ttl_minutes: number
-          updated_at: string
-        }
-        Insert: {
-          auth_email_ttl_minutes?: number
-          batch_size?: number
-          id?: number
-          retry_after_until?: string | null
-          send_delay_ms?: number
-          transactional_email_ttl_minutes?: number
-          updated_at?: string
-        }
-        Update: {
-          auth_email_ttl_minutes?: number
-          batch_size?: number
-          id?: number
-          retry_after_until?: string | null
-          send_delay_ms?: number
-          transactional_email_ttl_minutes?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
       email_unsubscribe_tokens: {
         Row: {
           created_at: string
@@ -197,30 +167,90 @@ export type Database = {
         }
         Relationships: []
       }
-      order_items: {
+      order_deliveries: {
         Row: {
           created_at: string
           id: string
           order_id: string
-          product_name: string
-          quantity: number
-          unit_price: number
+          order_item_id: string
+          scheduled_for: string
+          sequence: number
+          shipped_at: string | null
+          status: string
+          tracking_number: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           order_id: string
-          product_name: string
-          quantity?: number
-          unit_price: number
+          order_item_id: string
+          scheduled_for: string
+          sequence?: number
+          shipped_at?: string | null
+          status?: string
+          tracking_number?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           order_id?: string
+          order_item_id?: string
+          scheduled_for?: string
+          sequence?: number
+          shipped_at?: string | null
+          status?: string
+          tracking_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_deliveries_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_deliveries_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          bottles_each: number
+          created_at: string
+          id: string
+          order_id: string
+          product_name: string
+          quantity: number
+          unit_price_cents: number
+          variant_id: string | null
+          variant_label: string
+        }
+        Insert: {
+          bottles_each?: number
+          created_at?: string
+          id?: string
+          order_id: string
+          product_name: string
+          quantity?: number
+          unit_price_cents: number
+          variant_id?: string | null
+          variant_label: string
+        }
+        Update: {
+          bottles_each?: number
+          created_at?: string
+          id?: string
+          order_id?: string
           product_name?: string
           quantity?: number
-          unit_price?: number
+          unit_price_cents?: number
+          variant_id?: string | null
+          variant_label?: string
         }
         Relationships: [
           {
@@ -230,35 +260,152 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
         Row: {
           created_at: string
           currency: string
-          guest_email: string | null
+          email: string
           id: string
+          shipping_address: Json | null
+          shipping_name: string | null
           status: string
-          total_amount: number
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          subtotal_cents: number
+          total_cents: number
+          updated_at: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
           currency?: string
-          guest_email?: string | null
+          email: string
           id?: string
+          shipping_address?: Json | null
+          shipping_name?: string | null
           status?: string
-          total_amount?: number
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subtotal_cents?: number
+          total_cents?: number
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
           currency?: string
-          guest_email?: string | null
+          email?: string
           id?: string
+          shipping_address?: Json | null
+          shipping_name?: string | null
           status?: string
-          total_amount?: number
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subtotal_cents?: number
+          total_cents?: number
+          updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      product_variants: {
+        Row: {
+          active: boolean
+          bottles: number
+          created_at: string
+          default_interval_months: number
+          deliveries_count: number
+          id: string
+          is_bundle: boolean
+          label: string
+          price_cents: number
+          product_id: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          bottles?: number
+          created_at?: string
+          default_interval_months?: number
+          deliveries_count?: number
+          id?: string
+          is_bundle?: boolean
+          label: string
+          price_cents: number
+          product_id: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          bottles?: number
+          created_at?: string
+          default_interval_months?: number
+          deliveries_count?: number
+          id?: string
+          is_bundle?: boolean
+          label?: string
+          price_cents?: number
+          product_id?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          active: boolean
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          slug: string
+          stock_quantity: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          slug: string
+          stock_quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          slug?: string
+          stock_quantity?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -366,30 +513,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      delete_email: {
-        Args: { message_id: number; queue_name: string }
-        Returns: boolean
-      }
-      enqueue_email: {
-        Args: { payload: Json; queue_name: string }
+      decrement_stock: {
+        Args: { p_bottles: number; p_product_id: string }
         Returns: number
-      }
-      move_to_dlq: {
-        Args: {
-          dlq_name: string
-          message_id: number
-          payload: Json
-          source_queue: string
-        }
-        Returns: number
-      }
-      read_email_batch: {
-        Args: { batch_size: number; queue_name: string; vt: number }
-        Returns: {
-          message: Json
-          msg_id: number
-          read_ct: number
-        }[]
       }
     }
     Enums: {

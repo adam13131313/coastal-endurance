@@ -22,7 +22,7 @@ interface Profile {
 interface Order {
   id: string;
   status: string;
-  total_amount: number;
+  total_cents: number;
   currency: string;
   created_at: string;
 }
@@ -304,7 +304,7 @@ const Account = () => {
                             })}
                           </p>
                           <p className="font-medium mt-1">
-                            ${order.total_amount} {order.currency}
+                            ${(order.total_cents / 100).toFixed(2)} {order.currency}
                           </p>
                         </div>
                         <span className="text-xs uppercase tracking-widest px-3 py-1 bg-muted text-muted-foreground">

@@ -1,24 +1,20 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ShoppingBag, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingBag, Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { formatPrice } from "@/lib/catalog";
+import { toast } from "sonner";
 import snowyMountains from "@/assets/snowy-mountains.jpg";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const { items, updateQuantity, removeItem, checkout, isCheckingOut } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
+  const totalCents = items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
-  useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
-
-  const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
-      setIsOpen(false);
-    }
+  const handleCheckout = async () => {
+    const { error } = await checkout();
+    if (error) toast.error(error);
   };
 
   return (
@@ -59,29 +55,33 @@ export const CartDrawer = () => {
                 <div className="space-y-4">
                   {items.map((item) => (
                     <div key={item.variantId} className="flex gap-4 p-3 border-b border-border last:border-0">
-                      <div className="w-16 h-16 bg-muted overflow-hidden flex-shrink-0">
-                        {item.product.node.images?.edges?.[0]?.node && (
-                          <img src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} className="w-full h-full object-cover" />
-                        )}
-                      </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-display text-sm truncate">{item.product.node.title}</h4>
-                        <p className="text-xs text-muted-foreground">{item.selectedOptions.map(o => o.value).join(' · ')}</p>
-                        <p className="text-sm font-medium mt-1">${parseFloat(item.price.amount).toFixed(2)} {item.price.currencyCode}</p>
+                        <h4 className="font-display text-sm truncate">{item.productName}</h4>
+                        <p className="text-xs text-muted-foreground">{item.variantLabel}</p>
+                        {item.isBundle && item.deliveryDates.length > 0 && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {item.deliveryDates.length} shipments · first {item.deliveryDates[0]}
+                          </p>
+                        )}
+                        <p className="text-sm font-medium mt-1">{formatPrice(item.priceCents)}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         <button aria-label="Remove item from cart" onClick={() => removeItem(item.variantId)} className="p-1 text-muted-foreground hover:text-foreground">
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
-                        <div className="flex items-center border border-border">
-                          <button aria-label="Decrease quantity" className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}>
-                            <Minus className="h-3 w-3" />
-                          </button>
-                          <span className="w-7 text-center text-xs">{item.quantity}</span>
-                          <button aria-label="Increase quantity" className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}>
-                            <Plus className="h-3 w-3" />
-                          </button>
-                        </div>
+                        {item.isBundle ? (
+                          <span className="text-xs text-muted-foreground">Qty 1</span>
+                        ) : (
+                          <div className="flex items-center border border-border">
+                            <button aria-label="Decrease quantity" className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}>
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="w-7 text-center text-xs">{item.quantity}</span>
+                            <button aria-label="Increase quantity" className="p-1.5 hover:bg-muted transition-colors" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}>
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -90,7 +90,7 @@ export const CartDrawer = () => {
               <div className="flex-shrink-0 space-y-4 pt-4 border-t border-border">
                 <div className="flex justify-between items-center">
                   <span className="font-display text-lg">Total</span>
-                  <span className="font-display text-xl">${totalPrice.toFixed(2)} {items[0]?.price.currencyCode}</span>
+                  <span className="font-display text-xl">{formatPrice(totalCents)} AUD</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Free delivery within Australia. International shipping calculated at checkout.
@@ -98,16 +98,9 @@ export const CartDrawer = () => {
                 <button
                   onClick={handleCheckout}
                   className="btn-primary w-full flex items-center justify-center"
-                  disabled={items.length === 0 || isLoading || isSyncing}
+                  disabled={items.length === 0 || isCheckingOut}
                 >
-                  {isLoading || isSyncing ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      Checkout
-                      <ExternalLink className="w-4 h-4 ml-2" />
-                    </>
-                  )}
+                  {isCheckingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : "Checkout"}
                 </button>
               </div>
             </>

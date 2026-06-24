@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,31 +22,15 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Account = lazy(() => import("./pages/Account"));
 const FieldTeam = lazy(() => import("./pages/FieldTeam"));
-const CartSyncInitializer = lazy(() => import("@/components/CartSyncInitializer"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
+const CheckoutCancel = lazy(() => import("./pages/CheckoutCancel"));
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const [shouldLoadCartSync, setShouldLoadCartSync] = useState(false);
-
-  useEffect(() => {
-    if (!window.localStorage.getItem("shopify-cart")) return;
-
-    const timer = window.setTimeout(() => {
-      setShouldLoadCartSync(true);
-    }, 0);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
   return (
     <BrowserRouter>
       <ScrollToTop />
-      {shouldLoadCartSync ? (
-        <Suspense fallback={null}>
-          <CartSyncInitializer />
-        </Suspense>
-      ) : null}
       <div className="flex flex-col min-h-screen">
         <div className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-center py-2 text-sm font-medium tracking-wide">
           Launching June 2026
@@ -67,6 +51,8 @@ const AppContent = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/account" element={<Account />} />
               <Route path="/field-team" element={<FieldTeam />} />
+              <Route path="/checkout/success" element={<CheckoutSuccess />} />
+              <Route path="/checkout/cancel" element={<CheckoutCancel />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

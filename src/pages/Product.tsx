@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Check, Minus, Plus, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { storefrontApiRequest, STOREFRONT_PRODUCT_BY_HANDLE_QUERY, type ShopifyProduct } from "@/lib/shopify";
+import { fetchProduct, defaultDeliveryDates, type Product as CatalogProduct } from "@/lib/catalog";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
@@ -11,69 +11,80 @@ type PurchaseType = "one-time" | "subscription";
 const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [purchaseType, setPurchaseType] = useState<PurchaseType>("one-time");
-  const [shopifyProduct, setShopifyProduct] = useState<ShopifyProduct | null>(null);
-  const [subscriptionProduct, setSubscriptionProduct] = useState<ShopifyProduct | null>(null);
+  const [product, setProduct] = useState<CatalogProduct | null>(null);
+  const [deliveryDates, setDeliveryDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const { addItem, isLoading: cartLoading } = useCartStore();
+  const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const [singleData, subData] = await Promise.all([
-          storefrontApiRequest(STOREFRONT_PRODUCT_BY_HANDLE_QUERY, { handle: "field-oil" }),
-          storefrontApiRequest(STOREFRONT_PRODUCT_BY_HANDLE_QUERY, { handle: "field-oil-12-month-supply" }),
-        ]);
-        if (singleData?.data?.productByHandle) {
-          setShopifyProduct({ node: singleData.data.productByHandle });
-        }
-        if (subData?.data?.productByHandle) {
-          setSubscriptionProduct({ node: subData.data.productByHandle });
-        }
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
+    fetchProduct("field-oil")
+      .then(setProduct)
+      .catch((e) => console.error("Failed to fetch product:", e))
+      .finally(() => setLoading(false));
   }, []);
 
-  const variant = shopifyProduct?.node.variants.edges[0]?.node;
-  const subVariant = subscriptionProduct?.node.variants.edges[0]?.node;
-  const price = variant ? parseFloat(variant.price.amount) : 85;
-  const currencyCode = variant?.price.currencyCode || "AUD";
-  const productImage = shopifyProduct?.node.images?.edges?.[0]?.node?.url || fieldOilImage;
-  const subscriptionPrice = subVariant ? parseFloat(subVariant.price.amount) : price * 3;
-  const savingsAmount = (price * 4) - subscriptionPrice;
-  const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
+  const singleVariant = product?.variants.find((v) => !v.is_bundle);
+  const bundleVariant = product?.variants.find((v) => v.is_bundle);
 
-  const handleAddToCart = async () => {
+  const price = singleVariant ? singleVariant.price_cents / 100 : 75;
+  const currencyCode = product?.currency || "AUD";
+  const productImage = product?.image_url || fieldOilImage;
+  const bundleBottles = bundleVariant?.bottles ?? 4;
+  const subscriptionPrice = bundleVariant ? bundleVariant.price_cents / 100 : price * 3;
+  const savingsAmount = price * bundleBottles - subscriptionPrice;
+  const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
+  const inStock = (product?.stock_quantity ?? 0) > 0;
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Seed the bundle delivery schedule once the product loads (first dispatch
+  // now, then spaced by the variant's default interval). Customer can edit.
+  useEffect(() => {
+    const b = product?.variants.find((v) => v.is_bundle);
+    if (b) setDeliveryDates(defaultDeliveryDates(b.deliveries_count, b.default_interval_months));
+  }, [product]);
+
+  const updateDeliveryDate = (index: number, value: string) => {
+    setDeliveryDates((prev) => prev.map((d, i) => (i === index ? value : d)));
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
     if (purchaseType === "subscription") {
-      if (!subscriptionProduct || !subVariant) {
-        toast.error("Subscription product not available");
+      if (!bundleVariant) {
+        toast.error("This option isn't available right now.");
         return;
       }
-      await addItem({
-        product: subscriptionProduct,
-        variantId: subVariant.id,
-        variantTitle: subVariant.title,
-        price: subVariant.price,
+      addItem({
+        variantId: bundleVariant.id,
+        productId: product.id,
+        productName: product.name,
+        variantLabel: bundleVariant.label,
+        variantSlug: bundleVariant.slug,
+        priceCents: bundleVariant.price_cents,
+        bottles: bundleVariant.bottles,
+        isBundle: true,
+        deliveriesCount: bundleVariant.deliveries_count,
         quantity: 1,
-        selectedOptions: subVariant.selectedOptions || [],
+        deliveryDates,
       });
       toast.success("Added 12-month supply to cart");
     } else {
-      if (!shopifyProduct || !variant) {
-        toast.error("Product not available");
+      if (!singleVariant) {
+        toast.error("This product isn't available right now.");
         return;
       }
-      await addItem({
-        product: shopifyProduct,
-        variantId: variant.id,
-        variantTitle: variant.title,
-        price: variant.price,
+      addItem({
+        variantId: singleVariant.id,
+        productId: product.id,
+        productName: product.name,
+        variantLabel: singleVariant.label,
+        variantSlug: singleVariant.slug,
+        priceCents: singleVariant.price_cents,
+        bottles: singleVariant.bottles,
+        isBundle: false,
+        deliveriesCount: 1,
         quantity,
-        selectedOptions: variant.selectedOptions || [],
+        deliveryDates: [],
       });
       toast.success(`Added ${quantity} × Field Oil to cart`);
       setQuantity(1);
@@ -84,10 +95,10 @@ const Product = () => {
     <main className="pt-20" id="top">
       <Helmet>
         <title>Field Oil — Daily Barrier Face Oil | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for surfers, cyclists, tradies. $85 AUD. Made in Australia." />
+        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for life outdoors. $75 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
         <meta property="og:title" content="Field Oil — Daily Barrier Face Oil" />
-        <meta property="og:description" content="7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for life outdoors. $85 AUD. Made in Australia." />
+        <meta property="og:description" content="7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for life outdoors. $75 AUD. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/product" />
         <meta property="og:type" content="product" />
         <script type="application/ld+json">{JSON.stringify({
@@ -102,7 +113,7 @@ const Product = () => {
             price: price.toFixed(2),
             priceCurrency: currencyCode,
             priceValidUntil: "2026-12-31",
-            availability: "https://schema.org/InStock",
+            availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
             url: "https://coastalendurance.com/product",
           },
           countryOfOrigin: { "@type": "Country", name: "Australia" },
@@ -119,7 +130,7 @@ const Product = () => {
             FIELD OIL
           </h1>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
-            100% natural. Every ingredient has a job. No synthetics. No filler. 
+            100% natural. Every ingredient has a job. No synthetics. No filler.
             59% Australian-grown. Just functional compounds chosen for performance.
           </p>
         </div>
@@ -147,7 +158,7 @@ const Product = () => {
               </p>
 
               <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
-                A medium-weight daily oil that supports and maintains your skin barrier. 
+                A medium-weight daily oil that supports and maintains your skin barrier.
                 Formulated for those who face sun, wind, salt, and sweat — every day.
               </p>
 
@@ -219,7 +230,7 @@ const Product = () => {
                   )}
                 </div>
 
-                {/* Subscription Card */}
+                {/* Bundle Card */}
                 <div
                   onClick={() => setPurchaseType("subscription")}
                   className={`relative p-6 border cursor-pointer transition-all ${
@@ -236,7 +247,7 @@ const Product = () => {
                     <div className="flex-1">
                        <span className="block text-base font-body font-medium">12-Month Supply</span>
                       <span className="block text-sm font-body text-muted-foreground mt-1">
-                        4 bottles — one delivered every 3 months
+                        {bundleBottles} bottles — shipped on your schedule (default every 3 months)
                        </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
@@ -253,15 +264,15 @@ const Product = () => {
                       <span className="text-base font-body font-medium">${subscriptionPrice.toFixed(2)} {currencyCode} total</span>
                     </div>
                      <p className="text-sm font-body text-muted-foreground mt-1">
-                      4 bottles for the price of 3 — save ${savingsAmount.toFixed(2)}
+                      {bundleBottles} bottles for the price of 3 — save ${savingsAmount.toFixed(2)}
                     </p>
                   </div>
 
                   <ul className="mt-5 space-y-2.5">
                      {[
                       "Free delivery within Australia",
-                      "1 bottle delivered every 3 months",
-                      "Cancel anytime — no lock-in",
+                      "Pay once — no recurring charges",
+                      "Choose when each bottle ships",
                     ].map((benefit, index) => (
                       <li key={index} className="flex items-center gap-3 text-sm font-body">
                         <Check className="w-4 h-4 text-foreground flex-shrink-0" />
@@ -269,17 +280,42 @@ const Product = () => {
                       </li>
                     ))}
                   </ul>
+
+                  {purchaseType === "subscription" && deliveryDates.length > 0 && (
+                    <div className="mt-6 pt-5 border-t border-border" onClick={(e) => e.stopPropagation()}>
+                      <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                        DELIVERY SCHEDULE
+                      </p>
+                      <p className="text-sm font-body text-muted-foreground mb-4">
+                        We default to one bottle every 3 months. Adjust any date to suit you.
+                      </p>
+                      <div className="space-y-3">
+                        {deliveryDates.map((date, i) => (
+                          <div key={i} className="flex items-center gap-3">
+                            <span className="text-sm font-body text-muted-foreground w-20 shrink-0">Bottle {i + 1}</span>
+                            <input
+                              type="date"
+                              value={date}
+                              min={today}
+                              onChange={(e) => updateDeliveryDate(i, e.target.value)}
+                              className="flex-1 px-3 py-2 border border-border bg-background text-sm font-body rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <button
                   onClick={handleAddToCart}
-                  disabled={cartLoading || loading}
+                  disabled={loading || !inStock}
                   className="btn-primary w-full flex items-center justify-center"
                 >
-                  {cartLoading ? (
+                  {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : purchaseType === "subscription" ? (
-                    `SUBSCRIBE — $${subscriptionPrice.toFixed(2)} ${currencyCode}`
+                  ) : !inStock ? (
+                    "SOLD OUT"
                   ) : (
                     `ADD TO CART — $${currentPrice.toFixed(2)} ${currencyCode}`
                   )}
@@ -292,7 +328,7 @@ const Product = () => {
                   HOW TO USE
                 </h3>
                 <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
-                  Apply ≈0.3ml to clean, slightly damp skin. Morning or evening. 
+                  Apply ≈0.3ml to clean, slightly damp skin. Morning or evening.
                   Massage into face and neck. That's it. One product. Daily.
                 </p>
               </div>
@@ -318,8 +354,8 @@ const Product = () => {
             WHO IT'S FOR
           </h2>
           <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px] text-left">
-            Field Oil is built for those who spend real time outside. Surfers, runners, cyclists, 
-            builders, professionals who train before or after work. If your skin faces the elements daily, 
+            Field Oil is built for those who spend real time outside. Surfers, runners, cyclists,
+            builders, professionals who train before or after work. If your skin faces the elements daily,
             this is your maintenance tool.
           </p>
         </div>
