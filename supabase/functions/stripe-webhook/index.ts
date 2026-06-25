@@ -28,7 +28,7 @@ async function sendReceipt(
   const itemRows = items
     .map(
       (i) =>
-        `<tr><td style="padding:4px 0">${i.quantity} × ${i.product_name} — ${i.variant_label}</td>` +
+        `<tr><td style="padding:4px 0">${i.quantity} × ${i.product_name} (${i.variant_label})</td>` +
         `<td style="padding:4px 0;text-align:right">${formatPrice(i.unit_price_cents * i.quantity)}</td></tr>`,
     )
     .join("");
@@ -62,6 +62,53 @@ async function sendReceipt(
     if (!res.ok) console.error("receipt email failed", res.status, await res.text().catch(() => ""));
   } catch (e) {
     console.error("receipt email error", e);
+  }
+}
+
+// Notify the store's admins (from the public.admins allowlist) of a new paid order.
+async function sendAdminNotification(
+  supa: ReturnType<typeof createClient>,
+  details: { orderId: string; email: string; totalCents: number; currency: string; shippingName: string | null },
+  items: Array<{ product_name: string; variant_label: string; quantity: number; unit_price_cents: number }>,
+  deliveries: Array<{ scheduled_for: string; sequence: number }>,
+) {
+  if (!RESEND_API_KEY) return;
+  const { data: adminRows } = await supa.from("admins").select("email");
+  const recipients = (adminRows ?? []).map((a) => a.email as string).filter(Boolean);
+  if (recipients.length === 0) return;
+
+  const itemRows = items
+    .map((i) => `<li>${i.quantity} × ${i.product_name} (${i.variant_label}), ${formatPrice(i.unit_price_cents * i.quantity)}</li>`)
+    .join("");
+  const schedule =
+    deliveries.length > 1
+      ? `<p style="font-size:14px"><strong>Delivery schedule:</strong> ${deliveries
+          .sort((a, b) => a.sequence - b.sequence)
+          .map((d) => d.scheduled_for)
+          .join(", ")}</p>`
+      : "";
+  const html = `
+    <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:24px">
+      <h2 style="font-size:18px;margin:0 0 12px">New order: ${formatPrice(details.totalCents)} ${details.currency}</h2>
+      <p style="font-size:14px;color:#333">From <strong>${details.shippingName ?? details.email}</strong> (${details.email})</p>
+      <ul style="font-size:14px;color:#333;line-height:1.6">${itemRows}</ul>
+      ${schedule}
+      <p style="font-size:12px;color:#999;margin-top:20px">Order ${details.orderId}. Manage at https://coastalendurance.com/admin</p>
+    </div>`;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: FROM_ADDRESS,
+        to: recipients,
+        subject: `New order: ${formatPrice(details.totalCents)} ${details.currency}`,
+        html,
+      }),
+    });
+    if (!res.ok) console.error("admin notification failed", res.status, await res.text().catch(() => ""));
+  } catch (e) {
+    console.error("admin notification error", e);
   }
 }
 
@@ -164,6 +211,18 @@ Deno.serve(async (req) => {
     .eq("order_id", order.id);
 
   await sendReceipt(email, { total_cents: session.amount_total ?? order.total_cents, currency: order.currency }, items ?? [], deliveries ?? []);
+  await sendAdminNotification(
+    admin,
+    {
+      orderId: order.id,
+      email,
+      totalCents: session.amount_total ?? order.total_cents,
+      currency: order.currency,
+      shippingName: shipping?.name ?? session.customer_details?.name ?? null,
+    },
+    items ?? [],
+    deliveries ?? [],
+  );
 
   return new Response(JSON.stringify({ received: true }), { headers: { "Content-Type": "application/json" } });
 });
