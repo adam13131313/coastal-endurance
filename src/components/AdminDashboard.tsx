@@ -6,15 +6,29 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 // Structural shape of what the dashboard needs from each order (Admin passes its
 // richer Order objects, which are compatible).
 interface DashOrder {
+  id: string;
+  created_at: string;
+  email: string;
+  phone: string | null;
   status: string;
   total_cents: number;
-  created_at: string;
-  order_items: { quantity: number; bottles_each: number }[];
+  currency: string;
+  shipping_name: string | null;
+  shipping_address: Record<string, unknown> | null;
+  order_items: { product_name: string; variant_label: string; quantity: number; bottles_each: number; unit_price_cents: number }[];
   order_deliveries: { scheduled_for: string; status: string }[];
 }
 
 const MS_WEEK = 7 * 86400000;
 const FILL = "hsl(var(--foreground))";
+
+function formatAddress(a: Record<string, unknown> | null): string {
+  if (!a) return "";
+  return ["line1", "line2", "city", "state", "postal_code", "country"]
+    .map((k) => a[k])
+    .filter((v) => typeof v === "string" && v.length > 0)
+    .join(", ");
+}
 
 const Tile = ({ label, value, sub }: { label: string; value: string | number; sub?: string }) => (
   <div className="border border-border p-4">
@@ -55,11 +69,30 @@ const AdminDashboard = ({ orders }: { orders: DashOrder[] }) => {
     );
     const aov = paid.length ? Math.round(revenue / paid.length) : 0;
 
+    // Single vs bundle (units; bundle = multi-bottle item).
+    let singles = 0, bundles = 0;
+    for (const o of paid) {
+      for (const it of o.order_items) {
+        if (it.bottles_each > 1) bundles += it.quantity;
+        else singles += it.quantity;
+      }
+    }
+
+    // Repeat customers (by email, among paid orders).
+    const byEmail = new Map<string, number>();
+    for (const o of paid) byEmail.set(o.email, (byEmail.get(o.email) ?? 0) + 1);
+    const customers = byEmail.size;
+    const repeat = [...byEmail.values()].filter((n) => n > 1).length;
+    const repeatRate = customers ? Math.round((repeat / customers) * 100) : 0;
+
+    // Refunds.
+    const refunded = orders.filter((o) => o.status === "refunded");
+    const refundedAmount = refunded.reduce((s, o) => s + o.total_cents, 0);
+
     const scheduled = paid.flatMap((o) => o.order_deliveries.filter((d) => d.status === "scheduled"));
     const overdue = scheduled.filter((d) => d.scheduled_for < todayISO).length;
     const dueWeek = scheduled.filter((d) => d.scheduled_for >= todayISO && d.scheduled_for <= weekAheadISO).length;
 
-    // Revenue, last 12 weeks (oldest → newest).
     const weeks = Array.from({ length: 12 }, (_, i) => {
       const d = new Date(now.getTime() - (11 - i) * MS_WEEK);
       return { label: d.toLocaleDateString("en-AU", { day: "numeric", month: "short" }), revenue: 0 };
@@ -69,7 +102,6 @@ const AdminDashboard = ({ orders }: { orders: DashOrder[] }) => {
       if (diff >= 0 && diff < 12) weeks[11 - diff].revenue += o.total_cents / 100;
     }
 
-    // Upcoming shipments, next 6 months.
     const months = Array.from({ length: 6 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
       return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString("en-AU", { month: "short" }), count: 0 };
@@ -82,17 +114,53 @@ const AdminDashboard = ({ orders }: { orders: DashOrder[] }) => {
 
     return {
       revenue, revenueMonth, ordersCount: paid.length, bottlesSold, aov,
+      singles, bundles, customers, repeat, repeatRate,
+      refundedCount: refunded.length, refundedAmount,
       shipmentsOwed: scheduled.length, overdue, dueWeek, weeks, months,
     };
   }, [orders]);
 
+  const exportCsv = () => {
+    const headers = ["Date", "Order ID", "Status", "Customer", "Email", "Phone", "Shipping address", "Items", "Total (AUD)", "Currency"];
+    const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const rows = orders.map((o) => [
+      new Date(o.created_at).toLocaleString("en-AU"),
+      o.id,
+      o.status,
+      o.shipping_name ?? "",
+      o.email,
+      o.phone ?? "",
+      formatAddress(o.shipping_address),
+      o.order_items.map((it) => `${it.quantity} x ${it.product_name} (${it.variant_label})`).join("; "),
+      (o.total_cents / 100).toFixed(2),
+      o.currency,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map(esc).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `coastal-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-10">
+      <div className="flex justify-end">
+        <button onClick={exportCsv} disabled={orders.length === 0} className="btn-outline text-xs px-3 py-1.5 disabled:opacity-50">
+          Export orders (CSV)
+        </button>
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Tile label="Revenue" value={formatPrice(m.revenue)} sub={`${formatPrice(m.revenueMonth)} this month`} />
         <Tile label="Paid orders" value={m.ordersCount} />
         <Tile label="Bottles sold" value={m.bottlesSold} />
         <Tile label="Avg order" value={formatPrice(m.aov)} />
+        <Tile label="Product mix" value={`${m.singles} / ${m.bundles}`} sub="singles / bundles" />
+        <Tile label="Repeat customers" value={`${m.repeatRate}%`} sub={`${m.repeat} of ${m.customers}`} />
+        <Tile label="Refunded" value={formatPrice(m.refundedAmount)} sub={`${m.refundedCount} orders`} />
         <Tile label="Stock on hand" value={stock ?? "—"} />
         <Tile label="Shipments owed" value={m.shipmentsOwed} sub="scheduled, unshipped" />
         <Tile label="Overdue" value={m.overdue} />
