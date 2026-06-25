@@ -8,6 +8,7 @@ const STRIPE_WEBHOOK_SECRET = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 const FROM_ADDRESS = "Coastal Endurance <noreply@coastalendurance.com>";
+const LOW_STOCK_THRESHOLD = 10;
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
   httpClient: Stripe.createFetchHttpClient(),
@@ -112,6 +113,90 @@ async function sendAdminNotification(
   }
 }
 
+// Email admins when a product drops to/below the low-stock threshold.
+async function sendLowStockAlert(
+  supa: ReturnType<typeof createClient>,
+  productId: string,
+  remaining: number,
+) {
+  if (!RESEND_API_KEY) return;
+  const { data: product } = await supa.from("products").select("name").eq("id", productId).maybeSingle();
+  const { data: adminRows } = await supa.from("admins").select("email");
+  const recipients = (adminRows ?? []).map((a) => a.email as string).filter(Boolean);
+  if (recipients.length === 0) return;
+  const name = (product as { name?: string } | null)?.name ?? "a product";
+  const html = `
+    <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px">
+      <h2 style="font-size:18px;margin:0 0 12px">Low stock: ${name}</h2>
+      <p style="font-size:14px;color:#333">Only <strong>${remaining}</strong> left in stock. Time to restock.</p>
+    </div>`;
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: FROM_ADDRESS, to: recipients, subject: `Low stock: ${remaining} left`, html }),
+    });
+  } catch (e) {
+    console.error("low stock email error", e);
+  }
+}
+
+// On a full refund: mark the order refunded, cancel pending shipments, restock.
+async function handleRefund(charge: Stripe.Charge) {
+  if (!charge.refunded || charge.amount_refunded < charge.amount) return; // full refunds only
+  const pi = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id;
+  if (!pi) return;
+
+  const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  const { data: order } = await admin
+    .from("orders")
+    .select("id, status, email, total_cents, currency")
+    .eq("stripe_payment_intent_id", pi)
+    .maybeSingle();
+  if (!order || order.status === "refunded") return;
+
+  await admin.from("orders").update({ status: "refunded", updated_at: new Date().toISOString() }).eq("id", order.id);
+  await admin.from("order_deliveries").update({ status: "cancelled" }).eq("order_id", order.id).eq("status", "scheduled");
+
+  // Restock bottles.
+  const { data: items } = await admin.from("order_items").select("variant_id, bottles_each, quantity").eq("order_id", order.id);
+  const variantIds = [...new Set((items ?? []).map((i) => i.variant_id).filter(Boolean))] as string[];
+  const bottlesPerProduct = new Map<string, number>();
+  if (variantIds.length > 0) {
+    const { data: variants } = await admin.from("product_variants").select("id, product_id").in("id", variantIds);
+    const productByVariant = new Map((variants ?? []).map((v) => [v.id, v.product_id]));
+    for (const it of items ?? []) {
+      const pid = it.variant_id ? productByVariant.get(it.variant_id) : undefined;
+      if (pid) bottlesPerProduct.set(pid, (bottlesPerProduct.get(pid) ?? 0) + it.bottles_each * it.quantity);
+    }
+  }
+  for (const [productId, bottles] of bottlesPerProduct) {
+    const { error } = await admin.rpc("increment_stock", { p_product_id: productId, p_bottles: bottles });
+    if (error) console.error("restock failed", { orderId: order.id, productId, bottles, error });
+  }
+
+  if (RESEND_API_KEY) {
+    const { data: adminRows } = await admin.from("admins").select("email");
+    const recipients = (adminRows ?? []).map((a) => a.email as string).filter(Boolean);
+    if (recipients.length) {
+      const html = `
+        <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px">
+          <h2 style="font-size:18px;margin:0 0 12px">Order refunded</h2>
+          <p style="font-size:14px;color:#333">Order ${order.id} (${order.email}), ${formatPrice(order.total_cents)} ${order.currency}, was refunded. Bottles restocked and pending shipments cancelled.</p>
+        </div>`;
+      try {
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ from: FROM_ADDRESS, to: recipients, subject: "Order refunded", html }),
+        });
+      } catch (e) {
+        console.error("refund email error", e);
+      }
+    }
+  }
+}
+
 Deno.serve(async (req) => {
   const sig = req.headers.get("stripe-signature");
   if (!sig) return new Response("Missing signature", { status: 400 });
@@ -125,6 +210,10 @@ Deno.serve(async (req) => {
     return new Response("Invalid signature", { status: 400 });
   }
 
+  if (event.type === "charge.refunded") {
+    await handleRefund(event.data.object as Stripe.Charge);
+    return new Response(JSON.stringify({ received: true }), { headers: { "Content-Type": "application/json" } });
+  }
   if (event.type !== "checkout.session.completed") {
     return new Response(JSON.stringify({ received: true }), { headers: { "Content-Type": "application/json" } });
   }
@@ -206,10 +295,12 @@ Deno.serve(async (req) => {
     }
   }
   for (const [productId, bottles] of bottlesPerProduct) {
-    const { error } = await admin.rpc("decrement_stock", { p_product_id: productId, p_bottles: bottles });
+    const { data: remaining, error } = await admin.rpc("decrement_stock", { p_product_id: productId, p_bottles: bottles });
     if (error) {
-      // Payment succeeded but stock couldn't be decremented — flag for manual review.
+      // Payment succeeded but stock couldn't be decremented; flag for manual review.
       console.error("stock decrement failed (needs review)", { orderId: order.id, productId, bottles, error });
+    } else if (typeof remaining === "number" && remaining <= LOW_STOCK_THRESHOLD) {
+      await sendLowStockAlert(admin, productId, remaining);
     }
   }
 

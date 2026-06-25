@@ -19,12 +19,26 @@ interface Profile {
   preferred_currency: string | null;
 }
 
+interface OrderItemRow {
+  product_name: string;
+  variant_label: string;
+  quantity: number;
+  unit_price_cents: number;
+}
+interface DeliveryRow {
+  sequence: number;
+  scheduled_for: string;
+  status: string;
+  tracking_number: string | null;
+}
 interface Order {
   id: string;
   status: string;
   total_cents: number;
   currency: string;
   created_at: string;
+  order_items: OrderItemRow[];
+  order_deliveries: DeliveryRow[];
 }
 
 interface WishlistItem {
@@ -88,7 +102,7 @@ const Account = () => {
     setLoading(true);
     const [profileRes, ordersRes, wishlistRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user!.id).single(),
-      supabase.from("orders").select("*").eq("user_id", user!.id).order("created_at", { ascending: false }),
+      supabase.from("orders").select("id, status, total_cents, currency, created_at, order_items ( product_name, variant_label, quantity, unit_price_cents ), order_deliveries ( sequence, scheduled_for, status, tracking_number )").eq("user_id", user!.id).order("created_at", { ascending: false }),
       supabase.from("wishlists").select("*").eq("user_id", user!.id).order("created_at", { ascending: false }),
     ]);
 
@@ -106,7 +120,7 @@ const Account = () => {
         preferred_currency: profileRes.data.preferred_currency || "AUD",
       });
     }
-    if (ordersRes.data) setOrders(ordersRes.data);
+    if (ordersRes.data) setOrders(ordersRes.data as unknown as Order[]);
     if (wishlistRes.data) setWishlist(wishlistRes.data);
     setLoading(false);
   };
@@ -311,6 +325,32 @@ const Account = () => {
                           {order.status}
                         </span>
                       </div>
+
+                      {order.order_items?.length > 0 && (
+                        <ul className="mt-3 text-sm text-muted-foreground space-y-1">
+                          {order.order_items.map((it, i) => (
+                            <li key={i}>{it.quantity} × {it.product_name} ({it.variant_label})</li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {order.order_deliveries?.length > 1 && (
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Delivery schedule</p>
+                          <ul className="text-sm text-muted-foreground space-y-1">
+                            {[...order.order_deliveries].sort((a, b) => a.sequence - b.sequence).map((d, i) => (
+                              <li key={i} className="flex justify-between gap-4">
+                                <span>Bottle {d.sequence}: {d.scheduled_for}</span>
+                                <span>
+                                  {d.status === "shipped" || d.status === "delivered"
+                                    ? (d.tracking_number ? `Shipped · #${d.tracking_number}` : "Shipped")
+                                    : d.status}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
