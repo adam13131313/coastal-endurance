@@ -49,6 +49,14 @@ const Footer = () => {
               >
                 Instagram ↗
               </a>
+              <a
+                href="https://www.tiktok.com/@faceoilnatural"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-body text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+              >
+                TikTok ↗
+              </a>
             </div>
           </div>
         </div>
