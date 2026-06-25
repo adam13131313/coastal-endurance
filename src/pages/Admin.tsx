@@ -7,6 +7,8 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import AdminGuide from "@/components/AdminGuide";
 import AdminDashboard from "@/components/AdminDashboard";
+import StaffBoard from "@/components/StaffBoard";
+import StaffAssistant from "@/components/StaffAssistant";
 
 interface OrderItem {
   id: string;
@@ -61,7 +63,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"overview" | "dispatch" | "orders" | "guide">("overview");
+  const [tab, setTab] = useState<"overview" | "dispatch" | "orders" | "board" | "assistant" | "guide">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -175,7 +177,7 @@ const Admin = () => {
           </div>
 
           <div className="flex gap-1 border-b border-border mb-8">
-            {(["overview", "dispatch", "orders", "guide"] as const).map((t) => (
+            {(["overview", "dispatch", "orders", "board", "assistant", "guide"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -183,7 +185,12 @@ const Admin = () => {
                   tab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t === "overview" ? "Overview" : t === "dispatch" ? `To ship (${dispatch.length})` : t === "orders" ? `Orders (${orders.length})` : "Staff guide"}
+                {t === "overview" ? "Overview"
+                  : t === "dispatch" ? `To ship (${dispatch.length})`
+                  : t === "orders" ? `Orders (${orders.length})`
+                  : t === "board" ? "Staff board"
+                  : t === "assistant" ? "Assistant"
+                  : "Staff guide"}
               </button>
             ))}
           </div>
@@ -289,6 +296,10 @@ const Admin = () => {
               </div>
             )
           )}
+
+          {tab === "board" && <StaffBoard />}
+
+          {tab === "assistant" && <StaffAssistant />}
 
           {tab === "guide" && <AdminGuide />}
         </div>
