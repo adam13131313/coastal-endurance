@@ -11,10 +11,10 @@ const About = () => {
     <main id="top" className="pt-20">
       <Helmet>
         <title>About Field Oil — Coastal Endurance</title>
-        <meta name="description" content="Barrier maintenance face oil for life outdoors. 59% active barrier-repair oils, 59% Australian-grown. Seven ingredients with a purpose." />
+        <meta name="description" content="A daily face oil with seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/about" />
         <meta property="og:title" content="About Field Oil — Coastal Endurance" />
-        <meta property="og:description" content="Equipment maintenance for outdoor-exposed skin. 59% active barrier-repair oils, 59% Australian-grown. Seven ingredients with a purpose." />
+        <meta property="og:description" content="Seven natural oils, each with a purpose — active barrier-repair oils, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/about" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -53,7 +53,7 @@ const About = () => {
               skin needs maintenance. Not when it's visibly damaged. Now. While you're still doing the thing.
             </p>
             <p className="text-foreground text-lg font-medium">
-              59% barrier-repair oils. 59% Australian-grown. Seven ingredients, each with a purpose.
+              Active barrier-repair oils, Australian-grown carriers, a natural antioxidant system. Seven oils, each with a purpose.
             </p>
           </div>
         </div>
@@ -94,8 +94,8 @@ const About = () => {
                 while you're actively doing the thing, not repair after the fact.
               </p>
               <p>
-                Clinical-dose actives (59% barrier-repair oils vs typical 20–40%). Australian ingredients built 
-                for Australian conditions (59% Australian-grown: Tasmanian Hemp, Australian Jojoba, Australian 
+                The active oils — Rosehip and Hemp — do the barrier-repair work. Australian ingredients built 
+                for Australian conditions (Tasmanian Hemp, Australian Jojoba, Australian 
                 Macadamia). Function over ritual. 60 seconds, once daily.
               </p>
             </div>
@@ -131,17 +131,17 @@ const About = () => {
             <div>
               <h3 className="text-xl font-typewriter uppercase">3. CLINICAL-DOSE ACTIVES</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                59% active barrier-repair oils. Most face oils use 20–40% actives diluted with cheap carriers. 
+                Rosehip and Hemp are the active oils — the working core of the formula. Where many face oils run a small dose of active in a large carrier base, here the actives lead. 
                 We use clinical doses — concentrations shown in research to support barrier function.
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-typewriter uppercase">4. 59% AUSTRALIAN-GROWN</h3>
+              <h3 className="text-xl font-typewriter uppercase">4. AUSTRALIAN-GROWN</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
                 Tasmanian Hemp Seed Oil. Australian Jojoba. Australian Macadamia. Sourced from Australian 
                 farms, built for harsh Australian conditions. Not imported ingredients with "Australian brand" 
-                marketing — actual Australian-grown ingredients at meaningful percentages.
+                marketing — actual Australian-grown ingredients.
               </p>
             </div>
 
@@ -192,7 +192,7 @@ const About = () => {
             Seven ingredients. Each with a purpose.
           </p>
           <p className="mt-4 font-body text-muted-foreground text-[17px] leading-relaxed">
-            59% active barrier-repair oils. 59% Australian-grown. Zero synthetics, zero essential oils, zero fragrance.
+            Active barrier-repair oils, Australian-grown carriers. Zero synthetics, zero essential oils, zero fragrance.
           </p>
           <Link
             to="/ingredients"

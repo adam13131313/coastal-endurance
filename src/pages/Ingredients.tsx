@@ -20,28 +20,28 @@ const Ingredients = () => {
       origin: "Australian-grown, Western Australia/South Australia/NSW",
       function:
         "Structurally similar to human sebum (your skin's natural oil). Helps regulate skin's natural oil balance. Lightweight, non-comedogenic (won't clog pores) wax ester.",
-      why: "Australian-sourced at clinical dose. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat — helps maintain balanced skin without heaviness. Primary component of our 59% Australian-grown content.",
+      why: "Australian-sourced at clinical dose. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat — helps maintain balanced skin without heaviness. One of our Australian-grown oils.",
     },
     {
       name: "HEMP SEED OIL",
       origin: "Tasmanian-grown, cold-pressed, THC-free",
       function:
         "Balanced anti-inflammatory oil containing both gamma-linolenic acid (GLA, omega-6) and alpha-linolenic acid (ALA, omega-3). Optimal 3:1 ratio of omega-6 to omega-3 fatty acids helps regulate inflammation and support barrier function.",
-      why: "Tasmanian-grown premium hemp. One of the few plant oils containing both omega-6 and omega-3 in balanced proportions. GLA provides anti-inflammatory support while omega-3 helps regulate sebum production (your skin's natural oil). Lighter texture than most seed oils — absorbs quickly without heaviness. Ideal for outdoor-exposed skin that needs inflammation control without excess oil. Part of our 59% Australian-grown content.",
+      why: "Tasmanian-grown premium hemp. One of the few plant oils containing both omega-6 and omega-3 in balanced proportions. GLA provides anti-inflammatory support while omega-3 helps regulate sebum production (your skin's natural oil). Lighter texture than most seed oils — absorbs quickly without heaviness. Ideal for outdoor-exposed skin that needs inflammation control without excess oil. One of our Australian-grown oils.",
     },
     {
       name: "MACADAMIA OIL",
       origin: "Australian-grown, Queensland/Northern NSW",
       function:
         "Contains palmitoleic acid (omega-7, a fatty acid that naturally occurs in younger skin but decreases with age and sun exposure). Lightweight despite being nourishing.",
-      why: "Australian native tree at clinically meaningful dose. Provides fatty acids that help maintain skin's lipid barrier (your skin's natural oil layer). Contains omega-7, found in few other plant sources. Addresses age-related lipid depletion accelerated by environmental exposure. Part of our 59% Australian-grown content.",
+      why: "Australian native tree at clinically meaningful dose. Provides fatty acids that help maintain skin's lipid barrier (your skin's natural oil layer). Contains omega-7, found in few other plant sources. Addresses age-related lipid depletion accelerated by environmental exposure. One of our Australian-grown oils.",
     },
     {
       name: "MEADOWFOAM SEED OIL",
       origin: "Oregon, USA (only region where it grows)",
       function:
         "Exceptionally stable plant oil with long-chain fatty acids (meaning it doesn't break down or go rancid easily). Helps protect other oils from degradation. Forms a breathable protective layer on skin.",
-      why: "Acts as natural stabilizer, extending product shelf life without synthetic additives. Helps formula remain stable under sun exposure and temperature changes. Critical for protecting the 50% oxidation-prone oils in this formula from Australian sun.",
+      why: "Acts as natural stabilizer, extending product shelf life without synthetic additives. Helps formula remain stable under sun exposure and temperature changes. Critical for protecting the oxidation-prone oils in this formula from Australian sun.",
     },
     {
       name: "VITAMIN E",
@@ -77,7 +77,7 @@ const Ingredients = () => {
     },
     {
       q: "Why Australian ingredients?",
-      a: "Australian-grown ingredients (Tasmanian Hemp, Australian Jojoba, Australian Macadamia) make up 59% of the formula. They're sourced locally, built for harsh Australian conditions, and support Australian agriculture.",
+      a: "Three of the seven oils are Australian-grown: Tasmanian Hemp, Australian Jojoba, Australian Macadamia. They're sourced locally, built for harsh Australian conditions, and support Australian agriculture.",
     },
     {
       q: "Is this anti-aging?",
@@ -85,7 +85,7 @@ const Ingredients = () => {
     },
     {
       q: "How is this different from other face oils?",
-      a: "Clinical-dose actives (59% barrier-repair oils vs typical 20-40%), Australian provenance (59% Australian-grown), equipment maintenance approach (not anti-aging or luxury), essential oil-free, built specifically for life outdoors.",
+      a: "Active oils at clinical dose (Rosehip and Hemp lead the formula), Australian-grown carriers (Jojoba and Macadamia), a natural antioxidant system instead of synthetic preservatives, an equipment-maintenance approach (not anti-aging or luxury), and essential-oil-free.",
     },
     {
       q: "Why only 7 ingredients?",
@@ -110,11 +110,11 @@ const Ingredients = () => {
         <title>Field Oil Ingredients — 7 Natural Barrier-Repair Oils</title>
         <meta
           name="description"
-          content="Field Oil's 7 natural ingredients: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. 59% Australian-grown."
+          content="Field Oil's 7 natural ingredients: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. Australian-grown Hemp, Jojoba and Macadamia."
         />
         <link rel="canonical" href="https://coastalendurance.com/ingredients" />
         <meta property="og:title" content="Field Oil Ingredients — 7 Natural Barrier-Repair Oils" />
-        <meta property="og:description" content="Full ingredient breakdown: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. 59% Australian-grown." />
+        <meta property="og:description" content="Full ingredient breakdown: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. Australian-grown Hemp, Jojoba and Macadamia." />
         <meta property="og:url" content="https://coastalendurance.com/ingredients" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -166,7 +166,7 @@ const Ingredients = () => {
 
           {/* Key stat callout */}
           <p className="mt-10 text-lg font-body font-medium text-foreground">
-            59% active barrier-repair oils. 59% Australian-grown. Not anti-aging — equipment maintenance.
+            Active barrier-repair oils, Australian-grown carriers. Not anti-aging — equipment maintenance.
           </p>
         </div>
       </section>
@@ -237,7 +237,7 @@ const Ingredients = () => {
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-typewriter uppercase mb-3">ORIGIN</h2>
-          <p className="text-lg font-body font-medium text-foreground">59% Australian-grown by volume</p>
+          <p className="text-lg font-body font-medium text-foreground">Australian-grown oils</p>
           <p className="mt-2 text-[17px] font-body text-muted-foreground">
             Tasmanian Hemp, Australian Jojoba, and Australian Macadamia sourced from Australian farms.
           </p>

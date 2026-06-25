@@ -26,7 +26,7 @@ const Product = () => {
   const singleVariant = product?.variants.find((v) => !v.is_bundle);
   const bundleVariant = product?.variants.find((v) => v.is_bundle);
 
-  const price = singleVariant ? singleVariant.price_cents / 100 : 75;
+  const price = singleVariant ? singleVariant.price_cents / 100 : 76;
   const currencyCode = product?.currency || "AUD";
   const productImage = product?.image_url || fieldOilImage;
   const bundleBottles = bundleVariant?.bottles ?? 4;
@@ -95,17 +95,17 @@ const Product = () => {
     <main className="pt-20" id="top">
       <Helmet>
         <title>Field Oil — Daily Barrier Face Oil | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: 7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for life outdoors. $75 AUD. Made in Australia." />
+        <meta name="description" content="Field Oil: a daily face oil of seven natural oils — Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, zero fragrance. $76 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
         <meta property="og:title" content="Field Oil — Daily Barrier Face Oil" />
-        <meta property="og:description" content="7 natural ingredients, 59% active barrier-repair oils, zero fragrance. Built for life outdoors. $75 AUD. Made in Australia." />
+        <meta property="og:description" content="A daily face oil of seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. $76 AUD. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/product" />
         <meta property="og:type" content="product" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
           name: "Field Oil",
-          description: "A daily barrier maintenance face oil for life outdoors. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance, zero essential oils. 30ml. Made in Australia.",
+          description: "A daily face oil for healthy skin. Seven natural oils — Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, plus a natural antioxidant system. Zero fragrance, zero essential oils. 30ml. Made in Australia.",
           image: "https://coastalendurance.com/og-image.png",
           brand: { "@type": "Brand", name: "Coastal Endurance" },
           offers: {
@@ -130,8 +130,8 @@ const Product = () => {
             FIELD OIL
           </h1>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
-            100% natural. Every ingredient has a job. No synthetics. No filler.
-            59% Australian-grown. Just functional compounds chosen for performance.
+            100% natural. Every ingredient has a job — actives, carriers, antioxidants.
+            No synthetics, no fragrance. Made with Australian-grown oils.
           </p>
         </div>
       </section>

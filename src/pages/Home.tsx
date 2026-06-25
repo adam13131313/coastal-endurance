@@ -31,10 +31,10 @@ const Home = () => {
     <main>
       <Helmet>
         <title>Field Oil: Daily Skin Maintenance</title>
-        <meta name="description" content="Daily face oil for Australian men with serious outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance." />
+        <meta name="description" content="A daily face oil for healthy skin. Seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/" />
         <meta property="og:title" content="Field Oil: Daily Skin Maintenance" />
-        <meta property="og:description" content="Daily face oil for Australian men with serious outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance." />
+        <meta property="og:description" content="A daily face oil for healthy skin. Seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
 
@@ -100,7 +100,7 @@ const Home = () => {
               <ul className="mt-8 space-y-3">
                 {[
                 "Supports and maintains the skin barrier",
-                "59% Australian-grown actives",
+                "Rosehip & Hemp actives, Australian-grown carriers",
                 "No fragrance, no essential oils",
                 "30ml — approximately 3 months supply"].
                 map((feature, index) =>
