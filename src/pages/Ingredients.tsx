@@ -81,7 +81,7 @@ const Ingredients = () => {
     },
     {
       q: "Is this anti-aging?",
-      a: "No. This is barrier maintenance for environmental damage. If you've spent 15-30 years outdoors (surfing, cycling, working outside), your skin barrier has been compromised by sun, wind, salt. This addresses that — not chronological aging.",
+      a: "No. This is barrier maintenance for environmental damage. If you regularly spend time outdoors (surfing, cycling, working outside), sun, wind and salt wear on your skin barrier. This addresses that — not chronological aging.",
     },
     {
       q: "How is this different from other face oils?",
@@ -253,7 +253,7 @@ const Ingredients = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-typewriter uppercase mb-3">BUILT FOR</h2>
           <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
-            Men with significant outdoor exposure — surfers with 15+ years in the water, tradies with decades on the tools, cyclists doing serious miles, outdoor workers exposed to the elements.
+            Men with significant outdoor exposure — surfers, tradies, cyclists, and outdoor workers exposed to the elements.
           </p>
           <p className="mt-4 text-[17px] font-body font-medium text-foreground">
             Not anti-aging. Barrier maintenance for cumulative environmental damage from prolonged outdoor conditions.

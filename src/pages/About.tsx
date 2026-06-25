@@ -49,7 +49,7 @@ const About = () => {
               Not anti-aging. Not grooming. Not luxury ritual. Equipment maintenance.
             </p>
             <p>
-              If you're spending serious time outdoors — surfing regularly, riding centuries, working in the sun — your 
+              If you're spending serious time outdoors — surfing, cycling, working in the sun — your 
               skin needs maintenance. Not when it's visibly damaged. Now. While you're still doing the thing.
             </p>
             <p className="text-foreground text-lg font-medium">
@@ -78,7 +78,7 @@ const About = () => {
                 real time outdoors and care primarily about function and practical maintenance.
               </p>
               <p>
-                If you're surfing daily, riding 12+ hours a week, or working outside year-round, your skin is 
+                If you surf, ride, or work outside regularly, your skin is 
                 constantly exposed to sun, wind, and salt. You need maintenance to keep going — not repair after 
                 things break down.
               </p>
