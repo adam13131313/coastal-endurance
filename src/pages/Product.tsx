@@ -422,7 +422,7 @@ const Product = () => {
                 {[
                   { label: "Shelf Life", value: "12–18 months from manufacture date" },
                   { label: "Storage", value: "Below 25°C, away from direct sunlight" },
-                  { label: "Packaging", value: "Amber glass bottle (UV protection)" },
+                  { label: "Packaging", value: "Amber glass bottle with dropper. The glass blocks UV; the dropper gives precise, mess-free application and the same dose every time." },
                 ].map((item, index) => (
                   <div key={index} className="pb-4 border-b border-border last:border-0">
                     <span className="block font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-1">{item.label}</span>
