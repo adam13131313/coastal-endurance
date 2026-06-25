@@ -26,7 +26,7 @@ const CheckoutSuccess = () => {
           </div>
           <h1 className="text-4xl md:text-5xl font-typewriter uppercase">Thank you</h1>
           <p className="mt-6 font-body text-muted-foreground text-[17px] leading-relaxed">
-            Your order is confirmed. We've emailed your receipt — and for the 12-month
+            Your order is confirmed. We've emailed your receipt, and for the 12-month
             supply, the delivery schedule you chose.
           </p>
           <Link to="/" className="btn-primary mt-8 inline-flex">

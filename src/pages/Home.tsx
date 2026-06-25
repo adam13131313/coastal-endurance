@@ -31,10 +31,10 @@ const Home = () => {
     <main>
       <Helmet>
         <title>Field Oil: Daily Skin Maintenance</title>
-        <meta name="description" content="A daily face oil for healthy skin. Seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
+        <meta name="description" content="A daily face oil for healthy skin. Seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/" />
         <meta property="og:title" content="Field Oil: Daily Skin Maintenance" />
-        <meta property="og:description" content="A daily face oil for healthy skin. Seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
+        <meta property="og:description" content="A daily face oil for healthy skin. Seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
 
@@ -76,7 +76,7 @@ const Home = () => {
             FOR LIFE IN THE OUTDOORS
           </h2>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
-            Field Oil is a daily face oil built for those who spend their days outside — surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
+            Field Oil is a daily face oil built for those who spend their days outside, surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
           </p>
         </div>
       </section>
@@ -102,7 +102,7 @@ const Home = () => {
                 "Supports and maintains the skin barrier",
                 "Rosehip & Hemp actives, Australian-grown carriers",
                 "No fragrance, no essential oils",
-                "30ml — approximately 3 months supply"].
+                "30ml, approximately 3 months supply"].
                 map((feature, index) =>
                 <li key={index} className="flex items-start gap-3 font-body text-muted-foreground text-[17px]">
                     <span className="w-1.5 h-1.5 rounded-full bg-foreground mt-2 flex-shrink-0" />

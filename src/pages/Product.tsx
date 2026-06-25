@@ -94,18 +94,18 @@ const Product = () => {
   return (
     <main className="pt-20" id="top">
       <Helmet>
-        <title>Field Oil — Daily Barrier Face Oil | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: a daily face oil of seven natural oils — Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, zero fragrance. $76 AUD. Made in Australia." />
+        <title>Field Oil: Daily Barrier Face Oil | Coastal Endurance</title>
+        <meta name="description" content="Field Oil: a daily face oil of seven natural oils, Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, zero fragrance. $76 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
-        <meta property="og:title" content="Field Oil — Daily Barrier Face Oil" />
-        <meta property="og:description" content="A daily face oil of seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. $76 AUD. Made in Australia." />
+        <meta property="og:title" content="Field Oil: Daily Barrier Face Oil" />
+        <meta property="og:description" content="A daily face oil of seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. $76 AUD. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/product" />
         <meta property="og:type" content="product" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
           name: "Field Oil",
-          description: "A daily face oil for healthy skin. Seven natural oils — Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, plus a natural antioxidant system. Zero fragrance, zero essential oils. 30ml. Made in Australia.",
+          description: "A daily face oil for healthy skin. Seven natural oils, Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, plus a natural antioxidant system. Zero fragrance, zero essential oils. 30ml. Made in Australia.",
           image: "https://coastalendurance.com/og-image.png",
           brand: { "@type": "Brand", name: "Coastal Endurance" },
           offers: {
@@ -130,7 +130,7 @@ const Product = () => {
             FIELD OIL
           </h1>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
-            100% natural. Every ingredient has a job — actives, carriers, antioxidants.
+            100% natural. Every ingredient has a job: actives, carriers, antioxidants.
             No synthetics, no fragrance. Made with Australian-grown oils.
           </p>
         </div>
@@ -159,12 +159,12 @@ const Product = () => {
 
               <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
                 A medium-weight daily oil that supports and maintains your skin barrier.
-                Formulated for those who face sun, wind, salt, and sweat — every day.
+                Formulated for those who face sun, wind, salt, and sweat, every day.
               </p>
 
               <ul className="mt-8 space-y-3">
                 {[
-                  "30ml — approximately 3 months of daily use",
+                  "30ml, approximately 3 months of daily use",
                   "Fast-absorbing, non-greasy finish",
                   "No fragrance or essential oils",
                   "Free delivery within Australia",
@@ -192,7 +192,7 @@ const Product = () => {
                     <div>
                       <span className="block text-base font-body font-medium">One-Time Purchase</span>
                       <span className="block text-sm font-body text-muted-foreground mt-1">
-                        Single bottle — ${price.toFixed(2)} {currencyCode}
+                        Single bottle, ${price.toFixed(2)} {currencyCode}
                       </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -247,7 +247,7 @@ const Product = () => {
                     <div className="flex-1">
                        <span className="block text-base font-body font-medium">12-Month Supply</span>
                       <span className="block text-sm font-body text-muted-foreground mt-1">
-                        {bundleBottles} bottles — shipped on your schedule (default every 3 months)
+                        {bundleBottles} bottles, shipped on your schedule (default every 3 months)
                        </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
@@ -264,14 +264,14 @@ const Product = () => {
                       <span className="text-base font-body font-medium">${subscriptionPrice.toFixed(2)} {currencyCode} total</span>
                     </div>
                      <p className="text-sm font-body text-muted-foreground mt-1">
-                      {bundleBottles} bottles for the price of 3 — save ${savingsAmount.toFixed(2)}
+                      {bundleBottles} bottles for the price of 3, save ${savingsAmount.toFixed(2)}
                     </p>
                   </div>
 
                   <ul className="mt-5 space-y-2.5">
                      {[
                       "Free delivery within Australia",
-                      "Pay once — no recurring charges",
+                      "Pay once, no recurring charges",
                       "Choose when each bottle ships",
                     ].map((benefit, index) => (
                       <li key={index} className="flex items-center gap-3 text-sm font-body">
@@ -317,7 +317,7 @@ const Product = () => {
                   ) : !inStock ? (
                     "SOLD OUT"
                   ) : (
-                    `ADD TO CART — $${currentPrice.toFixed(2)} ${currencyCode}`
+                    `ADD TO CART $${currentPrice.toFixed(2)} ${currencyCode}`
                   )}
                 </button>
               </div>
@@ -404,7 +404,7 @@ const Product = () => {
                 {[
                   { label: "Appearance", value: "Clear to pale amber oil with golden hue" },
                   { label: "Texture", value: "Medium-weight, absorbs in approximately 2 minutes" },
-                  { label: "Scent", value: "Natural plant oil aroma (grassy, nutty, earthy) — dissipates quickly" },
+                  { label: "Scent", value: "Natural plant oil aroma (grassy, nutty, earthy), dissipates quickly" },
                   { label: "Colour", value: "Pale golden yellow" },
                   { label: "Viscosity", value: "Medium (pours easily, not too thick or thin)" },
                 ].map((item, index) => (

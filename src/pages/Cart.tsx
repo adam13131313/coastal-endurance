@@ -78,7 +78,7 @@ const Cart = () => {
                       <p className="text-sm font-body text-muted-foreground">{item.variantLabel}</p>
                       {item.isBundle && item.deliveryDates.length > 0 && (
                         <p className="text-xs font-body text-muted-foreground mt-1">
-                          {item.deliveryDates.length} shipments — {item.deliveryDates.join(", ")}
+                          {item.deliveryDates.length} shipments, {item.deliveryDates.join(", ")}
                         </p>
                       )}
                     </div>

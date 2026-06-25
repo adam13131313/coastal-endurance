@@ -4,7 +4,7 @@ const Privacy = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Privacy Policy — Coastal Endurance</title>
+        <title>Privacy Policy | Coastal Endurance</title>
         <meta name="description" content="Coastal Endurance privacy policy. How we collect, use, and protect your personal information." />
         <link rel="canonical" href="https://coastalendurance.com/privacy" />
       </Helmet>
@@ -17,7 +17,7 @@ const Privacy = () => {
             </p>
             <h2 className="text-2xl font-display text-foreground">Information We Collect</h2>
             <p>
-              We collect information you provide directly — your name, email address, shipping address, and payment details when you make a purchase or subscribe to our updates.
+              We collect information you provide directly, your name, email address, shipping address, and payment details when you make a purchase or subscribe to our updates.
             </p>
             <h2 className="text-2xl font-display text-foreground">How We Use It</h2>
             <p>

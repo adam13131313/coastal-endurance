@@ -20,14 +20,14 @@ const Ingredients = () => {
       origin: "Australian-grown, Western Australia/South Australia/NSW",
       function:
         "Structurally similar to human sebum (your skin's natural oil). Helps regulate skin's natural oil balance. Lightweight, non-comedogenic (won't clog pores) wax ester.",
-      why: "Australian-sourced at clinical dose. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat — helps maintain balanced skin without heaviness. One of our Australian-grown oils.",
+      why: "Australian-sourced at clinical dose. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat, helps maintain balanced skin without heaviness. One of our Australian-grown oils.",
     },
     {
       name: "HEMP SEED OIL",
       origin: "Tasmanian-grown, cold-pressed, THC-free",
       function:
         "Balanced anti-inflammatory oil containing both gamma-linolenic acid (GLA, omega-6) and alpha-linolenic acid (ALA, omega-3). Optimal 3:1 ratio of omega-6 to omega-3 fatty acids helps regulate inflammation and support barrier function.",
-      why: "Tasmanian-grown premium hemp. One of the few plant oils containing both omega-6 and omega-3 in balanced proportions. GLA provides anti-inflammatory support while omega-3 helps regulate sebum production (your skin's natural oil). Lighter texture than most seed oils — absorbs quickly without heaviness. Ideal for outdoor-exposed skin that needs inflammation control without excess oil. One of our Australian-grown oils.",
+      why: "Tasmanian-grown premium hemp. One of the few plant oils containing both omega-6 and omega-3 in balanced proportions. GLA provides anti-inflammatory support while omega-3 helps regulate sebum production (your skin's natural oil). Lighter texture than most seed oils, absorbs quickly without heaviness. Ideal for outdoor-exposed skin that needs inflammation control without excess oil. One of our Australian-grown oils.",
     },
     {
       name: "MACADAMIA OIL",
@@ -73,7 +73,7 @@ const Ingredients = () => {
   const faqs = [
     {
       q: "Why does it have a scent if it's fragrance-free?",
-      a: "Natural plant oils have their own aroma (grassy, nutty, earthy). We don't add fragrance or essential oils. The scent you smell is the ingredients themselves — it dissipates within minutes of application.",
+      a: "Natural plant oils have their own aroma (grassy, nutty, earthy). We don't add fragrance or essential oils. The scent you smell is the ingredients themselves, it dissipates within minutes of application.",
     },
     {
       q: "Why Australian ingredients?",
@@ -81,7 +81,7 @@ const Ingredients = () => {
     },
     {
       q: "Is this anti-aging?",
-      a: "No. This is barrier maintenance for environmental damage. If you regularly spend time outdoors (surfing, cycling, working outside), sun, wind and salt wear on your skin barrier. This addresses that — not chronological aging.",
+      a: "No. This is barrier maintenance for environmental damage. If you regularly spend time outdoors (surfing, cycling, working outside), sun, wind and salt wear on your skin barrier. This addresses that, not chronological aging.",
     },
     {
       q: "How is this different from other face oils?",
@@ -93,27 +93,27 @@ const Ingredients = () => {
     },
     {
       q: "Can I use this if I have oily skin?",
-      a: "Not recommended for very oily or acne-prone skin. This is formulated for normal, dry, or mature skin that's been exposed to outdoor conditions for years. If you're uncertain, start with a little less than ≈0.4ml.",
+      a: "Not recommended for very oily or acne-prone skin. This is formulated for normal, dry, or mature skin that's been exposed to outdoor conditions for years. If you're uncertain, start with a little less than ≈0.3ml.",
     },
   ];
 
   const characteristics = [
     { label: "Appearance", value: "Clear to pale amber oil with golden hue" },
     { label: "Texture", value: "Medium-weight, absorbs in approximately 2 minutes" },
-    { label: "Scent", value: "Natural plant oil aroma (grassy, nutty, earthy) — dissipates quickly" },
+    { label: "Scent", value: "Natural plant oil aroma (grassy, nutty, earthy), dissipates quickly" },
     { label: "Suitable for", value: "Normal, dry, mature, outdoor-exposed skin" },
   ];
 
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Field Oil Ingredients — 7 Natural Barrier-Repair Oils</title>
+        <title>Field Oil Ingredients: 7 Natural Barrier-Repair Oils</title>
         <meta
           name="description"
           content="Field Oil's 7 natural ingredients: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. Australian-grown Hemp, Jojoba and Macadamia."
         />
         <link rel="canonical" href="https://coastalendurance.com/ingredients" />
-        <meta property="og:title" content="Field Oil Ingredients — 7 Natural Barrier-Repair Oils" />
+        <meta property="og:title" content="Field Oil Ingredients: 7 Natural Barrier-Repair Oils" />
         <meta property="og:description" content="Full ingredient breakdown: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. Australian-grown Hemp, Jojoba and Macadamia." />
         <meta property="og:url" content="https://coastalendurance.com/ingredients" />
         <script type="application/ld+json">
@@ -149,7 +149,7 @@ const Ingredients = () => {
             100% Natural Ingredients. Zero Synthetic Ingredients. Zero Essential Oils. Zero Fragrance.
           </p>
           <p className="mt-4 font-body text-muted-foreground leading-relaxed text-[17px]">
-            Built for men with significant outdoor exposure — those who've been doing the thing long enough that the environmental damage shows.
+            Built for men with significant outdoor exposure, those who've been doing the thing long enough that the environmental damage shows.
           </p>
 
           {/* Characteristics table */}
@@ -166,7 +166,7 @@ const Ingredients = () => {
 
           {/* Key stat callout */}
           <p className="mt-10 text-lg font-body font-medium text-foreground">
-            Active barrier-repair oils, Australian-grown carriers. Not anti-aging — equipment maintenance.
+            Active barrier-repair oils, Australian-grown carriers. Not anti-aging, equipment maintenance.
           </p>
         </div>
       </section>
@@ -253,7 +253,7 @@ const Ingredients = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-typewriter uppercase mb-3">BUILT FOR</h2>
           <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
-            Men with significant outdoor exposure — surfers, tradies, cyclists, and outdoor workers exposed to the elements.
+            Men with significant outdoor exposure, surfers, tradies, cyclists, and outdoor workers exposed to the elements.
           </p>
           <p className="mt-4 text-[17px] font-body font-medium text-foreground">
             Not anti-aging. Barrier maintenance for cumulative environmental damage from prolonged outdoor conditions.

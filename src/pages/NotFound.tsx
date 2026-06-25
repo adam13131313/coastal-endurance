@@ -12,7 +12,7 @@ const NotFound = () => {
   return (
     <main className="flex min-h-screen items-center justify-center">
       <Helmet>
-        <title>Page Not Found — Coastal Endurance</title>
+        <title>Page Not Found | Coastal Endurance</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div className="text-center">

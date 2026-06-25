@@ -49,10 +49,10 @@ const Contact = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Contact — Coastal Endurance</title>
+        <title>Contact | Coastal Endurance</title>
         <meta name="description" content="Get in touch with Coastal Endurance. Questions about Field Oil, wholesale inquiries, or feedback. We respond within 24-48 hours." />
         <link rel="canonical" href="https://coastalendurance.com/contact" />
-        <meta property="og:title" content="Contact — Coastal Endurance" />
+        <meta property="og:title" content="Contact | Coastal Endurance" />
         <meta property="og:description" content="Questions about Field Oil, wholesale, or feedback. We respond within 24-48 hours." />
         <meta property="og:url" content="https://coastalendurance.com/contact" />
         <script type="application/ld+json">{JSON.stringify({

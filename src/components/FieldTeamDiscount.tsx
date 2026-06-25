@@ -46,7 +46,7 @@ const FieldTeamDiscount = () => {
               </p>
               <p className="text-[15px] font-body text-muted-foreground leading-relaxed">
                 If <span className="text-foreground">{email.trim().toLowerCase()}</span> is on our approved
-                field team list, we've emailed your discount code there. It may take a few minutes to arrive —
+                field team list, we've emailed your discount code there. It may take a few minutes to arrive,
                 check your spam folder if you don't see it. Contact adam@coastalendurance.com if you think
                 there's a mistake.
               </p>

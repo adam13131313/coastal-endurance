@@ -4,7 +4,7 @@ const Terms = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Terms & Conditions — Coastal Endurance</title>
+        <title>Terms & Conditions | Coastal Endurance</title>
         <meta name="description" content="Coastal Endurance terms and conditions. Products, orders, shipping, returns, and usage terms." />
         <link rel="canonical" href="https://coastalendurance.com/terms" />
       </Helmet>

@@ -6,7 +6,7 @@ const FieldTeam = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Field Oil — Beta Testing Guide | Coastal Endurance</title>
+        <title>Field Oil: Beta Testing Guide | Coastal Endurance</title>
         <meta
           name="description"
           content="Beta testing guide for Field Oil by Coastal Endurance. Instructions, ingredients, feedback schedule for the 30-person field test."
@@ -22,7 +22,7 @@ const FieldTeam = () => {
             COASTAL ENDURANCE
           </p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-typewriter uppercase tracking-tight">
-            FIELD OIL — BETA TESTING GUIDE
+            FIELD OIL: BETA TESTING GUIDE
           </h1>
           <p className="mt-4 text-xl md:text-2xl font-typewriter text-foreground">
             Thank You for Testing
@@ -45,7 +45,7 @@ const FieldTeam = () => {
           <ol className="space-y-4 text-[17px] font-body text-muted-foreground leading-relaxed">
             <li className="flex gap-4">
               <span className="text-foreground font-semibold shrink-0">1.</span>
-              <span>Apply ≈0.4ml to damp skin daily (not dry)</span>
+              <span>Apply ≈0.3ml to damp skin daily (not dry)</span>
             </li>
             <li className="flex gap-4">
               <span className="text-foreground font-semibold shrink-0">2.</span>
@@ -83,7 +83,7 @@ const FieldTeam = () => {
                 SCENT
               </h3>
               <p>
-                Natural plant aroma — grassy, earthy, slightly nutty. This is
+                Natural plant aroma, grassy, earthy, slightly nutty. This is
                 normal. We don't add fragrance or essential oils, so you're
                 smelling the raw ingredients (rosehip, jojoba, hemp seed).
               </p>
@@ -103,7 +103,7 @@ const FieldTeam = () => {
               </h3>
               <p>
                 Should absorb completely. If it feels greasy after 5 minutes,
-                you've used too much — try a little less next time.
+                you've used too much, try a little less next time.
               </p>
             </div>
           </div>
@@ -131,7 +131,7 @@ const FieldTeam = () => {
             </li>
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
-              Australian-grown oils — Tasmanian Hemp, Australian Jojoba, Australian Macadamia
+              Australian-grown oils, Tasmanian Hemp, Australian Jojoba, Australian Macadamia
             </li>
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
@@ -139,7 +139,7 @@ const FieldTeam = () => {
             </li>
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
-              Seven oils, each with a job — actives, carriers, antioxidants
+              Seven oils, each with a job, actives, carriers, antioxidants
             </li>
           </ul>
         </div>
@@ -246,7 +246,7 @@ const FieldTeam = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
-                  Absorption time — too slow, too fast, just right?
+                  Absorption time, too slow, too fast, just right?
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
@@ -290,7 +290,7 @@ const FieldTeam = () => {
 
           <div className="mt-8 border border-border bg-secondary/50 p-5">
             <p className="text-[17px] font-body text-foreground leading-relaxed font-semibold">
-              Be brutally honest. I need to know what's actually happening —
+              Be brutally honest. I need to know what's actually happening,
               good and bad. Polite feedback doesn't help me build a better
               product.
             </p>
@@ -345,7 +345,7 @@ const FieldTeam = () => {
             that actually works for people who spend serious time outdoors.
           </p>
           <div className="text-[17px] font-body text-foreground leading-relaxed">
-            <p>— Adam Hyde</p>
+            <p>Adam Hyde</p>
             <p className="text-muted-foreground">
               Founder, Coastal Endurance
             </p>

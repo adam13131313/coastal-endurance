@@ -10,11 +10,11 @@ const About = () => {
   return (
     <main id="top" className="pt-20">
       <Helmet>
-        <title>About Field Oil — Coastal Endurance</title>
-        <meta name="description" content="A daily face oil with seven natural oils — Rosehip and Hemp actives, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
+        <title>About Field Oil | Coastal Endurance</title>
+        <meta name="description" content="A daily face oil with seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/about" />
-        <meta property="og:title" content="About Field Oil — Coastal Endurance" />
-        <meta property="og:description" content="Seven natural oils, each with a purpose — active barrier-repair oils, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
+        <meta property="og:title" content="About Field Oil | Coastal Endurance" />
+        <meta property="og:description" content="Seven natural oils, each with a purpose, active barrier-repair oils, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/about" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -49,7 +49,7 @@ const About = () => {
               Not anti-aging. Not grooming. Not luxury ritual. Equipment maintenance.
             </p>
             <p>
-              If you're spending serious time outdoors — surfing, cycling, working in the sun — your 
+              If you're spending serious time outdoors, surfing, cycling, working in the sun, your 
               skin needs maintenance. Not when it's visibly damaged. Now. While you're still doing the thing.
             </p>
             <p className="text-foreground text-lg font-medium">
@@ -79,7 +79,7 @@ const About = () => {
               </p>
               <p>
                 If you surf, ride, or work outside regularly, your skin is 
-                constantly exposed to sun, wind, and salt. You need maintenance to keep going — not repair after 
+                constantly exposed to sun, wind, and salt. You need maintenance to keep going, not repair after 
                 things break down.
               </p>
             </div>
@@ -90,11 +90,11 @@ const About = () => {
             <div className="mt-4 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
               <p>Field Oil treats barrier maintenance the same way you'd treat any other gear.</p>
               <p>
-                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach — maintenance 
+                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach, maintenance 
                 while you're actively doing the thing, not repair after the fact.
               </p>
               <p>
-                The active oils — Rosehip and Hemp — do the barrier-repair work. Australian ingredients built 
+                The active oils, Rosehip and Hemp, do the barrier-repair work. Australian ingredients built 
                 for Australian conditions (Tasmanian Hemp, Australian Jojoba, Australian 
                 Macadamia). Function over ritual. 60 seconds, once daily.
               </p>
@@ -112,7 +112,7 @@ const About = () => {
             <div>
               <h3 className="text-xl font-typewriter uppercase">1. EQUIPMENT MAINTENANCE</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach — 
+                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach, 
                 regular upkeep for gear that's constantly exposed to harsh conditions.
               </p>
             </div>
@@ -121,7 +121,7 @@ const About = () => {
               <h3 className="text-xl font-typewriter uppercase">2. BUILT FOR OUTDOOR PEOPLE</h3>
               <div className="mt-3 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
                 <p>
-                  Built for men who love being outdoors — whether that's daily sessions, weekend rides, 
+                  Built for men who love being outdoors, whether that's daily sessions, weekend rides, 
                   or years on the tools. If you're out there regularly and want to keep doing it, 
                   maintenance matters.
                 </p>
@@ -131,8 +131,8 @@ const About = () => {
             <div>
               <h3 className="text-xl font-typewriter uppercase">3. CLINICAL-DOSE ACTIVES</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                Rosehip and Hemp are the active oils — the working core of the formula. Where many face oils run a small dose of active in a large carrier base, here the actives lead. 
-                We use clinical doses — concentrations shown in research to support barrier function.
+                Rosehip and Hemp are the active oils, the working core of the formula. Where many face oils run a small dose of active in a large carrier base, here the actives lead. 
+                We use clinical doses, concentrations shown in research to support barrier function.
               </p>
             </div>
 
@@ -141,7 +141,7 @@ const About = () => {
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
                 Tasmanian Hemp Seed Oil. Australian Jojoba. Australian Macadamia. Sourced from Australian 
                 farms, built for harsh Australian conditions. Not imported ingredients with "Australian brand" 
-                marketing — actual Australian-grown ingredients.
+                marketing, actual Australian-grown ingredients.
               </p>
             </div>
 
@@ -149,7 +149,7 @@ const About = () => {
               <h3 className="text-xl font-typewriter uppercase">5. FUNCTION OVER FORM</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
                 Zero fragrance. Zero essential oils. 100% natural ingredients. No aromatherapy. No luxury 
-                ritual. No 10-step routine. Apply ≈0.4ml to damp skin once daily. Absorbs in 2 minutes. Done.
+                ritual. No 10-step routine. Apply ≈0.3ml to damp skin once daily. Absorbs in 2 minutes. Done.
               </p>
             </div>
           </div>
@@ -167,15 +167,15 @@ const About = () => {
           <div className="mt-8 space-y-6 font-body text-muted-foreground leading-relaxed text-[17px]">
             <p className="text-foreground font-medium">Men who love the outdoors:</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Surfers — whether it's dawn patrol every day or weekend sessions</li>
-              <li>Swimmers — open water, wild swimming, or daily lap sessions in the pool</li>
+              <li>Surfers, whether it's dawn patrol every day or weekend sessions</li>
+              <li>Swimmers, open water, wild swimming, or daily lap sessions in the pool</li>
               <li>Cyclists putting in miles on the road or the trail</li>
-              <li>Outdoor workers — tradies, builders, farmers, utility and municipal crews</li>
+              <li>Outdoor workers, tradies, builders, farmers, utility and municipal crews</li>
               <li>Dads who spend every spare hour outside with their kids</li>
               <li>Anyone whose outdoor time adds up, week after week</li>
             </ul>
             <p>
-              <strong className="text-foreground">Defining characteristic:</strong> You spend real time outdoors — 
+              <strong className="text-foreground">Defining characteristic:</strong> You spend real time outdoors, 
               and you want to keep doing it. Whether that's daily or every weekend, cumulative exposure matters.
             </p>
             <p className="text-foreground font-medium">
