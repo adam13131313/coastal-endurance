@@ -30,10 +30,10 @@ const Home = () => {
   return (
     <main>
       <Helmet>
-        <title>Field Oil: Daily Barrier Maintenance for Life Outdoors</title>
+        <title>Field Oil: Daily Skin Maintenance</title>
         <meta name="description" content="Daily face oil for Australian men with serious outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance." />
         <link rel="canonical" href="https://coastalendurance.com/" />
-        <meta property="og:title" content="Field Oil: Daily Barrier Maintenance for Life Outdoors" />
+        <meta property="og:title" content="Field Oil: Daily Skin Maintenance" />
         <meta property="og:description" content="Daily face oil for Australian men with serious outdoor exposure. 7 natural ingredients, 59% active barrier-repair oils, zero fragrance." />
         <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
@@ -46,7 +46,7 @@ const Home = () => {
               100% NATURAL INGREDIENTS
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-tight animate-slide-up text-foreground" style={{ animationDelay: "0.05s" }}>
-              FIELD OIL: DAILY BARRIER MAINTENANCE FOR LIFE OUTDOORS
+              FIELD OIL: DAILY SKIN MAINTENANCE
             </h1>
             <p className="mt-4 text-xl md:text-2xl font-typewriter animate-slide-up text-foreground" style={{ animationDelay: "0.08s" }}>
               For Sun, Salt, Wind, & Time
