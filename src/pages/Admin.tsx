@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import AdminGuide from "@/components/AdminGuide";
+import AdminDashboard from "@/components/AdminDashboard";
 
 interface OrderItem {
   id: string;
@@ -13,6 +14,7 @@ interface OrderItem {
   variant_label: string;
   quantity: number;
   unit_price_cents: number;
+  bottles_each: number;
 }
 interface Delivery {
   id: string;
@@ -38,7 +40,7 @@ interface Order {
 // `*` (rather than naming columns) keeps `phone` working before the generated
 // types include it; we cast the result to our own Order shape below.
 const ORDER_SELECT =
-  "*, order_items ( id, product_name, variant_label, quantity, unit_price_cents ), " +
+  "*, order_items ( id, product_name, variant_label, quantity, unit_price_cents, bottles_each ), " +
   "order_deliveries ( id, sequence, scheduled_for, status, tracking_number )";
 
 const fmtDate = (s: string) =>
@@ -59,7 +61,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"dispatch" | "orders" | "guide">("dispatch");
+  const [tab, setTab] = useState<"overview" | "dispatch" | "orders" | "guide">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -173,7 +175,7 @@ const Admin = () => {
           </div>
 
           <div className="flex gap-1 border-b border-border mb-8">
-            {(["dispatch", "orders", "guide"] as const).map((t) => (
+            {(["overview", "dispatch", "orders", "guide"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -181,10 +183,12 @@ const Admin = () => {
                   tab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t === "dispatch" ? `To ship (${dispatch.length})` : t === "orders" ? `Orders (${orders.length})` : "Staff guide"}
+                {t === "overview" ? "Overview" : t === "dispatch" ? `To ship (${dispatch.length})` : t === "orders" ? `Orders (${orders.length})` : "Staff guide"}
               </button>
             ))}
           </div>
+
+          {tab === "overview" && <AdminDashboard orders={orders} />}
 
           {tab === "dispatch" && (
             dispatch.length === 0 ? (
