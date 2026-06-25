@@ -215,6 +215,7 @@ Deno.serve(async (req) => {
       success_url: `${siteBase}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteBase}/checkout/cancel`,
       shipping_address_collection: { allowed_countries: ["AU", "NZ", "GB", "US", "CA", "IE"] },
+      phone_number_collection: { enabled: true },
       metadata: { order_id: order.id },
       payment_intent_data: { metadata: { order_id: order.id } },
     });

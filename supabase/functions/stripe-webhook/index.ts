@@ -177,6 +177,14 @@ Deno.serve(async (req) => {
     })
     .eq("id", order.id);
 
+  // Best-effort: store the contact phone. The column may not exist until the
+  // order_phone migration is applied, so a failure here is non-fatal.
+  const phone = session.customer_details?.phone ?? null;
+  if (phone) {
+    const { error: phoneErr } = await admin.from("orders").update({ phone }).eq("id", order.id);
+    if (phoneErr) console.warn("phone not stored (apply order_phone migration?)", phoneErr.message);
+  }
+
   // Decrement inventory per product (atomic; guards against overselling).
   const { data: items } = await admin
     .from("order_items")
