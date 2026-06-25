@@ -5,6 +5,7 @@ import { formatPrice } from "@/lib/catalog";
 import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import AdminGuide from "@/components/AdminGuide";
 
 interface OrderItem {
   id: string;
@@ -58,7 +59,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"dispatch" | "orders">("dispatch");
+  const [tab, setTab] = useState<"dispatch" | "orders" | "guide">("dispatch");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -172,7 +173,7 @@ const Admin = () => {
           </div>
 
           <div className="flex gap-1 border-b border-border mb-8">
-            {(["dispatch", "orders"] as const).map((t) => (
+            {(["dispatch", "orders", "guide"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -180,7 +181,7 @@ const Admin = () => {
                   tab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t === "dispatch" ? `To ship (${dispatch.length})` : `Orders (${orders.length})`}
+                {t === "dispatch" ? `To ship (${dispatch.length})` : t === "orders" ? `Orders (${orders.length})` : "Staff guide"}
               </button>
             ))}
           </div>
@@ -284,6 +285,8 @@ const Admin = () => {
               </div>
             )
           )}
+
+          {tab === "guide" && <AdminGuide />}
         </div>
       </section>
     </main>
