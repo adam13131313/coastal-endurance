@@ -31,3 +31,7 @@ dist-ssr
 # Supabase CLI local state
 supabase/.temp/
 supabase/.branches/
+
+# Private financial model (never commit to public repo)
+coastal_endurance_model_*.xlsx
+*.xlsx
