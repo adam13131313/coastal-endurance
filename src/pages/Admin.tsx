@@ -9,6 +9,7 @@ import AdminGuide from "@/components/AdminGuide";
 import AdminDashboard from "@/components/AdminDashboard";
 import StaffBoard from "@/components/StaffBoard";
 import StaffAssistant from "@/components/StaffAssistant";
+import BrandGuide from "@/components/BrandGuide";
 
 interface OrderItem {
   id: string;
@@ -63,7 +64,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"overview" | "dispatch" | "orders" | "board" | "assistant" | "guide">("overview");
+  const [tab, setTab] = useState<"overview" | "dispatch" | "orders" | "board" | "assistant" | "guide" | "brand">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -177,7 +178,7 @@ const Admin = () => {
           </div>
 
           <div className="flex gap-1 border-b border-border mb-8">
-            {(["overview", "dispatch", "orders", "board", "assistant", "guide"] as const).map((t) => (
+            {(["overview", "dispatch", "orders", "board", "assistant", "guide", "brand"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -190,7 +191,8 @@ const Admin = () => {
                   : t === "orders" ? `Orders (${orders.length})`
                   : t === "board" ? "Staff board"
                   : t === "assistant" ? "Assistant"
-                  : "Staff guide"}
+                  : t === "guide" ? "Staff guide"
+                  : "Brand"}
               </button>
             ))}
           </div>
@@ -302,6 +304,8 @@ const Admin = () => {
           {tab === "assistant" && <StaffAssistant />}
 
           {tab === "guide" && <AdminGuide />}
+
+          {tab === "brand" && <BrandGuide />}
         </div>
       </section>
     </main>
