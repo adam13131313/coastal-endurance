@@ -9,6 +9,7 @@ import AdminGuide from "@/components/AdminGuide";
 import AdminDashboard from "@/components/AdminDashboard";
 import PlanTracker from "@/components/PlanTracker";
 import PipelineTracker from "@/components/PipelineTracker";
+import ContentGenerator from "@/components/ContentGenerator";
 import StaffBoard from "@/components/StaffBoard";
 import StaffAssistant from "@/components/StaffAssistant";
 import BrandGuide from "@/components/BrandGuide";
@@ -71,7 +72,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "dispatch" | "orders" | "board" | "assistant" | "guide" | "brand">("overview");
+  const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "content" | "dispatch" | "orders" | "board" | "assistant" | "guide" | "brand">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [heard, setHeard] = useState<Record<string, string>>({});
@@ -194,7 +195,7 @@ const Admin = () => {
           </div>
 
           <div className="flex gap-1 border-b border-border mb-8">
-            {(["overview", "plan", "pipeline", "dispatch", "orders", "board", "assistant", "guide", "brand"] as const).map((t) => (
+            {(["overview", "plan", "pipeline", "content", "dispatch", "orders", "board", "assistant", "guide", "brand"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
@@ -205,6 +206,7 @@ const Admin = () => {
                 {t === "overview" ? "Overview"
                   : t === "plan" ? "Plan"
                   : t === "pipeline" ? "Pipeline"
+                  : t === "content" ? "Content"
                   : t === "dispatch" ? `To ship (${dispatch.length})`
                   : t === "orders" ? `Orders (${orders.length})`
                   : t === "board" ? "Staff board"
@@ -220,6 +222,8 @@ const Admin = () => {
           {tab === "plan" && <PlanTracker orders={orders} />}
 
           {tab === "pipeline" && <PipelineTracker orders={orders} />}
+
+          {tab === "content" && <ContentGenerator />}
 
           {tab === "dispatch" && (
             dispatch.length === 0 ? (
