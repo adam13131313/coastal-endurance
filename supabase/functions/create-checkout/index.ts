@@ -73,6 +73,8 @@ Deno.serve(async (req) => {
     const rawItems: IncomingItem[] = Array.isArray(body?.items) ? body.items : [];
     const email: string | undefined =
       typeof body?.email === "string" && body.email.includes("@") ? body.email : undefined;
+    const attr = body?.attribution && typeof body.attribution === "object" ? (body.attribution as Record<string, unknown>) : null;
+    const str = (v: unknown) => (typeof v === "string" && v.length > 0 ? v.slice(0, 300) : null);
 
     if (rawItems.length === 0) return json({ error: "Your cart is empty." }, 400);
 
@@ -153,6 +155,20 @@ Deno.serve(async (req) => {
     if (oErr || !order) {
       console.error("order insert failed", oErr);
       return json({ error: "Could not start checkout." }, 500);
+    }
+
+    // Best-effort attribution (columns exist after the order_attribution migration).
+    if (attr) {
+      const { error: attrErr } = await admin
+        .from("orders")
+        .update({
+          utm_source: str(attr.utm_source),
+          utm_medium: str(attr.utm_medium),
+          utm_campaign: str(attr.utm_campaign),
+          referrer: str(attr.referrer),
+        })
+        .eq("id", order.id);
+      if (attrErr) console.warn("attribution not stored (apply order_attribution migration?)", attrErr.message);
     }
 
     // Order items.

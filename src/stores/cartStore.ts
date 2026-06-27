@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { supabase } from "@/integrations/supabase/client";
+import { getAttribution } from "@/lib/attribution";
 
 // A line in the client-side cart. Pricing/stock are re-validated server-side at
 // checkout (the create-checkout edge function reads authoritative prices from the DB).
@@ -99,6 +100,7 @@ export const useCartStore = create<CartStore>()(
             {
               body: {
                 email,
+                attribution: getAttribution(),
                 items: items.map((i) => ({
                   variantId: i.variantId,
                   quantity: i.quantity,

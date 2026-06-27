@@ -37,6 +37,11 @@ interface Order {
   currency: string;
   shipping_name: string | null;
   shipping_address: Record<string, unknown> | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  referrer: string | null;
+  heard_about: string | null;
   order_items: OrderItem[];
   order_deliveries: Delivery[];
 }
@@ -68,6 +73,7 @@ const Admin = () => {
   const [tab, setTab] = useState<"overview" | "plan" | "dispatch" | "orders" | "board" | "assistant" | "guide" | "brand">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
+  const [heard, setHeard] = useState<Record<string, string>>({});
 
   const loadOrders = useCallback(async () => {
     setLoading(true);
@@ -119,6 +125,14 @@ const Admin = () => {
     }
     await loadOrders();
     setBusy(null);
+  };
+
+  const saveHeard = async (id: string) => {
+    setBusy(id);
+    await supabase.from("orders").update({ heard_about: (heard[id] ?? "").trim() || null } as never).eq("id", id);
+    await loadOrders();
+    setBusy(null);
+    toast.success("Saved.");
   };
 
   if (authorized === null || (authorized && loading)) {
@@ -271,6 +285,25 @@ const Admin = () => {
                         </li>
                       ))}
                     </ul>
+
+                    {(o.utm_source || o.referrer) && (
+                      <p className="mt-3 text-xs font-body text-muted-foreground">
+                        {o.utm_source ? `Source: ${o.utm_source}${o.utm_medium ? ` / ${o.utm_medium}` : ""}${o.utm_campaign ? ` / ${o.utm_campaign}` : ""}` : ""}
+                        {o.utm_source && o.referrer ? " · " : ""}
+                        {o.referrer ? `Referrer: ${o.referrer}` : ""}
+                      </p>
+                    )}
+
+                    <div className="mt-3 flex items-center gap-2">
+                      <span className="text-xs font-typewriter uppercase tracking-widest text-muted-foreground shrink-0">How they heard</span>
+                      <input
+                        value={heard[o.id] ?? o.heard_about ?? ""}
+                        onChange={(e) => setHeard((h) => ({ ...h, [o.id]: e.target.value }))}
+                        placeholder="e.g. word of mouth, Instagram, a mate"
+                        className="flex-1 px-2 py-1 border border-border bg-background text-sm font-body rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+                      />
+                      <button onClick={() => saveHeard(o.id)} disabled={busy === o.id} className="btn-outline text-xs px-3 py-1 disabled:opacity-50">Save</button>
+                    </div>
 
                     {o.order_deliveries.length > 0 && (
                       <div className="mt-4 pt-4 border-t border-border">
