@@ -33,10 +33,6 @@ const AppContent = () => {
     <BrowserRouter>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen">
-        <div className="fixed top-0 left-0 right-0 z-[60] bg-primary text-primary-foreground text-center py-2 text-sm font-medium tracking-wide">
-          Launching June 2026
-        </div>
-        <div className="h-8" />
         <Header />
         <div className="flex-1">
           <Suspense fallback={<main className="min-h-[40vh] bg-background" aria-busy="true" />}>
