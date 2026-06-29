@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     const { data: adminRow } = await admin.from("admins").select("email").eq("email", email).maybeSingle();
     if (!adminRow) return json({ error: "Forbidden" }, 403);
 
-    if (!ANTHROPIC_API_KEY) return json({ error: "The generator isn't configured yet (missing API key)." }, 503);
+    if (!ANTHROPIC_API_KEY) return json({ error: "The generator isn't configured yet (ANTHROPIC_API_KEY not visible to this function)." });
 
     const body = await req.json().catch(() => ({}));
     const format = typeof body?.format === "string" ? body.format.slice(0, 80) : "social post";
@@ -74,8 +74,14 @@ Deno.serve(async (req) => {
       }),
     });
     if (!res.ok) {
-      console.error("anthropic error", res.status, await res.text().catch(() => ""));
-      return json({ error: "The generator is unavailable right now." }, 502);
+      const detail = await res.text().catch(() => "");
+      console.error("anthropic error", res.status, detail);
+      let hint = "";
+      if (res.status === 401) hint = " (the ANTHROPIC_API_KEY is invalid)";
+      else if (res.status === 400 && /credit|billing/i.test(detail)) hint = " (the Anthropic account has no credit)";
+      else if (res.status === 429) hint = " (rate limited)";
+      else if (res.status === 404) hint = " (model not found)";
+      return json({ error: `Anthropic API error ${res.status}${hint}.` });
     }
     const data = await res.json();
     const content = (data?.content ?? []).filter((b: { type: string }) => b.type === "text").map((b: { text: string }) => b.text).join("\n").trim();
