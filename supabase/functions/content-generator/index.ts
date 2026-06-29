@@ -39,7 +39,7 @@ FACTS YOU CAN USE:
 - 100% natural. Seven oils: active oils (Rosehip, Hemp), Australian-grown carriers (Jojoba, Macadamia), and a natural antioxidant system (Meadowfoam, Vitamin E, Rosemary CO2). Zero fragrance, zero synthetics. Made in Australia.
 - Lines we like: "Daily Skin Maintenance", "For Sun, Salt, Wind, and Time", "Field Oil maintains what the elements wear down."
 
-Write copy for the requested channel and brief. Unless told otherwise, give 3 distinct, ready-to-post options, numbered. No preamble, just the options. Match the platform (short and punchy for socials, calmer for website/email). Suggest a hashtag set only if asked.`;
+Write copy for the requested channel and brief. Match the platform: short and punchy for socials, calmer for website and email. For each piece, also suggest a small set of relevant hashtags (a mix of reach and niche, no spammy walls of tags) for social formats. For website, email, or product-blurb formats, return an empty hashtags list. Give distinct options the user can choose between.`;
 
 Deno.serve(async (req) => {
   const h = cors(req.headers.get("Origin"));
@@ -61,16 +61,38 @@ Deno.serve(async (req) => {
     const notes = typeof body?.notes === "string" ? body.notes.slice(0, 1000) : "";
     if (!topic.trim()) return json({ error: "Add a brief" }, 400);
 
-    const user = `Channel / format: ${format}.\nBrief: ${topic}${notes ? `\nExtra notes: ${notes}` : ""}`;
+    const count = Math.min(Math.max(Math.floor(Number(body?.count) || 3), 1), 5);
+    const user = `Channel / format: ${format}.\nBrief: ${topic}${notes ? `\nExtra notes: ${notes}` : ""}\nGive ${count} distinct options.`;
+
+    const SCHEMA = {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        options: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              body: { type: "string" },
+              hashtags: { type: "array", items: { type: "string" } },
+            },
+            required: ["body", "hashtags"],
+          },
+        },
+      },
+      required: ["options"],
+    };
 
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 1500,
+        max_tokens: 2000,
         system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
         messages: [{ role: "user", content: user }],
+        output_config: { format: { type: "json_schema", schema: SCHEMA } },
       }),
     });
     if (!res.ok) {
@@ -84,8 +106,26 @@ Deno.serve(async (req) => {
       return json({ error: `Anthropic API error ${res.status}${hint}.` });
     }
     const data = await res.json();
-    const content = (data?.content ?? []).filter((b: { type: string }) => b.type === "text").map((b: { text: string }) => b.text).join("\n").trim();
-    return json({ content: content || "No content generated." });
+    const text = (data?.content ?? []).filter((b: { type: string }) => b.type === "text").map((b: { text: string }) => b.text).join("").trim();
+
+    type Opt = { body: string; hashtags: string[] };
+    let options: Opt[] = [];
+    try {
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed?.options)) options = parsed.options;
+    } catch {
+      // model returned non-JSON; fall back to one option of raw text
+    }
+    if (options.length === 0) options = [{ body: text || "No content generated.", hashtags: [] }];
+
+    options = options.slice(0, 5).map((o) => ({
+      body: String(o?.body ?? "").slice(0, 3000),
+      hashtags: Array.isArray(o?.hashtags)
+        ? o.hashtags.map((t) => String(t).replace(/^#/, "")).filter(Boolean).slice(0, 30)
+        : [],
+    }));
+
+    return json({ options });
   } catch (e) {
     console.error("content-generator error", e);
     return json({ error: "Unexpected error" }, 500);
