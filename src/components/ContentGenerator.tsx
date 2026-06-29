@@ -5,6 +5,8 @@ const FORMATS = [
   "Instagram caption",
   "Instagram / Reels hook",
   "TikTok hook + short script",
+  "Video shot list (TikTok / Reels)",
+  "Photo carousel (slide-by-slide)",
   "X / Twitter post",
   "Facebook / Meta ad copy",
   "Website / product blurb",
@@ -29,6 +31,8 @@ interface Option {
 type Platform = "x" | "instagram" | "tiktok" | "facebook" | null;
 function platformOf(format: string): Platform {
   const f = format.toLowerCase();
+  // Production plans are filmed/built, not pasted-and-posted — no hand-off button.
+  if (f.includes("shot list") || f.includes("storyboard") || f.includes("carousel")) return null;
   if (f.includes("x /") || f.includes("twitter")) return "x";
   if (f.includes("instagram")) return "instagram";
   if (f.includes("tiktok")) return "tiktok";
