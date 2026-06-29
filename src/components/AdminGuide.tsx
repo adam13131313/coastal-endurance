@@ -8,8 +8,8 @@ const AdminGuide = () => (
     <section>
       <H>What this store is</H>
       <p>
-        Coastal Endurance sells one product, Field Oil, as a <strong>single bottle ($76)</strong> or a
-        prepaid <strong>12-month bundle ($228)</strong>: 4 bottles shipped on a schedule the customer
+        Coastal Endurance sells one product, Field Oil, as a <strong>single bottle ($78)</strong> or a
+        prepaid <strong>12-month bundle ($234)</strong>: 4 bottles for the price of 3, shipped on a schedule the customer
         chooses (default every 3 months). The bundle is paid once upfront, so we still owe those
         shipments over the following year. Keeping on top of the dispatch schedule is the most
         important daily job.
@@ -31,7 +31,7 @@ const AdminGuide = () => (
         <li><strong>Ship a delivery:</strong> To ship tab → enter tracking → Mark shipped.</li>
         <li><strong>Complete an order:</strong> Orders tab → Mark order fulfilled (once every shipment is sent).</li>
         <li><strong>Refund a customer:</strong> do it in <strong>Stripe</strong> (Payments → open the order → Refund). The store updates itself: the order is set to refunded, remaining shipments are cancelled, bottles are restocked, and you get a confirmation email. Do not change anything here by hand.</li>
-        <li><strong>Restock / change price / hide the product:</strong> Supabase dashboard → Table Editor → <code>products</code> (edit <code>stock_quantity</code>) or <code>product_variants</code> (edit <code>price_cents</code>, where 7600 = $76.00).</li>
+        <li><strong>Restock / change price / hide the product:</strong> Supabase dashboard → Table Editor → <code>products</code> (edit <code>stock_quantity</code>) or <code>product_variants</code> (edit <code>price_cents</code>, where 7800 = $78.00).</li>
         <li><strong>Add a staff member:</strong> Supabase → Table Editor → <code>admins</code> → insert their Google login email. That grants this admin area and the notification emails.</li>
       </ul>
     </section>

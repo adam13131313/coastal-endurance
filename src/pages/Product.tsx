@@ -26,7 +26,7 @@ const Product = () => {
   const singleVariant = product?.variants.find((v) => !v.is_bundle);
   const bundleVariant = product?.variants.find((v) => v.is_bundle);
 
-  const price = singleVariant ? singleVariant.price_cents / 100 : 76;
+  const price = singleVariant ? singleVariant.price_cents / 100 : 78;
   const currencyCode = product?.currency || "AUD";
   const productImage = product?.image_url || fieldOilImage;
   const bundleBottles = bundleVariant?.bottles ?? 4;
@@ -95,10 +95,10 @@ const Product = () => {
     <main className="pt-20" id="top">
       <Helmet>
         <title>Field Oil: Daily Barrier Face Oil | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: a daily face oil of seven natural oils, Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, zero fragrance. $76 AUD. Made in Australia." />
+        <meta name="description" content="Field Oil: a daily face oil of seven natural oils, Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, zero fragrance. $78 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
         <meta property="og:title" content="Field Oil: Daily Barrier Face Oil" />
-        <meta property="og:description" content="A daily face oil of seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. $76 AUD. Made in Australia." />
+        <meta property="og:description" content="A daily face oil of seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. $78 AUD. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/product" />
         <meta property="og:type" content="product" />
         <script type="application/ld+json">{JSON.stringify({

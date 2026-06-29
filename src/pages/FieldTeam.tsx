@@ -266,7 +266,7 @@ const FieldTeam = () => {
               <ul className="space-y-2 text-[17px] font-body text-muted-foreground leading-relaxed">
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
-                  Would you buy this at $76?
+                  Would you buy this at $78?
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />

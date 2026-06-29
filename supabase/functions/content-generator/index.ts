@@ -35,7 +35,7 @@ BRAND VOICE: terse, plain, confident, functional. Masculine but inclusive (never
 AVOID: skincare jargon as the hook (never lead with "barrier maintenance"), hype and superlatives, "for outdoor men only", specific activity quantities (e.g. "ride 12 hours a week"), stacked percentages, and EM DASHES (use commas or colons instead).
 
 FACTS YOU CAN USE:
-- Field Oil: single bottle A$76, or a prepaid 12-month bundle (A$228, 4 bottles for the price of 3, shipped on a schedule the customer picks).
+- Field Oil: single bottle A$78, or a prepaid 12-month bundle (A$234, 4 bottles for the price of 3, shipped on a schedule the customer picks).
 - 100% natural. Seven oils: active oils (Rosehip, Hemp), Australian-grown carriers (Jojoba, Macadamia), and a natural antioxidant system (Meadowfoam, Vitamin E, Rosemary CO2). Zero fragrance, zero synthetics. Made in Australia.
 - Lines we like: "Daily Skin Maintenance", "For Sun, Salt, Wind, and Time", "Field Oil maintains what the elements wear down."
 

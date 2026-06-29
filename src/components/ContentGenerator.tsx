@@ -13,10 +13,10 @@ const FORMATS = [
 ];
 
 const PRESETS = [
-  "Launch announcement: Field Oil is live, A$76 a bottle.",
+  "Launch announcement: Field Oil is live, A$78 a bottle.",
   "Explain the three-role oil blend (actives, carriers, antioxidants) in plain language.",
   "Why a face oil, not a cream. Maintenance for skin that takes weather.",
-  "The prepaid bundle: 4 bottles for the price of 3, shipped on your schedule.",
+  "The prepaid bundle: 4 bottles for the price of 3 (A$234), shipped on your schedule.",
   "Made in Australia, 100% natural, zero fragrance.",
 ];
 
