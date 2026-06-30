@@ -8,7 +8,7 @@ const AUDIENCE_NAME = "Coastal Endurance updates";
 
 const ALLOWED_ORIGINS = ["https://coastalendurance.com", "https://www.coastalendurance.com"];
 function originAllowed(o: string | null) {
-  return o != null && (ALLOWED_ORIGINS.includes(o) || /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(o) || /^http:\/\/localhost(:\d+)?$/.test(o));
+  return o != null && (ALLOWED_ORIGINS.includes(o) || /^https:\/\/coastal-endurance[a-z0-9-]*\.vercel\.app$/.test(o) || /^http:\/\/localhost(:\d+)?$/.test(o));
 }
 function cors(o: string | null): Record<string, string> {
   return {

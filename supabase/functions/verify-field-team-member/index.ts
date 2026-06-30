@@ -24,7 +24,7 @@ function corsHeadersFor(origin: string | null): Record<string, string> {
   const allowed =
     origin != null &&
     (ALLOWED_ORIGINS.includes(origin) ||
-      /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) ||
+      /^https:\/\/coastal-endurance[a-z0-9-]*\.vercel\.app$/.test(origin) ||
       /^http:\/\/localhost(:\d+)?$/.test(origin));
   return {
     "Access-Control-Allow-Origin": allowed ? origin! : ALLOWED_ORIGINS[0],

@@ -1,6 +1,14 @@
 project_id = "eutbtqkhzizndynilcpl"
 
 [functions]
-  # Stripe calls this with its own signature, not a Supabase JWT.
+  # SECURITY: every other function relies on verify_jwt = true (the default), so the
+  # Supabase gateway verifies the JWT signature before the function runs. The admin
+  # functions then trust the email/role claims they parse from that token. Do NOT set
+  # verify_jwt = false on any function that checks the caller's identity (field-team,
+  # content-generator, staff-assistant, ship-delivery, reschedule-delivery,
+  # field-team-status) — it would make those claims forgeable and allow privilege escalation.
+  #
+  # stripe-webhook is the one exception: Stripe calls it with its own signature
+  # (verified against STRIPE_WEBHOOK_SECRET), not a Supabase JWT.
   [functions.stripe-webhook]
     verify_jwt = false

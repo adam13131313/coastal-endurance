@@ -16,7 +16,7 @@ function originAllowed(origin: string | null): boolean {
   return (
     origin != null &&
     (ALLOWED_ORIGINS.includes(origin) ||
-      /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) ||
+      /^https:\/\/coastal-endurance[a-z0-9-]*\.vercel\.app$/.test(origin) ||
       /^http:\/\/localhost(:\d+)?$/.test(origin))
   );
 }

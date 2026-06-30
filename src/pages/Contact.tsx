@@ -13,9 +13,16 @@ const Contact = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterHp, setNewsletterHp] = useState(""); // honeypot
+  const [contactHp, setContactHp] = useState(""); // honeypot
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Honeypot: bots fill this; pretend success and drop.
+    if (contactHp.trim() !== "") {
+      toast.success("Message sent. We'll be in touch.");
+      setFormData({ name: "", email: "", message: "" });
+      return;
+    }
     setIsSubmitting(true);
     const { error } = await supabase.from("contact_submissions").insert({
       name: formData.name,
@@ -82,6 +89,16 @@ const Contact = () => {
             <div>
               <h2 className="text-2xl font-typewriter uppercase mb-6">GET IN TOUCH</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
+                <input
+                  type="text"
+                  name="company"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={contactHp}
+                  onChange={(e) => setContactHp(e.target.value)}
+                  style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+                />
                 <div>
                   <label htmlFor="name" className="block text-sm font-body font-medium mb-2">
                     Name
