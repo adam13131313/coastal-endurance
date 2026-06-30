@@ -229,6 +229,8 @@ Deno.serve(async (req) => {
       // Pin to card (covers Apple Pay / Google Pay wallets) and exclude Link,
       // so no customer is funnelled into Link's phone-verification step.
       payment_method_types: ["card"],
+      // Let customers enter a field-team / promo code at checkout.
+      allow_promotion_codes: true,
       line_items: lineItems,
       customer_email: email,
       success_url: `${siteBase}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
