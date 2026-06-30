@@ -231,6 +231,14 @@ const FieldTeam = () => {
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
                   Have you tried it yet?
                 </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
+                  How was the website and buying experience (browsing, cart, checkout)?
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
+                  Anything confusing or clunky in the order process?
+                </li>
               </ul>
             </div>
 
@@ -348,8 +356,9 @@ const FieldTeam = () => {
             THANKS AGAIN
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
-            Your time and honest feedback are shaping Field Oil into something
-            that actually works.
+            Field Oil already performs better than anything else we've tested it
+            against, and our customers love using it daily. Your honest feedback
+            helps us make a great product even better.
           </p>
           <div className="text-[17px] font-body text-foreground leading-relaxed">
             <p>Adam Hyde</p>
