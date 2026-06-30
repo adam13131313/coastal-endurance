@@ -75,6 +75,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "content" | "dispatch" | "orders" | "field" | "board" | "assistant" | "guide" | "brand">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
+  const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [heard, setHeard] = useState<Record<string, string>>({});
 
@@ -130,6 +131,22 @@ const Admin = () => {
     setBusy(null);
   };
 
+  const rescheduleDelivery = async (deliveryId: string, current: string) => {
+    const next = dates[deliveryId] ?? current;
+    if (!next || next === current) return;
+    setBusy(deliveryId);
+    const { data, error } = await supabase.functions.invoke("reschedule-delivery", {
+      body: { deliveryId, scheduledFor: next },
+    });
+    if (error || (data as { error?: string })?.error) {
+      toast.error((data as { error?: string })?.error || "Couldn't change the date.");
+    } else {
+      toast.success("Delivery date updated.");
+    }
+    await loadOrders();
+    setBusy(null);
+  };
+
   const saveHeard = async (id: string) => {
     setBusy(id);
     await supabase.from("orders").update({ heard_about: (heard[id] ?? "").trim() || null } as never).eq("id", id);
@@ -176,6 +193,25 @@ const Admin = () => {
       />
       <button onClick={() => shipDelivery(id)} disabled={busy === id} className="btn-outline text-xs px-3 py-1 disabled:opacity-50">
         {busy === id ? "…" : "Mark shipped"}
+      </button>
+    </span>
+  );
+
+  // Move a not-yet-shipped delivery to a new date (customer asked; staff actions it).
+  const Reschedule = ({ id, current }: { id: string; current: string }) => (
+    <span className="flex items-center gap-2">
+      <input
+        type="date"
+        value={dates[id] ?? current}
+        onChange={(e) => setDates((d) => ({ ...d, [id]: e.target.value }))}
+        className="px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+      />
+      <button
+        onClick={() => rescheduleDelivery(id, current)}
+        disabled={busy === id || (dates[id] ?? current) === current}
+        className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-40"
+      >
+        Save date
       </button>
     </span>
   );
@@ -257,7 +293,8 @@ const Admin = () => {
                           </p>
                         </div>
                       </div>
-                      <div className="mt-3">
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                        <Reschedule id={d.id} current={d.scheduled_for} />
                         <TrackShip id={d.id} />
                       </div>
                     </div>
