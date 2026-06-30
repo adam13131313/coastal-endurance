@@ -66,6 +66,30 @@ async function sendReceipt(
   }
 }
 
+// Tell the customer their full refund has been processed (on-brand, matches the receipt).
+async function sendRefundConfirmation(to: string, order: { total_cents: number; currency: string }) {
+  if (!RESEND_API_KEY || !to) return;
+  const html = `
+    <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 28px">
+      <p style="font-size:13px;font-weight:600;letter-spacing:3px;margin:0">COASTAL ENDURANCE</p>
+      <hr style="border:none;border-top:1px solid #d6cfc4;margin:16px 0 24px"/>
+      <h1 style="font-size:22px;margin:0 0 16px">Refund processed</h1>
+      <p style="font-size:15px;color:#333;line-height:1.6">We've refunded <strong>${formatPrice(order.total_cents)} ${order.currency}</strong> to your original payment method. Your bank usually takes 5 to 10 business days to show it.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6">Any questions, find us at coastalendurance.com.</p>
+      <p style="font-size:13px;color:#999;margin-top:24px">Coastal Endurance · Made in Australia</p>
+    </div>`;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: FROM_ADDRESS, to, subject: "Your Coastal Endurance refund", html }),
+    });
+    if (!res.ok) console.error("customer refund email failed", res.status, await res.text().catch(() => ""));
+  } catch (e) {
+    console.error("customer refund email error", e);
+  }
+}
+
 // Notify the store's admins (from the public.admins allowlist) of a new paid order.
 async function sendAdminNotification(
   supa: ReturnType<typeof createClient>,
@@ -174,6 +198,9 @@ async function handleRefund(charge: Stripe.Charge) {
     const { error } = await admin.rpc("increment_stock", { p_product_id: productId, p_bottles: bottles });
     if (error) console.error("restock failed", { orderId: order.id, productId, bottles, error });
   }
+
+  // Confirm the refund to the customer.
+  await sendRefundConfirmation(order.email, { total_cents: order.total_cents, currency: order.currency });
 
   if (RESEND_API_KEY) {
     const { data: adminRows } = await admin.from("admins").select("email");
