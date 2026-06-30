@@ -72,16 +72,22 @@ const Home = () => {
       {/* Father's Day promo */}
       <Link
         to="/fathers-day"
-        className="block bg-foreground text-background hover:bg-foreground/90 transition-colors"
+        className="group block bg-foreground text-background hover:bg-foreground/90 transition-colors"
       >
-        <div className="container-wide py-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center">
-          <span className="font-typewriter text-xs uppercase tracking-widest">
-            Father's Day · Daily skin maintenance for Dad
+        <div className="container-wide py-5 md:py-7 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center">
+          <span className="inline-flex items-center bg-background text-foreground font-typewriter text-[11px] uppercase tracking-widest px-2.5 py-1 animate-pulse">
+            Father's Day
           </span>
-          <span className="font-body text-sm opacity-80">
+          <span className="font-typewriter text-sm md:text-lg uppercase tracking-wider">
+            Daily skin maintenance for Dad
+          </span>
+          <span className="hidden sm:inline font-body text-sm opacity-80">
             Order now, ships from 18 August, in time for 6 September
           </span>
-          <ArrowRight className="w-4 h-4" />
+          <span className="inline-flex items-center font-typewriter text-xs uppercase tracking-widest border-b border-background/50 pb-0.5 group-hover:border-background">
+            Shop
+            <ArrowRight className="ml-1.5 w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </span>
         </div>
       </Link>
 
