@@ -356,9 +356,9 @@ const FieldTeam = () => {
             THANKS AGAIN
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
-            Field Oil already performs better than anything else we've tested it
-            against, and our customers love using it daily. Your honest feedback
-            helps us make a great product even better.
+            We built Field Oil to outperform anything else we put it against, and
+            we're proud of what it is. You're among the very first to use it, so
+            your honest feedback is what proves it out and helps us make it better.
           </p>
           <div className="text-[17px] font-body text-foreground leading-relaxed">
             <p>Adam Hyde</p>
