@@ -76,7 +76,7 @@ const Home = () => {
       >
         <div className="container-wide py-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center">
           <span className="font-typewriter text-xs uppercase tracking-widest">
-            Father's Day · A gift he'll actually use
+            Father's Day · Daily skin maintenance for Dad
           </span>
           <span className="font-body text-sm opacity-80">
             Order now, ships from 18 August, in time for 6 September

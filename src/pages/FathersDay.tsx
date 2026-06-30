@@ -10,11 +10,11 @@ const FathersDay = () => {
         <title>Father's Day Gift: Field Oil | Coastal Endurance</title>
         <meta
           name="description"
-          content="A Father's Day gift he'll actually use. Field Oil, a 100% natural daily face oil made in Australia. Order now, ships from 18 August, in time for Father's Day, Sunday 6 September."
+          content="A Father's Day gift for Dad. Field Oil, a 100% natural daily face oil made in Australia. Order now, ships from 18 August, in time for Father's Day, Sunday 6 September."
         />
         <link rel="canonical" href="https://coastalendurance.com/fathers-day" />
         <meta property="og:title" content="Father's Day Gift: Field Oil" />
-        <meta property="og:description" content="A gift he'll actually use. Order now, ships from 18 August, in time for Father's Day." />
+        <meta property="og:description" content="Daily skin maintenance, for Dad. Order now, ships from 18 August, in time for Father's Day." />
         <meta property="og:url" content="https://coastalendurance.com/fathers-day" />
       </Helmet>
 
@@ -27,10 +27,10 @@ const FathersDay = () => {
                 Father's Day · Sunday 6 September
               </p>
               <h1 className="text-4xl md:text-6xl font-typewriter uppercase leading-tight text-foreground">
-                A gift he'll actually use
+                Daily skin maintenance, for Dad
               </h1>
               <p className="mt-6 text-lg font-body text-muted-foreground leading-relaxed max-w-lg">
-                Field Oil is a 100% natural daily face oil. No fuss, no fragrance, no shelf it sits on.
+                Field Oil is a 100% natural daily face oil. No fuss, no fragrance.
                 One dropper a day, for skin that takes sun, salt, wind, and time.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
@@ -56,7 +56,7 @@ const FathersDay = () => {
           <h2 className="text-2xl md:text-3xl font-typewriter uppercase mb-8">Why it makes a good gift</h2>
           <ul className="space-y-4 text-[17px] font-body text-muted-foreground leading-relaxed">
             {[
-              "Practical, not a novelty. He'll use it every day, not leave it in a drawer.",
+              "Practical. One dropper a day, morning or night.",
               "One 30ml bottle lasts about three months.",
               "100% natural, zero fragrance, zero synthetics. Made in Australia.",
               "Simple. One dropper to damp skin, morning or night. Nothing to learn.",
