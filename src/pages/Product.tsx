@@ -288,6 +288,8 @@ const Product = () => {
                       </p>
                       <p className="text-sm font-body text-muted-foreground mb-4">
                         We default to one bottle every 3 months. Adjust any date to suit you.
+                        Your schedule is included in your receipt, and we email tracking each
+                        time a bottle ships. Need to change a date later? Just get in touch.
                       </p>
                       <div className="space-y-3">
                         {deliveryDates.map((date, i) => (
