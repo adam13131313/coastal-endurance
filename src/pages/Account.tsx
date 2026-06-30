@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { User, Package, Heart, Settings, LogOut } from "lucide-react";
+import { User, Package, LogOut } from "lucide-react";
 import type { User as SupaUser } from "@supabase/supabase-js";
 
 interface Profile {
@@ -41,22 +41,14 @@ interface Order {
   order_deliveries: DeliveryRow[];
 }
 
-interface WishlistItem {
-  id: string;
-  product_name: string;
-  product_variant: string | null;
-  created_at: string;
-}
-
-type Tab = "profile" | "orders" | "wishlist" | "settings";
+type Tab = "orders" | "profile";
 
 const Account = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupaUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const [activeTab, setActiveTab] = useState<Tab>("profile");
+  const [activeTab, setActiveTab] = useState<Tab>("orders");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -100,10 +92,9 @@ const Account = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const [profileRes, ordersRes, wishlistRes] = await Promise.all([
+    const [profileRes, ordersRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user!.id).single(),
       supabase.from("orders").select("id, status, total_cents, currency, created_at, order_items ( product_name, variant_label, quantity, unit_price_cents ), order_deliveries ( sequence, scheduled_for, status, tracking_number )").eq("user_id", user!.id).order("created_at", { ascending: false }),
-      supabase.from("wishlists").select("*").eq("user_id", user!.id).order("created_at", { ascending: false }),
     ]);
 
     if (profileRes.data) {
@@ -121,7 +112,6 @@ const Account = () => {
       });
     }
     if (ordersRes.data) setOrders(ordersRes.data as unknown as Order[]);
-    if (wishlistRes.data) setWishlist(wishlistRes.data);
     setLoading(false);
   };
 
@@ -153,21 +143,14 @@ const Account = () => {
     setSaving(false);
   };
 
-  const handleRemoveWishlistItem = async (id: string) => {
-    await supabase.from("wishlists").delete().eq("id", id);
-    setWishlist((prev) => prev.filter((w) => w.id !== id));
-  };
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
-    { key: "profile", label: "Profile", icon: <User className="w-4 h-4" /> },
     { key: "orders", label: "Orders", icon: <Package className="w-4 h-4" /> },
-    { key: "wishlist", label: "Wishlist", icon: <Heart className="w-4 h-4" /> },
-    { key: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> },
+    { key: "profile", label: "Profile", icon: <User className="w-4 h-4" /> },
   ];
 
   if (loading) {
@@ -185,18 +168,27 @@ const Account = () => {
       <section className="section-padding">
         <div className="container-narrow">
           {/* Header */}
-          <div className="flex items-center gap-4 mb-10">
-            {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="w-14 h-14 rounded-full object-cover" />
-            ) : (
-              <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
-                <User className="w-6 h-6 text-muted-foreground" />
+          <div className="flex items-center justify-between gap-4 mb-10">
+            <div className="flex items-center gap-4">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="" className="w-14 h-14 rounded-full object-cover" />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+                  <User className="w-6 h-6 text-muted-foreground" />
+                </div>
+              )}
+              <div>
+                <h1 className="text-2xl font-display">{profile?.display_name || user?.email}</h1>
+                <p className="text-sm text-muted-foreground">{profile?.email || user?.email}</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-2xl font-display">{profile?.display_name || user?.email}</h1>
-              <p className="text-sm text-muted-foreground">{profile?.email || user?.email}</p>
             </div>
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Sign out</span>
+            </button>
           </div>
 
           {/* Tabs */}
@@ -358,62 +350,6 @@ const Account = () => {
             </div>
           )}
 
-          {/* Wishlist Tab */}
-          {activeTab === "wishlist" && (
-            <div>
-              {wishlist.length === 0 ? (
-                <p className="text-muted-foreground text-center py-12">Your wishlist is empty.</p>
-              ) : (
-                <div className="space-y-3">
-                  {wishlist.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between p-4 border border-border">
-                      <div>
-                        <p className="font-medium">{item.product_name}</p>
-                        {item.product_variant && (
-                          <p className="text-sm text-muted-foreground">{item.product_variant}</p>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleRemoveWishlistItem(item.id)}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Settings Tab */}
-          {activeTab === "settings" && (
-            <div className="space-y-8 max-w-lg">
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Preferred Currency</label>
-                <select
-                  value={formData.preferred_currency}
-                  onChange={(e) => setFormData({ ...formData, preferred_currency: e.target.value })}
-                  className="w-full px-3 py-2 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
-                >
-                  <option value="AUD">AUD ($)</option>
-                </select>
-                <button onClick={handleSaveProfile} disabled={saving} className="btn-primary mt-4">
-                  {saving ? "Saving..." : "Save Preferences"}
-                </button>
-              </div>
-
-              <div className="pt-8 border-t border-border">
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign Out
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </section>
     </main>
