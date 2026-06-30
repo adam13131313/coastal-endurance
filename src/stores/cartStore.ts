@@ -113,6 +113,13 @@ export const useCartStore = create<CartStore>()(
           if (error) return { error: error.message ?? "Checkout failed." };
           if (!data?.url) return { error: data?.error ?? "Checkout failed." };
 
+          // Stash what was bought so the success page can tailor its message
+          // (read + cleared there). No PII, just whether a bundle was included.
+          try {
+            const hasBundle = items.some((i) => i.isBundle || i.deliveriesCount > 1);
+            localStorage.setItem("ce-last-purchase", JSON.stringify({ bundle: hasBundle }));
+          } catch { /* localStorage unavailable */ }
+
           window.location.href = data.url as string;
           return {};
         } catch (e) {
