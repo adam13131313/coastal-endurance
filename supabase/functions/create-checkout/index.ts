@@ -200,6 +200,11 @@ Deno.serve(async (req) => {
       scheduled_for: string;
     }> = [];
     const today = new Date().toISOString().slice(0, 10);
+    // Orders open now; nothing ships before this date. Keep in sync with
+    // FIRST_SHIP_DATE in src/lib/catalog.ts.
+    const FIRST_SHIP_DATE = "2026-08-18";
+    const firstShip = today > FIRST_SHIP_DATE ? today : FIRST_SHIP_DATE;
+    const floor = (d: string) => (d < firstShip ? firstShip : d);
 
     for (const r of resolved) {
       const itemRow = insertedItems.find((x) => x.variant_id === r.variant.id);
@@ -208,13 +213,13 @@ Deno.serve(async (req) => {
         const provided = (r.incoming.deliveryDates ?? []).filter(isIsoDate);
         const dates =
           provided.length === r.variant.deliveries_count
-            ? provided
-            : defaultDates(r.variant.deliveries_count, r.variant.default_interval_months);
+            ? provided.map(floor)
+            : defaultDates(r.variant.deliveries_count, r.variant.default_interval_months, firstShip);
         dates.forEach((d, idx) =>
           deliveries.push({ order_id: order.id, order_item_id: itemRow.id, sequence: idx + 1, scheduled_for: d }),
         );
       } else {
-        deliveries.push({ order_id: order.id, order_item_id: itemRow.id, sequence: 1, scheduled_for: today });
+        deliveries.push({ order_id: order.id, order_item_id: itemRow.id, sequence: 1, scheduled_for: firstShip });
       }
     }
     if (deliveries.length > 0) {
@@ -253,9 +258,9 @@ Deno.serve(async (req) => {
   }
 });
 
-function defaultDates(count: number, intervalMonths: number): string[] {
+function defaultDates(count: number, intervalMonths: number, baseIso: string): string[] {
   const out: string[] = [];
-  const from = new Date();
+  const from = new Date(baseIso + "T00:00:00");
   for (let i = 0; i < count; i++) {
     const d = new Date(from);
     d.setMonth(d.getMonth() + i * intervalMonths);

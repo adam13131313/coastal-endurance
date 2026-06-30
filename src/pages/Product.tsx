@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Check, Minus, Plus, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { fetchProduct, defaultDeliveryDates, type Product as CatalogProduct } from "@/lib/catalog";
+import { fetchProduct, defaultDeliveryDates, firstShipBase, FIRST_SHIP_DATE, type Product as CatalogProduct } from "@/lib/catalog";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
@@ -35,12 +35,14 @@ const Product = () => {
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
   const inStock = (product?.stock_quantity ?? 0) > 0;
   const today = new Date().toISOString().slice(0, 10);
+  // Orders open now; first shipments go from FIRST_SHIP_DATE (until that passes).
+  const firstShip = FIRST_SHIP_DATE > today ? FIRST_SHIP_DATE : today;
 
   // Seed the bundle delivery schedule once the product loads (first dispatch
   // now, then spaced by the variant's default interval). Customer can edit.
   useEffect(() => {
     const b = product?.variants.find((v) => v.is_bundle);
-    if (b) setDeliveryDates(defaultDeliveryDates(b.deliveries_count, b.default_interval_months));
+    if (b) setDeliveryDates(defaultDeliveryDates(b.deliveries_count, b.default_interval_months, firstShipBase()));
   }, [product]);
 
   const updateDeliveryDate = (index: number, value: string) => {
@@ -156,6 +158,11 @@ const Product = () => {
               <p className="mt-2 text-2xl font-body">
                 ${price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
               </p>
+              {FIRST_SHIP_DATE > today && (
+                <p className="mt-2 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
+                  Available now · First bottles ship from 18 August 2026
+                </p>
+              )}
 
               <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
                 A medium-weight daily oil that supports and maintains your skin barrier.
@@ -298,7 +305,7 @@ const Product = () => {
                             <input
                               type="date"
                               value={date}
-                              min={today}
+                              min={firstShip}
                               onChange={(e) => updateDeliveryDate(i, e.target.value)}
                               className="flex-1 px-3 py-2 border border-border bg-background text-sm font-body rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
                             />

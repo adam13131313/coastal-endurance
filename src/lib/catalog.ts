@@ -48,8 +48,20 @@ export function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-// Default delivery schedule for a bundle: first dispatch now, then spaced
-// `intervalMonths` apart. Returns ISO date strings (yyyy-mm-dd).
+// Orders are open now, but the first physical shipments go out from this date.
+// Keep in sync with FIRST_SHIP_DATE in supabase/functions/create-checkout.
+export const FIRST_SHIP_DATE = "2026-08-18";
+
+// The earliest a shipment can be scheduled: today, or the first-ship date if
+// that's still in the future.
+export function firstShipBase(): Date {
+  const today = new Date();
+  const first = new Date(FIRST_SHIP_DATE + "T00:00:00");
+  return today > first ? today : first;
+}
+
+// Default delivery schedule for a bundle: first dispatch on/after the first-ship
+// date, then spaced `intervalMonths` apart. Returns ISO date strings (yyyy-mm-dd).
 export function defaultDeliveryDates(
   count: number,
   intervalMonths: number,
