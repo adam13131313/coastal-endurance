@@ -8,18 +8,18 @@ import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
 const Home = () => {
   const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterHp, setNewsletterHp] = useState(""); // honeypot
   const [isSubscribing, setIsSubscribing] = useState(false);
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubscribing(true);
     const { supabase } = await import("@/integrations/supabase/client");
-    const { error } = await supabase.from("newsletter_signups").insert({
-      email: newsletterEmail,
-      source: "homepage"
+    const { data, error } = await supabase.functions.invoke("subscribe", {
+      body: { email: newsletterEmail, source: "homepage", hp: newsletterHp },
     });
     setIsSubscribing(false);
-    if (error) {
+    if (error || (data as { error?: string })?.error) {
       toast.error("Something went wrong. Please try again.");
       return;
     }
@@ -176,6 +176,16 @@ const Home = () => {
             New products, restocks, and nothing else.
           </p>
           <form onSubmit={handleNewsletterSubmit} className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              value={newsletterHp}
+              onChange={(e) => setNewsletterHp(e.target.value)}
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
             <input
               type="email"
               placeholder="Your email"
