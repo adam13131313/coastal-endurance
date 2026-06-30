@@ -69,6 +69,22 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Father's Day promo */}
+      <Link
+        to="/fathers-day"
+        className="block bg-foreground text-background hover:bg-foreground/90 transition-colors"
+      >
+        <div className="container-wide py-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center">
+          <span className="font-typewriter text-xs uppercase tracking-widest">
+            Father's Day · A gift he'll actually use
+          </span>
+          <span className="font-body text-sm opacity-80">
+            Order now, ships from 18 August, in time for 6 September
+          </span>
+          <ArrowRight className="w-4 h-4" />
+        </div>
+      </Link>
+
       {/* Problem Section */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6 text-center">

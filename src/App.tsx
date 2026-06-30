@@ -22,6 +22,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Account = lazy(() => import("./pages/Account"));
 const FieldTeam = lazy(() => import("./pages/FieldTeam"));
+const FathersDay = lazy(() => import("./pages/FathersDay"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const CheckoutCancel = lazy(() => import("./pages/CheckoutCancel"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -48,6 +49,7 @@ const AppContent = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/account" element={<Account />} />
               <Route path="/field-team" element={<FieldTeam />} />
+              <Route path="/fathers-day" element={<FathersDay />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/checkout/cancel" element={<CheckoutCancel />} />
               <Route path="/admin" element={<Admin />} />
