@@ -48,6 +48,7 @@ const Account = () => {
   const [user, setUser] = useState<SupaUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [fieldTeam, setFieldTeam] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("orders");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -113,6 +114,11 @@ const Account = () => {
     }
     if (ordersRes.data) setOrders(ordersRes.data as unknown as Order[]);
     setLoading(false);
+
+    // Field team badge: are they on the list? (checks their own email)
+    supabase.functions.invoke("field-team-status").then(({ data }) => {
+      setFieldTeam(!!(data as { member?: boolean })?.member);
+    });
   };
 
   const handleSaveProfile = async () => {
@@ -178,7 +184,14 @@ const Account = () => {
                 </div>
               )}
               <div>
-                <h1 className="text-2xl font-display">{profile?.display_name || user?.email}</h1>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-2xl font-display">{profile?.display_name || user?.email}</h1>
+                  {fieldTeam && (
+                    <span className="text-[10px] font-typewriter uppercase tracking-widest bg-foreground text-background px-2 py-0.5">
+                      Field Team
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">{profile?.email || user?.email}</p>
               </div>
             </div>

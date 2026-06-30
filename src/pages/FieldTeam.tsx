@@ -6,10 +6,10 @@ const FieldTeam = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Field Oil: Beta Testing Guide | Coastal Endurance</title>
+        <title>Field Oil: Field Team Guide | Coastal Endurance</title>
         <meta
           name="description"
-          content="Beta testing guide for Field Oil by Coastal Endurance. Instructions, ingredients, feedback schedule for the 30-person field test."
+          content="Field team guide for Field Oil by Coastal Endurance. How to redeem your code, how to use the oil, ingredients, and how to send feedback."
         />
         <link rel="canonical" href="https://coastalendurance.com/field-team" />
         <meta name="robots" content="noindex, nofollow" />
@@ -22,14 +22,15 @@ const FieldTeam = () => {
             COASTAL ENDURANCE
           </p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-typewriter uppercase tracking-tight">
-            FIELD OIL: BETA TESTING GUIDE
+            FIELD OIL: FIELD TEAM GUIDE
           </h1>
           <p className="mt-4 text-xl md:text-2xl font-typewriter text-foreground">
-            Thank You for Testing
+            Welcome to the Field Team
           </p>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
-            You're one of 30 people testing Field Oil before our public launch.
-            Your feedback will shape the final product.
+            You're on the Field Team: people who get Field Oil free in exchange for
+            honest feedback. This page has everything you need: how to redeem your
+            code, how to use the oil, and how to tell us what you think.
           </p>
         </div>
       </section>
@@ -119,10 +120,8 @@ const FieldTeam = () => {
             WHAT THIS IS
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-6">
-            Field Oil is a 100% natural barrier maintenance face oil built for
-            men with significant outdoor exposure. Not anti-aging. Not a luxury
-            ritual. Equipment maintenance for skin that's seen years of sun,
-            salt, wind, and time.
+            Field Oil is a 100% natural daily face oil. Not anti-aging. Not a luxury
+            ritual. Daily maintenance for skin that takes sun, salt, wind, and time.
           </p>
           <ul className="space-y-3 text-[17px] font-body text-muted-foreground leading-relaxed">
             <li className="flex items-start gap-3">
@@ -196,7 +195,7 @@ const FieldTeam = () => {
             </li>
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
-              Use within 6 months of opening (for beta testing)
+              Use within 6 months of opening
             </li>
           </ul>
         </div>
@@ -211,7 +210,7 @@ const FieldTeam = () => {
             FEEDBACK SCHEDULE
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
-            I'll check in with you 3 times during the 30-day test:
+            I'll check in a few times over your first month, so feedback is easy to give in stages:
           </p>
 
           <div className="space-y-6">
@@ -326,8 +325,16 @@ const FieldTeam = () => {
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl md:text-2xl font-typewriter uppercase tracking-wide mb-8">
-            YOUR DISCOUNT
+            YOUR FREE BOTTLE
           </h2>
+          <ol className="space-y-3 text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
+            <li className="flex gap-4"><span className="text-foreground font-semibold shrink-0">1.</span><span><strong className="text-foreground">Sign in</strong> with Google using the email your code was sent to, so your order lands in your account with your Field Team badge.</span></li>
+            <li className="flex gap-4"><span className="text-foreground font-semibold shrink-0">2.</span><span>Add a single bottle on the product page.</span></li>
+            <li className="flex gap-4"><span className="text-foreground font-semibold shrink-0">3.</span><span>Enter your code at checkout. The total drops to $0, no card needed.</span></li>
+          </ol>
+          <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
+            Lost your code? Enter your email below and we'll resend it.
+          </p>
           <FieldTeamDiscount />
         </div>
       </section>
@@ -342,7 +349,7 @@ const FieldTeam = () => {
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
             Your time and honest feedback are shaping Field Oil into something
-            that actually works for people who spend serious time outdoors.
+            that actually works.
           </p>
           <div className="text-[17px] font-body text-foreground leading-relaxed">
             <p>Adam Hyde</p>

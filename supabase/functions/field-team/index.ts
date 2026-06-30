@@ -83,7 +83,8 @@ async function sendCodeEmail(to: string, code: string) {
       <h1 style="font-size:22px;margin:0 0 16px">You're on the Field Team</h1>
       <p style="font-size:15px;color:#333;line-height:1.6">Here's your code for a free bottle of Field Oil:</p>
       <p style="font-size:24px;letter-spacing:2px;font-weight:600;margin:16px 0;padding:14px 18px;border:1px solid #d6cfc4;text-align:center">${code}</p>
-      <p style="font-size:15px;color:#333;line-height:1.6">To redeem: add a single bottle at <a href="${SITE}/product" style="color:#000">coastalendurance.com/product</a>, then enter this code at checkout. It covers one bottle and works once.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6"><strong>Sign in first</strong> with Google at <a href="${SITE}/auth" style="color:#000">coastalendurance.com</a> using this email, then add a single bottle at <a href="${SITE}/product" style="color:#000">the product page</a> and enter this code at checkout. Signing in first means your order shows up in your account, with your Field Team badge.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6">The code covers one bottle and works once.</p>
       <p style="font-size:13px;color:#999;margin-top:24px">Coastal Endurance · Made in Australia</p>
     </div>`;
   const res = await fetch("https://api.resend.com/emails", {
