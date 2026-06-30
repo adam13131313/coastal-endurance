@@ -78,6 +78,39 @@ const AdminGuide = () => (
     </section>
 
     <section>
+      <H>Field team (free bottles)</H>
+      <p className="mb-3">
+        The field team are people we invite to try Field Oil for free in exchange for feedback and word of mouth.
+        Each person gets <strong>one free bottle</strong>. You add them one at a time, as you recruit them, from the
+        <strong> Field team</strong> tab. There is no list to upload.
+      </p>
+      <p className="font-typewriter text-xs uppercase tracking-widest text-foreground mb-2">To add a member</p>
+      <ol className="list-decimal pl-5 space-y-2 mb-4">
+        <li>Open the <strong>Field team</strong> tab.</li>
+        <li>Type the person's <strong>email</strong> and click <strong>Generate code</strong>.</li>
+        <li>The store creates a one-time code (looks like <code>FIELD-XXXXX</code>), <strong>emails it to them</strong> with instructions, and adds them to the list below. Nothing else to do.</li>
+      </ol>
+      <p className="font-typewriter text-xs uppercase tracking-widest text-foreground mb-2">What the member does</p>
+      <ol className="list-decimal pl-5 space-y-2 mb-4">
+        <li>Goes to the product page and adds a <strong>single bottle</strong> to the cart.</li>
+        <li>Enters their code at checkout. The total drops to <strong>$0</strong> and the order completes (no card needed).</li>
+        <li>It then arrives in <strong>To ship</strong> like any order. You post it and mark it shipped the same way. Free bottles still come out of stock.</li>
+      </ol>
+      <p className="font-typewriter text-xs uppercase tracking-widest text-foreground mb-2">Managing members</p>
+      <ul className="space-y-2 mb-4">
+        <li><strong>Status</strong> shows <em>Issued</em> (code sent, not used yet), <em>Redeemed</em> (they've ordered), or <em>Revoked</em>.</li>
+        <li><strong>Resend</strong> re-emails someone their code if they lost it.</li>
+        <li><strong>Revoke</strong> turns a code off so it can no longer be used and removes the person. <strong>Always revoke here</strong> — never delete the row in Supabase by hand, as that leaves a live code floating.</li>
+      </ul>
+      <p className="font-typewriter text-xs uppercase tracking-widest text-foreground mb-2">Rules to know</p>
+      <ul className="list-disc pl-5 space-y-1">
+        <li>Each code works <strong>once</strong> and covers <strong>one bottle</strong>. Codes are personal, don't post them publicly.</li>
+        <li>If a member adds the 4-bottle bundle instead, the code only takes <strong>$78 off</strong> (they pay the rest) — a field-team code can never give away a whole bundle.</li>
+        <li>Free bottles record as <strong>$0 revenue but count as one unit</strong>, so the Plan and Pipeline numbers stay honest.</li>
+      </ul>
+    </section>
+
+    <section>
       <H>Where to log in</H>
       <ul className="space-y-2">
         <li><strong>Supabase</strong> — products, stock, order data, staff list: <a className="underline" href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer">supabase.com/dashboard</a></li>
