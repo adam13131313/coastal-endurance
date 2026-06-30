@@ -14,6 +14,11 @@ const AdminGuide = () => (
         shipments over the following year. Keeping on top of the dispatch schedule is the most
         important daily job.
       </p>
+      <p className="mt-3">
+        <strong>Launch window:</strong> orders are open now, but the first bottles ship from
+        <strong> 18 August 2026</strong>. Until then nothing is scheduled before that date, so the
+        To ship queue stays empty and the site reads "available now, ships from 18 August."
+      </p>
     </section>
 
     <section>
@@ -30,9 +35,12 @@ const AdminGuide = () => (
       <ul className="space-y-3">
         <li><strong>Ship a delivery:</strong> To ship tab → enter tracking → Mark shipped.</li>
         <li><strong>Complete an order:</strong> Orders tab → Mark order fulfilled (once every shipment is sent).</li>
-        <li><strong>Refund a customer:</strong> do it in <strong>Stripe</strong> (Payments → open the order → Refund). The store updates itself: the order is set to refunded, remaining shipments are cancelled, bottles are restocked, and you get a confirmation email. Do not change anything here by hand.</li>
+        <li><strong>Change a delivery date:</strong> a customer (usually 12-month supply) asks to move a shipment → To ship tab → change the date in that shipment's date box → <strong>Save date</strong>. Works only before it is shipped. Customers are told to contact us for this, so you action it here.</li>
+        <li><strong>Refund a customer:</strong> do it in <strong>Stripe</strong> (Payments → open the order → Refund). The store updates itself: the order is set to refunded, remaining shipments are cancelled, bottles are restocked, you get a confirmation email, and the customer is emailed a refund confirmation. Do not change anything here by hand.</li>
         <li><strong>Restock / change price / hide the product:</strong> Supabase dashboard → Table Editor → <code>products</code> (edit <code>stock_quantity</code>) or <code>product_variants</code> (edit <code>price_cents</code>, where 7800 = $78.00).</li>
         <li><strong>Add a staff member:</strong> Supabase → Table Editor → <code>admins</code> → insert their Google login email. That grants this admin area and the notification emails.</li>
+        <li><strong>Send a newsletter / restock update:</strong> Resend dashboard → Broadcasts → the <strong>Coastal Endurance updates</strong> audience → compose and send. Unsubscribe is handled automatically. Website signups feed this list.</li>
+        <li><strong>Issue a field team free bottle:</strong> see the Field team tab and its own section below.</li>
       </ul>
     </section>
 
@@ -44,6 +52,30 @@ const AdminGuide = () => (
         <li>Daily “shipments to send” digest</li>
         <li>Order refunded</li>
       </ul>
+    </section>
+
+    <section>
+      <H>The tabs in this admin</H>
+      <div className="border border-border divide-y divide-border">
+        {[
+          ["Overview", "Sales, stock, and key metrics at a glance."],
+          ["Plan", "Live actuals against the Year-1 targets."],
+          ["Pipeline", "Where sales come from (channels) and the reach needed to hit target."],
+          ["Content", "Generate on-brand social, website, and email copy plus video shot lists."],
+          ["To ship", "The dispatch queue. Your main daily screen."],
+          ["Orders", "Every order, with addresses and fulfilment status."],
+          ["Field team", "Issue free-bottle codes to field team members."],
+          ["Staff board", "Issues, requests, suggestions, and questions for the team."],
+          ["Assistant", "Ask plain questions about running the store."],
+          ["Staff guide", "This handbook."],
+          ["Brand", "Logo, colours, voice, and downloadable assets."],
+        ].map(([t, d]) => (
+          <div key={t} className="flex gap-4 p-3 text-sm">
+            <span className="w-28 shrink-0 font-typewriter uppercase tracking-wider text-foreground">{t}</span>
+            <span>{d}</span>
+          </div>
+        ))}
+      </div>
     </section>
 
     <section>
