@@ -149,7 +149,7 @@ const About = () => {
               <h3 className="text-xl font-typewriter uppercase">5. FUNCTION OVER FORM</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
                 Zero fragrance. Zero essential oils. 100% natural ingredients. No aromatherapy. No luxury 
-                ritual. No 10-step routine. Apply ≈0.3ml to damp skin once daily. Absorbs in 2 minutes. Done.
+                ritual. No 10-step routine. Apply 3–4 drops to damp skin once daily. Absorbs in 2 minutes. Done.
               </p>
             </div>
           </div>

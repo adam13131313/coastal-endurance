@@ -337,7 +337,7 @@ const Product = () => {
                   HOW TO USE
                 </h3>
                 <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
-                  Apply ≈0.3ml to clean, slightly damp skin. Morning or evening.
+                  Apply 3–4 drops to clean, damp skin once daily.
                   Massage into face and neck. That's it. One product. Daily.
                 </p>
               </div>
