@@ -48,8 +48,8 @@ const BrandGuide = () => (
         <li><strong>Field Oil: Daily Skin Maintenance</strong> (the headline)</li>
         <li><strong>For Sun, Salt, Wind, &amp; Time</strong> (the supporting line)</li>
         <li>Field Oil maintains what the elements wear down.</li>
-        <li>Seven natural oils, each with a job: <strong>active oils</strong> (Rosehip, Hemp), <strong>Australian-grown carriers</strong> (Jojoba, Macadamia), and a <strong>natural antioxidant system</strong> (Meadowfoam, Vitamin E, Rosemary CO2).</li>
-        <li>100% natural. Zero fragrance, zero synthetics. Made in Australia.</li>
+        <li>Naturally derived oils, each with a job: <strong>active oils</strong> (Rosehip, Hemp), <strong>Australian-grown carriers</strong> (Jojoba, Macadamia), and a <strong>natural antioxidant system</strong> (Meadowfoam, Vitamin E, Sunflower, Rosemary).</li>
+        <li>100% naturally derived. Zero fragrance, zero synthetics. Majority Australian-grown. Made in Australia.</li>
         <li>12-month bundle: 4 bottles for the price of 3, shipped on your schedule.</li>
       </ul>
     </section>

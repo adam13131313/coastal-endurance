@@ -11,10 +11,10 @@ const About = () => {
     <main id="top" className="pt-20">
       <Helmet>
         <title>About Field Oil | Coastal Endurance</title>
-        <meta name="description" content="A daily face oil with seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
+        <meta name="description" content="A daily face oil, naturally derived. Rosehip and Hemp actives, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/about" />
         <meta property="og:title" content="About Field Oil | Coastal Endurance" />
-        <meta property="og:description" content="Seven natural oils, each with a purpose, active barrier-repair oils, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
+        <meta property="og:description" content="Naturally derived oils, each with a purpose: active barrier-support oils, Australian-grown carriers, and a natural antioxidant system. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/about" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
@@ -53,7 +53,7 @@ const About = () => {
               skin needs maintenance. Not when it's visibly damaged. Now. While you're still doing the thing.
             </p>
             <p className="text-foreground text-lg font-medium">
-              Active barrier-repair oils, Australian-grown carriers, a natural antioxidant system. Seven oils, each with a purpose.
+              Active barrier-support oils, Australian-grown carriers, a natural antioxidant system. Each ingredient with a purpose.
             </p>
           </div>
         </div>
@@ -94,7 +94,7 @@ const About = () => {
                 while you're actively doing the thing, not repair after the fact.
               </p>
               <p>
-                The active oils, Rosehip and Hemp, do the barrier-repair work. Australian ingredients built 
+                The active oils, Rosehip and Hemp, do the barrier-support work. Australian ingredients built
                 for Australian conditions (Tasmanian Hemp, Australian Jojoba, Australian 
                 Macadamia). Function over ritual. 60 seconds, once daily.
               </p>
@@ -132,7 +132,7 @@ const About = () => {
               <h3 className="text-xl font-typewriter uppercase">3. CLINICAL-DOSE ACTIVES</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
                 Rosehip and Hemp are the active oils, the working core of the formula. Where many face oils run a small dose of active in a large carrier base, here the actives lead. 
-                We use clinical doses, concentrations shown in research to support barrier function.
+                We keep the actives high and the formula simple, made to support the skin's barrier.
               </p>
             </div>
 
@@ -148,7 +148,7 @@ const About = () => {
             <div>
               <h3 className="text-xl font-typewriter uppercase">5. FUNCTION OVER FORM</h3>
               <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                Zero fragrance. Zero essential oils. 100% natural ingredients. No aromatherapy. No luxury 
+                Zero fragrance. Zero essential oils. 100% naturally derived. No aromatherapy. No luxury
                 ritual. No 10-step routine. Apply 3–4 drops to damp skin once daily. Absorbs in 2 minutes. Done.
               </p>
             </div>
@@ -192,7 +192,7 @@ const About = () => {
             Seven ingredients. Each with a purpose.
           </p>
           <p className="mt-4 font-body text-muted-foreground text-[17px] leading-relaxed">
-            Active barrier-repair oils, Australian-grown carriers. Zero synthetics, zero essential oils, zero fragrance.
+            Active barrier-support oils, Australian-grown carriers. Zero synthetics, zero essential oils, zero fragrance.
           </p>
           <Link
             to="/ingredients"

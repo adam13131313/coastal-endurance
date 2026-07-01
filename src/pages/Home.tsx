@@ -31,10 +31,10 @@ const Home = () => {
     <main>
       <Helmet>
         <title>Field Oil: Daily Skin Maintenance</title>
-        <meta name="description" content="A daily face oil for healthy skin. Seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
+        <meta name="description" content="A daily face oil for healthy skin. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/" />
         <meta property="og:title" content="Field Oil: Daily Skin Maintenance" />
-        <meta property="og:description" content="A daily face oil for healthy skin. Seven natural oils, Rosehip and Hemp actives, Australian-grown carriers, zero fragrance. Made in Australia." />
+        <meta property="og:description" content="A daily face oil for healthy skin. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
 
@@ -43,7 +43,7 @@ const Home = () => {
         <div className="container-wide relative z-10 pt-20">
           <div className="max-w-2xl">
             <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
-              100% NATURAL INGREDIENTS
+              100% NATURALLY DERIVED
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-tight animate-slide-up text-foreground" style={{ animationDelay: "0.05s" }}>
               FIELD OIL: DAILY SKIN MAINTENANCE

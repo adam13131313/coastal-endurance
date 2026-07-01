@@ -19,7 +19,7 @@ const PRESETS = [
   "Explain the three-role oil blend (actives, carriers, antioxidants) in plain language.",
   "Why a face oil, not a cream. Maintenance for skin that takes weather.",
   "The prepaid bundle: 4 bottles for the price of 3 (A$234), shipped on your schedule.",
-  "Made in Australia, 100% natural, zero fragrance.",
+  "Made in Australia, 100% naturally derived, zero fragrance.",
 ];
 
 interface Option {
