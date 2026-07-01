@@ -14,52 +14,65 @@ const Ingredients = () => {
       name: "Australian Jojoba",
       inci: "Simmondsia Chinensis Seed Oil",
       note: "Australian-grown",
+      role: "The base",
       description:
-        "Golden and Australian-grown; a lightweight wax ester close to skin's own sebum. Absorbs cleanly and forms the stable base of the blend.",
+        "A golden, Australian-grown wax ester that's structurally close to skin's own sebum. It absorbs cleanly without a greasy film. We chose it as the backbone of the blend because it carries the active oils evenly and suits skin that sweats and works outdoors.",
     },
     {
       name: "Tasmanian Hemp Seed Oil",
       inci: "Cannabis Sativa Seed Oil",
       note: "Australian-grown",
+      role: "Active barrier-support oil",
       description:
-        "Australian-grown hemp seed oil, rich in omega-3 and -6 essential fatty acids; a key barrier-support oil. Seed oil — contains no CBD.",
+        "Australian-grown hemp seed oil, rich in the omega-3 and omega-6 essential fatty acids skin uses to maintain its barrier. It's light and absorbs quickly, so it supports the barrier without sitting heavy. This is a seed oil and contains no CBD. One of the two active oils in the formula.",
     },
     {
       name: "Rosehip",
       inci: "Rosa Canina Fruit Oil",
       note: "",
-      description: "A source of the essential fatty acids skin uses to maintain its barrier.",
+      role: "Active barrier-support oil",
+      description:
+        "A well-known source of the essential fatty acids skin uses to maintain its barrier. It partners with hemp as the second active oil, chosen for outdoor-exposed skin that's lost some of its natural resilience over years of sun, wind and salt.",
     },
     {
       name: "Australian Macadamia",
       inci: "Macadamia Integrifolia Seed Oil",
       note: "Australian-grown",
+      role: "Carrier & conditioning oil",
       description:
-        "Australian-grown; rich, cushioning and stable, high in monounsaturated fatty acids.",
+        "Australian-grown and high in monounsaturated fatty acids, macadamia is rich and cushioning yet stays stable. We selected it to give the blend a soft, nourishing feel and to help carry the actives, drawing on a tree native to Australia.",
     },
     {
       name: "Meadowfoam",
       inci: "Limnanthes Alba Seed Oil",
       note: "",
-      description: "Highly stable; forms a light protective layer that helps the skin hold moisture.",
+      role: "Stability & moisture-hold",
+      description:
+        "One of the most stable plant oils there is. It forms a light, breathable layer that helps skin hold on to moisture, and it helps protect the more delicate oils in the blend from breaking down. Chosen to keep the formula stable under Australian sun and heat without synthetic additives.",
     },
     {
       name: "Natural Vitamin E",
       inci: "Tocopherol",
       note: "",
-      description: "An antioxidant that helps protect the oils and the skin.",
+      role: "Antioxidant",
+      description:
+        "A naturally derived antioxidant that helps protect the oils from going off and helps defend skin against environmental stress. We use the natural form for better skin compatibility; it works alongside meadowfoam and rosemary as the blend's antioxidant system.",
     },
     {
       name: "Sunflower",
       inci: "Helianthus Annuus Seed Oil",
       note: "carrier",
-      description: "Natural carrier for the vitamin E and rosemary.",
+      role: "Natural carrier",
+      description:
+        "A light, naturally derived carrier oil. Its job is to disperse the vitamin E and rosemary extract evenly through the formula, so the antioxidant system works throughout the whole bottle rather than in patches.",
     },
     {
       name: "Rosemary Antioxidant Extract",
       inci: "Rosmarinus Officinalis Leaf Extract",
       note: "",
-      description: "A CO2 extract (not an essential oil) that helps keep the blend fresh.",
+      role: "Natural preservation",
+      description:
+        "A rosemary CO2 extract, not an essential oil, so it adds no scent. It's a natural antioxidant that helps keep the blend fresh and stable, which lets us skip synthetic preservatives. Used at a tiny amount, it's functional but undetectable.",
     },
   ];
 
@@ -192,7 +205,10 @@ const Ingredients = () => {
                 <p className="mt-1 text-sm font-body text-muted-foreground">
                   {ingredient.inci}{ingredient.note ? ` · ${ingredient.note}` : ""}
                 </p>
-                <p className="mt-5 font-body text-foreground leading-relaxed text-[17px]">
+                <p className="mt-4 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
+                  {ingredient.role}
+                </p>
+                <p className="mt-3 font-body text-foreground leading-relaxed text-[17px]">
                   {ingredient.description}
                 </p>
               </div>

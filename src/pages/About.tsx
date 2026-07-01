@@ -71,7 +71,6 @@ const About = () => {
           <div className="mt-10">
             <h3 className="text-xl font-typewriter uppercase">THE PROBLEM</h3>
             <div className="mt-4 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
-              <p>Traditional skincare doesn't address outdoor people.</p>
               <p>
                 Most face oils target chronological aging ("look younger") or are built around luxury 
                 rituals (10-step routines, aromatherapy, self-care). Neither works for men who spend 
