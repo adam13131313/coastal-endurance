@@ -11,6 +11,7 @@ import PlanTracker from "@/components/PlanTracker";
 import PipelineTracker from "@/components/PipelineTracker";
 import ContentGenerator from "@/components/ContentGenerator";
 import FieldTeamAdmin from "@/components/FieldTeamAdmin";
+import SocialGuide from "@/components/SocialGuide";
 import StaffBoard from "@/components/StaffBoard";
 import StaffAssistant from "@/components/StaffAssistant";
 import BrandGuide from "@/components/BrandGuide";
@@ -68,12 +69,25 @@ function formatAddress(a: Record<string, unknown> | null): string {
   return parts.join(", ");
 }
 
+// Grouped admin navigation (replaces the flat row of tabs).
+const NAV_GROUPS = [
+  { group: "Store", keys: ["overview", "dispatch", "orders", "field"] },
+  { group: "Marketing", keys: ["plan", "pipeline", "content", "social"] },
+  { group: "Team", keys: ["board", "assistant", "guide", "brand"] },
+] as const;
+
+const TAB_LABEL: Record<string, string> = {
+  overview: "Overview", plan: "Plan", pipeline: "Pipeline", content: "Content",
+  social: "Social", dispatch: "To ship", orders: "Orders", field: "Field team",
+  board: "Staff board", assistant: "Assistant", guide: "Staff guide", brand: "Brand",
+};
+
 const Admin = () => {
   const navigate = useNavigate();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "content" | "dispatch" | "orders" | "field" | "board" | "assistant" | "guide" | "brand">("overview");
+  const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "content" | "social" | "dispatch" | "orders" | "field" | "board" | "assistant" | "guide" | "brand">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -231,29 +245,34 @@ const Admin = () => {
             </button>
           </div>
 
-          <div className="flex gap-1 border-b border-border mb-8">
-            {(["overview", "plan", "pipeline", "content", "dispatch", "orders", "field", "board", "assistant", "guide", "brand"] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-4 py-3 text-sm font-typewriter uppercase tracking-wider border-b-2 -mb-px ${
-                  tab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t === "overview" ? "Overview"
-                  : t === "plan" ? "Plan"
-                  : t === "pipeline" ? "Pipeline"
-                  : t === "content" ? "Content"
-                  : t === "dispatch" ? `To ship (${dispatch.length})`
-                  : t === "orders" ? `Orders (${orders.length})`
-                  : t === "field" ? "Field team"
-                  : t === "board" ? "Staff board"
-                  : t === "assistant" ? "Assistant"
-                  : t === "guide" ? "Staff guide"
-                  : "Brand"}
-              </button>
-            ))}
-          </div>
+          <div className="flex flex-col md:flex-row gap-8 md:gap-10">
+            <aside className="md:w-48 md:shrink-0">
+              <nav className="flex md:flex-col gap-x-2 gap-y-6 overflow-x-auto md:overflow-visible pb-3 md:pb-0 border-b md:border-b-0 md:border-r border-border md:pr-6">
+                {NAV_GROUPS.map((section) => (
+                  <div key={section.group} className="shrink-0">
+                    <p className="hidden md:block font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground mb-2">{section.group}</p>
+                    <div className="flex md:flex-col gap-1">
+                      {section.keys.map((k) => {
+                        const label = k === "dispatch" ? `To ship (${dispatch.length})` : k === "orders" ? `Orders (${orders.length})` : TAB_LABEL[k];
+                        return (
+                          <button
+                            key={k}
+                            onClick={() => setTab(k)}
+                            className={`text-left whitespace-nowrap px-3 py-1.5 text-sm font-typewriter uppercase tracking-wider transition-colors ${
+                              tab === k ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            </aside>
+
+            <div className="flex-1 min-w-0">
 
           {tab === "overview" && <AdminDashboard orders={orders} />}
 
@@ -392,6 +411,10 @@ const Admin = () => {
           {tab === "guide" && <AdminGuide />}
 
           {tab === "brand" && <BrandGuide />}
+
+          {tab === "social" && <SocialGuide />}
+            </div>
+          </div>
         </div>
       </section>
     </main>

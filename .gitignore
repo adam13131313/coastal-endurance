@@ -35,3 +35,7 @@ supabase/.branches/
 # Private financial model (never commit to public repo)
 coastal_endurance_model_*.xlsx
 *.xlsx
+
+# Internal reference docs (repo is public — keep local only)
+SOCIAL_GUIDELINES.md
+BRAND_BRIEF.md
