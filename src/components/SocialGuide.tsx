@@ -47,12 +47,12 @@ const SocialGuide = () => (
       <Sub>Current formula (7 plant oils)</Sub>
       <p>Rosehip 35%, Australian Jojoba 25%, Evening Primrose 15%, Meadowfoam 9%, Hemp Seed 9%, Australian Macadamia 6%, Australian Sandalwood 1%.</p>
 
-      <div className="mt-4 border border-destructive/40 bg-destructive/5 p-4 space-y-2">
-        <p className="font-typewriter text-xs uppercase tracking-widest text-foreground">⚠ Verify before publishing — do not state as fact until confirmed</p>
+      <div className="mt-4 border border-border bg-muted/40 p-4 space-y-2">
+        <p className="font-typewriter text-xs uppercase tracking-widest text-foreground">Confirm the current details before publishing</p>
         <ul className="list-disc pl-5 space-y-1.5">
-          <li><strong>Any ingredient count / "seven natural oils".</strong> The plant-oil list and the packaging INCI list don't agree yet. Until the live formula is locked, don't claim a number. Safe fallback: "a blend of plant oils," or name the hero oils (rosehip, Australian jojoba) without a count.</li>
-          <li><strong>"100% natural" / "natural".</strong> ACCC risk if unsubstantiated. Avoid as a headline claim. Prefer defensible specifics ("no added fragrance, no essential oils," "34% Australian-grown").</li>
-          <li><strong>"Great value bundle" / "12-month bundle".</strong> Don't reference unless confirmed as a SKU, and never with discount language (it undercuts the A$78 premium).</li>
+          <li><strong>"100% natural" is approved.</strong> Field Oil is 100% natural (no synthetics), and it's a cosmetic, not a therapeutic good — use the claim with confidence.</li>
+          <li><strong>Named ingredients / oil count.</strong> Just make sure any specific ingredients or a count match the <em>current</em> formula — confirm against the live INCI before naming specific oils, since the ingredient list has been revised.</li>
+          <li><strong>The 12-month bundle exists (A$234, four bottles).</strong> Frame it functionally ("a year in one order"), never with discount language ("great value," "deal") — that undercuts the A$78 premium.</li>
         </ul>
       </div>
     </section>
@@ -174,7 +174,7 @@ const SocialGuide = () => (
           "Correct ratio for the platform (IG 4:5 / TikTok 9:16), key content in the safe zone.",
           "On-image text is one hook line only — no price, ingredient count, or hard CTA burned in.",
           "Price shown as A$78 (caption only).",
-          "No unverified claims: no “seven oils,” no “100% natural,” no “great value bundle” unless confirmed.",
+          "Named ingredients / oil count match the current formula (100% natural is fine); no discount language for the bundle.",
           "No therapeutic claims (repairs / treats / anti-aging / cures).",
           "Post talks to one audience (the man or the buyer), consistently.",
           "Voice: direct and functional — no gift-shop softness or discount language.",
