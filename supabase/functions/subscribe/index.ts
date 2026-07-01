@@ -19,6 +19,20 @@ function cors(o: string | null): Record<string, string> {
 }
 const isEmail = (s: unknown): s is string => typeof s === "string" && s.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
+// Per-IP rate limit via the hit_rate_limit RPC (hashed IP; fails open on error).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function rateLimited(admin: any, prefix: string, req: Request, max: number, windowSeconds: number): Promise<boolean> {
+  try {
+    const ip = (req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "").split(",")[0].trim() || "0.0.0.0";
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("ce-rl-v1:" + ip));
+    const hex = [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 24);
+    const { data } = await admin.rpc("hit_rate_limit", { p_key: `${prefix}:${hex}`, p_max: max, p_window_seconds: windowSeconds });
+    return data === false;
+  } catch {
+    return false;
+  }
+}
+
 // Cache the audience id across warm invocations.
 let cachedAudienceId: string | null = null;
 
@@ -80,6 +94,11 @@ Deno.serve(async (req) => {
     const source = typeof body?.source === "string" ? body.source.slice(0, 40) : null;
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+
+    // Abuse guard: cap signups per IP.
+    if (await rateLimited(admin, "subscribe", req, 5, 60)) {
+      return json({ error: "Too many requests. Please try again shortly." }, 429);
+    }
 
     // Dedup: only insert if this email isn't already captured.
     const { data: existing } = await admin.from("newsletter_signups").select("id").eq("email", email).maybeSingle();
