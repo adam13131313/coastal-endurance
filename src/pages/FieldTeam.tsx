@@ -120,13 +120,13 @@ const FieldTeam = () => {
             WHAT THIS IS
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-6">
-            Field Oil is a 100% natural daily face oil. Not anti-aging. Not a luxury
+            Field Oil is a 100% naturally derived daily face oil. Not anti-aging. Not a luxury
             ritual. Daily maintenance for skin that takes sun, salt, wind, and time.
           </p>
           <ul className="space-y-3 text-[17px] font-body text-muted-foreground leading-relaxed">
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
-              100% natural ingredients
+              100% naturally derived
             </li>
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
@@ -138,7 +138,7 @@ const FieldTeam = () => {
             </li>
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-foreground shrink-0" />
-              Seven oils, each with a job, actives, carriers, antioxidants
+              Oils, each with a job, actives, carriers, antioxidants
             </li>
           </ul>
         </div>
@@ -153,11 +153,11 @@ const FieldTeam = () => {
             FULL INGREDIENTS
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
-            Rosa Canina Fruit Oil (Rosehip), Simmondsia Chinensis Seed Oil
-            (Jojoba), Cannabis Sativa Seed Oil (Hemp Seed), Macadamia
-            Ternifolia Seed Oil (Macadamia), Limnanthes Alba Seed Oil
-            (Meadowfoam), Tocopherol (Vitamin E), Rosmarinus Officinalis Leaf
-            Extract (Rosemary)
+            Simmondsia Chinensis Seed Oil (Jojoba), Cannabis Sativa Seed Oil
+            (Hemp Seed), Rosa Canina Fruit Oil (Rosehip), Macadamia Integrifolia
+            Seed Oil (Macadamia), Limnanthes Alba Seed Oil (Meadowfoam),
+            Tocopherol (Vitamin E), Helianthus Annuus Seed Oil (Sunflower),
+            Rosmarinus Officinalis Leaf Extract (Rosemary)
           </p>
           <div className="mt-8 border border-destructive/30 bg-destructive/5 p-5 space-y-3">
             <p className="text-[17px] font-body text-foreground leading-relaxed">

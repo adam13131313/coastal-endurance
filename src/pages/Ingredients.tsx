@@ -7,55 +7,72 @@ import {
 import { Helmet } from "react-helmet-async";
 
 const Ingredients = () => {
+  // 8-ingredient anhydrous oil blend, listed in INCI order. Descriptions are the
+  // approved plain-language ones (no supplier marketing, no therapeutic claims).
   const ingredients = [
     {
-      name: "ROSEHIP OIL",
-      origin: "Chilean/European origin, cold-pressed from seeds",
-      function:
-        "Essential fatty acids (the building blocks your skin uses to maintain itself) support barrier function. Contains vitamin A precursors. Used extensively in formulations for environmentally exposed skin.",
-      why: "Primary active ingredient at clinical dose. High concentration of barrier-supporting lipids (your skin's natural oils that hold its protective layer together). Addresses cumulative environmental damage from prolonged outdoor exposure.",
+      name: "Australian Jojoba",
+      inci: "Simmondsia Chinensis Seed Oil",
+      note: "Australian-grown",
+      role: "The base",
+      description:
+        "A golden, Australian-grown wax ester that's structurally close to skin's own sebum. It absorbs cleanly without a greasy film. We chose it as the backbone of the blend because it carries the active oils evenly and suits skin that sweats and works outdoors.",
     },
     {
-      name: "JOJOBA OIL",
-      origin: "Australian-grown, Western Australia/South Australia/NSW",
-      function:
-        "Structurally similar to human sebum (your skin's natural oil). Helps regulate skin's natural oil balance. Lightweight, non-comedogenic (won't clog pores) wax ester.",
-      why: "Australian-sourced at clinical dose. Closely mimics skin's natural oil. Ideal for outdoor workers and athletes who sweat, helps maintain balanced skin without heaviness. One of our Australian-grown oils.",
+      name: "Tasmanian Hemp Seed Oil",
+      inci: "Cannabis Sativa Seed Oil",
+      note: "Australian-grown",
+      role: "Active barrier-support oil",
+      description:
+        "Australian-grown hemp seed oil, rich in the omega-3 and omega-6 essential fatty acids skin uses to maintain its barrier. It's light and absorbs quickly, so it supports the barrier without sitting heavy. This is a seed oil and contains no CBD. One of the two active oils in the formula.",
     },
     {
-      name: "HEMP SEED OIL",
-      origin: "Tasmanian-grown, cold-pressed, THC-free",
-      function:
-        "Balanced anti-inflammatory oil containing both gamma-linolenic acid (GLA, omega-6) and alpha-linolenic acid (ALA, omega-3). Optimal 3:1 ratio of omega-6 to omega-3 fatty acids helps regulate inflammation and support barrier function.",
-      why: "Tasmanian-grown premium hemp. One of the few plant oils containing both omega-6 and omega-3 in balanced proportions. GLA provides anti-inflammatory support while omega-3 helps regulate sebum production (your skin's natural oil). Lighter texture than most seed oils, absorbs quickly without heaviness. Ideal for outdoor-exposed skin that needs inflammation control without excess oil. One of our Australian-grown oils.",
+      name: "Rosehip",
+      inci: "Rosa Canina Fruit Oil",
+      note: "",
+      role: "Active barrier-support oil",
+      description:
+        "A well-known source of the essential fatty acids skin uses to maintain its barrier. It partners with hemp as the second active oil, chosen for outdoor-exposed skin that's lost some of its natural resilience over years of sun, wind and salt.",
     },
     {
-      name: "MACADAMIA OIL",
-      origin: "Australian-grown, Queensland/Northern NSW",
-      function:
-        "Contains palmitoleic acid (omega-7, a fatty acid that naturally occurs in younger skin but decreases with age and sun exposure). Lightweight despite being nourishing.",
-      why: "Australian native tree at clinically meaningful dose. Provides fatty acids that help maintain skin's lipid barrier (your skin's natural oil layer). Contains omega-7, found in few other plant sources. Addresses age-related lipid depletion accelerated by environmental exposure. One of our Australian-grown oils.",
+      name: "Australian Macadamia",
+      inci: "Macadamia Integrifolia Seed Oil",
+      note: "Australian-grown",
+      role: "Carrier & conditioning oil",
+      description:
+        "Australian-grown and high in monounsaturated fatty acids, macadamia is rich and cushioning yet stays stable. We selected it to give the blend a soft, nourishing feel and to help carry the actives, drawing on a tree native to Australia.",
     },
     {
-      name: "MEADOWFOAM SEED OIL",
-      origin: "Oregon, USA (only region where it grows)",
-      function:
-        "Exceptionally stable plant oil with long-chain fatty acids (meaning it doesn't break down or go rancid easily). Helps protect other oils from degradation. Forms a breathable protective layer on skin.",
-      why: "Acts as natural stabilizer, extending product shelf life without synthetic additives. Helps formula remain stable under sun exposure and temperature changes. Critical for protecting the oxidation-prone oils in this formula from Australian sun.",
+      name: "Meadowfoam",
+      inci: "Limnanthes Alba Seed Oil",
+      note: "",
+      role: "Stability & moisture-hold",
+      description:
+        "One of the most stable plant oils there is. It forms a light, breathable layer that helps skin hold on to moisture, and it helps protect the more delicate oils in the blend from breaking down. Chosen to keep the formula stable under Australian sun and heat without synthetic additives.",
     },
     {
-      name: "VITAMIN E",
-      origin: "Natural d-alpha tocopherol, plant-derived",
-      function:
-        "Antioxidant (protects against damage from environmental exposure) that helps protect skin from environmental stressors. Supports skin's natural lipid barrier (your skin's natural oil layer). Helps maintain product stability.",
-      why: "Natural form for better skin compatibility. Provides antioxidant protection without common allergen concerns. Works with Rosemary CO2 Extract and Meadowfoam to create a triple-layer antioxidant system for 12-18 month shelf life.",
+      name: "Natural Vitamin E",
+      inci: "Tocopherol",
+      note: "",
+      role: "Antioxidant",
+      description:
+        "A naturally derived antioxidant that helps protect the oils from going off and helps defend skin against environmental stress. We use the natural form for better skin compatibility; it works alongside meadowfoam and rosemary as the blend's antioxidant system.",
     },
     {
-      name: "ROSEMARY CO2 EXTRACT",
-      origin: "Mediterranean origin, supercritical CO2 extraction",
-      function:
-        "Contains carnosic acid (a natural antioxidant compound) with natural antioxidant and antimicrobial (keeps bacteria/fungi from growing) properties. Helps prevent product oxidation (going rancid). Maintains freshness without synthetic preservatives.",
-      why: "Natural preservation system. Minimal concentration means no detectable scent while effectively maintaining product integrity. Functionally active but undetectable. ECOCERT certified.",
+      name: "Sunflower",
+      inci: "Helianthus Annuus Seed Oil",
+      note: "carrier",
+      role: "Natural carrier",
+      description:
+        "A light, naturally derived carrier oil. Its job is to disperse the vitamin E and rosemary extract evenly through the formula, so the antioxidant system works throughout the whole bottle rather than in patches.",
+    },
+    {
+      name: "Rosemary Antioxidant Extract",
+      inci: "Rosmarinus Officinalis Leaf Extract",
+      note: "",
+      role: "Natural preservation",
+      description:
+        "A rosemary CO2 extract, not an essential oil, so it adds no scent. It's a natural antioxidant that helps keep the blend fresh and stable, which lets us skip synthetic preservatives. Used at a tiny amount, it's functional but undetectable.",
     },
   ];
 
@@ -73,48 +90,48 @@ const Ingredients = () => {
   const faqs = [
     {
       q: "Why does it have a scent if it's fragrance-free?",
-      a: "Natural plant oils have their own aroma (grassy, nutty, earthy). We don't add fragrance or essential oils. The scent you smell is the ingredients themselves, it dissipates within minutes of application.",
+      a: "Natural plant oils have their own aroma (grassy, nutty, earthy). We don't add fragrance or essential oils. The scent you smell is the ingredients themselves, and it dissipates within minutes of application.",
     },
     {
       q: "Why Australian ingredients?",
-      a: "Three of the seven oils are Australian-grown: Tasmanian Hemp, Australian Jojoba, Australian Macadamia. They're sourced locally, built for harsh Australian conditions, and support Australian agriculture.",
+      a: "The majority of the blend is Australian-grown: Tasmanian hemp, Australian jojoba, and Australian macadamia. They're sourced locally, suited to harsh Australian conditions, and support Australian agriculture.",
     },
     {
       q: "Is this anti-aging?",
-      a: "No. This is barrier maintenance for environmental damage. If you regularly spend time outdoors (surfing, cycling, working outside), sun, wind and salt wear on your skin barrier. This addresses that, not chronological aging.",
+      a: "No. This is barrier maintenance for environmental exposure. If you regularly spend time outdoors (surfing, cycling, working outside), sun, wind and salt wear on your skin's barrier. This is made to support that, not chronological aging.",
     },
     {
       q: "How is this different from other face oils?",
-      a: "Active oils at clinical dose (Rosehip and Hemp lead the formula), Australian-grown carriers (Jojoba and Macadamia), a natural antioxidant system instead of synthetic preservatives, an equipment-maintenance approach (not anti-aging or luxury), and essential-oil-free.",
+      a: "Active oils (Rosehip and Hemp lead the blend), Australian-grown carriers (jojoba and macadamia), a natural antioxidant system instead of synthetic preservatives, an equipment-maintenance approach (not anti-aging or luxury), and essential-oil-free.",
     },
     {
-      q: "Why only 7 ingredients?",
-      a: "Each ingredient has a specific function. Rosehip and Hemp for barrier repair and inflammation. Australian Jojoba and Macadamia as carriers. Meadowfoam, Vitamin E, and Rosemary CO2 for stability. No fillers.",
+      q: "Why so few ingredients?",
+      a: "Every ingredient has a job. Rosehip and hemp are the active barrier-support oils; Australian jojoba and macadamia are the carriers; meadowfoam, vitamin E, sunflower and rosemary keep the blend stable. No fillers.",
     },
     {
       q: "Can I use this if I have oily skin?",
-      a: "Not recommended for very oily or acne-prone skin. This is formulated for normal, dry, or mature skin that's been exposed to outdoor conditions for years. If you're uncertain, start with a little less than ≈0.3ml.",
+      a: "Not recommended for very oily or acne-prone skin. This is made for normal, dry, or mature skin that's been exposed to outdoor conditions for years. If you're uncertain, start with 2–3 drops.",
     },
   ];
 
   const characteristics = [
-    { label: "Appearance", value: "Clear to pale amber oil with golden hue" },
+    { label: "Appearance", value: "Clear to pale amber oil with a golden hue" },
     { label: "Texture", value: "Medium-weight, absorbs in approximately 2 minutes" },
-    { label: "Scent", value: "Natural plant oil aroma (grassy, nutty, earthy), dissipates quickly" },
+    { label: "Scent", value: "Natural plant-oil aroma (grassy, nutty, earthy), dissipates quickly" },
     { label: "Suitable for", value: "Normal, dry, mature, outdoor-exposed skin" },
   ];
 
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Field Oil Ingredients: 7 Natural Barrier-Repair Oils</title>
+        <title>Field Oil Ingredients: Naturally Derived Barrier-Support Oils</title>
         <meta
           name="description"
-          content="Field Oil's 7 natural ingredients: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. Australian-grown Hemp, Jojoba and Macadamia."
+          content="Field Oil's naturally derived ingredients: Australian jojoba, Tasmanian hemp, rosehip, Australian macadamia, meadowfoam, vitamin E, sunflower, rosemary. Majority Australian-grown, made in Australia."
         />
         <link rel="canonical" href="https://coastalendurance.com/ingredients" />
-        <meta property="og:title" content="Field Oil Ingredients: 7 Natural Barrier-Repair Oils" />
-        <meta property="og:description" content="Full ingredient breakdown: Rosehip, Jojoba, Hemp Seed, Macadamia, Meadowfoam, Vitamin E, Rosemary CO2. Australian-grown Hemp, Jojoba and Macadamia." />
+        <meta property="og:title" content="Field Oil Ingredients: Naturally Derived Barrier-Support Oils" />
+        <meta property="og:description" content="Full ingredient breakdown: Australian jojoba, Tasmanian hemp, rosehip, Australian macadamia, meadowfoam, vitamin E, sunflower, rosemary." />
         <meta property="og:url" content="https://coastalendurance.com/ingredients" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -146,10 +163,10 @@ const Ingredients = () => {
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
           <p className="text-lg md:text-xl font-body font-medium text-foreground leading-relaxed">
-            100% Natural Ingredients. Zero Synthetic Ingredients. Zero Essential Oils. Zero Fragrance.
+            100% naturally derived. No synthetics. Zero essential oils. No added fragrance.
           </p>
           <p className="mt-4 font-body text-muted-foreground leading-relaxed text-[17px]">
-            Built for men with significant outdoor exposure, those who've been doing the thing long enough that the environmental damage shows.
+            Built for men with significant outdoor exposure, those who've been doing the thing long enough that the environmental wear shows.
           </p>
 
           {/* Characteristics table */}
@@ -166,7 +183,7 @@ const Ingredients = () => {
 
           {/* Key stat callout */}
           <p className="mt-10 text-lg font-body font-medium text-foreground">
-            Active barrier-repair oils, Australian-grown carriers. Not anti-aging, equipment maintenance.
+            Active barrier-support oils, Australian-grown carriers. Not anti-aging, equipment maintenance.
           </p>
         </div>
       </section>
@@ -175,7 +192,7 @@ const Ingredients = () => {
       <section className="pb-20 md:pb-32">
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-2xl md:text-3xl font-typewriter uppercase mb-12">
-            FULL INGREDIENT LIST (7 INGREDIENTS)
+            FULL INGREDIENT LIST
           </h2>
 
           <div className="space-y-0">
@@ -185,26 +202,15 @@ const Ingredients = () => {
                 className="py-10 border-t border-border first:border-t-0 first:pt-0"
               >
                 <h3 className="text-xl md:text-2xl font-typewriter uppercase">{ingredient.name}</h3>
-                <p className="mt-1 text-sm font-body text-muted-foreground">{ingredient.origin}</p>
-
-                <div className="mt-6 space-y-5">
-                  <div>
-                    <h4 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                      FUNCTION
-                    </h4>
-                    <p className="font-body text-foreground leading-relaxed text-[17px]">
-                      {ingredient.function}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                      WHY WE USE IT
-                    </h4>
-                    <p className="font-body text-foreground leading-relaxed text-[17px]">
-                      {ingredient.why}
-                    </p>
-                  </div>
-                </div>
+                <p className="mt-1 text-sm font-body text-muted-foreground">
+                  {ingredient.inci}{ingredient.note ? ` · ${ingredient.note}` : ""}
+                </p>
+                <p className="mt-4 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
+                  {ingredient.role}
+                </p>
+                <p className="mt-3 font-body text-foreground leading-relaxed text-[17px]">
+                  {ingredient.description}
+                </p>
               </div>
             ))}
           </div>
@@ -214,10 +220,10 @@ const Ingredients = () => {
       {/* Storage & Shelf Life */}
       <section className="section-padding bg-secondary">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-typewriter uppercase mb-6">STORAGE & SHELF LIFE</h2>
+          <h2 className="text-xl font-typewriter uppercase mb-6">STORAGE</h2>
           <div className="border-t border-border">
             {[
-              { label: "Shelf life", value: "12-18 months from manufacture date" },
+              { label: "After opening", value: "Use within 6 months of opening" },
               { label: "Storage", value: "Below 25°C (77°F), away from direct sunlight" },
               { label: "Packaging", value: "Amber glass bottle with dropper. The glass blocks UV; the dropper gives precise, mess-free application and the same dose every time." },
             ].map((item, i) => (
@@ -229,17 +235,17 @@ const Ingredients = () => {
               </div>
             ))}
           </div>
-          <p className="mt-4 text-sm font-body text-muted-foreground">Keep lid tightly closed after each use.</p>
+          <p className="mt-4 text-sm font-body text-muted-foreground">Keep the lid tightly closed after each use.</p>
         </div>
       </section>
 
       {/* Origin */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-xl font-typewriter uppercase mb-3">ORIGIN</h2>
-          <p className="text-lg font-body font-medium text-foreground">Australian-grown oils</p>
+          <h2 className="text-xl font-typewriter uppercase mb-3">AUSTRALIAN-GROWN &amp; MADE IN AUSTRALIA</h2>
+          <p className="text-lg font-body font-medium text-foreground">The majority of the blend is Australian-grown.</p>
           <p className="mt-2 text-[17px] font-body text-muted-foreground">
-            Tasmanian Hemp, Australian Jojoba, and Australian Macadamia sourced from Australian farms.
+            Tasmanian hemp, Australian jojoba, and Australian macadamia, sourced from Australian farms. Blended and bottled in Australia.
           </p>
         </div>
       </section>
@@ -256,7 +262,7 @@ const Ingredients = () => {
             Men with significant outdoor exposure, surfers, tradies, cyclists, and outdoor workers exposed to the elements.
           </p>
           <p className="mt-4 text-[17px] font-body font-medium text-foreground">
-            Not anti-aging. Barrier maintenance for cumulative environmental damage from prolonged outdoor conditions.
+            Not anti-aging. Barrier maintenance for cumulative environmental exposure from prolonged outdoor conditions.
           </p>
         </div>
       </section>
@@ -266,10 +272,10 @@ const Ingredients = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-typewriter uppercase mb-4">FULL INCI LIST</h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
-            Rosa Canina Fruit Oil (Rosehip), Simmondsia Chinensis Seed Oil (Jojoba), Cannabis Sativa Seed Oil (Hemp Seed), Macadamia Ternifolia Seed Oil (Macadamia), Limnanthes Alba Seed Oil (Meadowfoam), Tocopherol (Vitamin E), Rosmarinus Officinalis Leaf Extract (Rosemary)
+            Simmondsia Chinensis Seed Oil, Cannabis Sativa Seed Oil, Rosa Canina Fruit Oil, Macadamia Integrifolia Seed Oil, Limnanthes Alba Seed Oil, Tocopherol, Helianthus Annuus Seed Oil, Rosmarinus Officinalis Leaf Extract.
           </p>
           <p className="mt-4 text-[17px] font-body font-medium text-foreground">
-            Contains: Tree nut derivatives (Macadamia)
+            Contains tree nut derivatives (Macadamia).
           </p>
         </div>
       </section>
@@ -314,7 +320,7 @@ const Ingredients = () => {
       <section className="py-10">
         <div className="max-w-[700px] mx-auto px-6">
           <p className="text-xs font-body text-muted-foreground leading-relaxed">
-            This product is a cosmetic, not a therapeutic good. It is designed to support barrier function and help maintain skin's natural moisture barrier. It is not intended to diagnose, treat, cure, or prevent any disease. Australian Certified Organic ingredients where specified. For external use only.
+            This product is a cosmetic, not a therapeutic good. It is made to support the skin's barrier and help maintain the skin's natural moisture barrier. It is not intended to diagnose, treat, cure, or prevent any disease. For external use only.
           </p>
         </div>
       </section>

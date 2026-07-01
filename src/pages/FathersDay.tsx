@@ -10,7 +10,7 @@ const FathersDay = () => {
         <title>Father's Day Gift: Field Oil | Coastal Endurance</title>
         <meta
           name="description"
-          content="A Father's Day gift for Dad. Field Oil, a 100% natural daily face oil made in Australia. Order now, ships from 18 August, in time for Father's Day, Sunday 6 September."
+          content="A Father's Day gift for Dad. Field Oil, a 100% naturally derived daily face oil made in Australia. Order now, ships from 18 August, in time for Father's Day, Sunday 6 September."
         />
         <link rel="canonical" href="https://coastalendurance.com/fathers-day" />
         <meta property="og:title" content="Father's Day Gift: Field Oil" />
@@ -30,7 +30,7 @@ const FathersDay = () => {
                 Daily skin maintenance, for Dad
               </h1>
               <p className="mt-6 text-lg font-body text-muted-foreground leading-relaxed max-w-lg">
-                Field Oil is a 100% natural daily face oil. No fuss, no fragrance.
+                Field Oil is a 100% naturally derived daily face oil. No fuss, no fragrance.
                 One dropper a day, for skin that takes sun, salt, wind, and time.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
@@ -58,7 +58,7 @@ const FathersDay = () => {
             {[
               "Practical. One dropper a day, morning or night.",
               "One 30ml bottle lasts about three months.",
-              "100% natural, zero fragrance, zero synthetics. Made in Australia.",
+              "100% naturally derived, zero fragrance, zero synthetics. Made in Australia.",
               "Simple. One dropper to damp skin, morning or night. Nothing to learn.",
             ].map((point, i) => (
               <li key={i} className="flex items-start gap-3">
