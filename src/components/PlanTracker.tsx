@@ -39,7 +39,7 @@ const Row = ({ label, actual, target, value, sub }: { label: string; actual: str
 );
 
 // Father's Day campaign: two goals — sell 200 bottles and recruit 15 Field Team
-// members for the free trial, by launch day. Batch is 250 units.
+// members for the free trial, by launch day. Batch is 220 units.
 const CAMPAIGN = {
   label: "Father's Day campaign",
   targetBottles: 200,
