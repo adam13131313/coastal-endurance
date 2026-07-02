@@ -38,6 +38,59 @@ const Row = ({ label, actual, target, value, sub }: { label: string; actual: str
   </div>
 );
 
+// Father's Day campaign: sell the validation batch (700 bottles) through by launch day.
+const CAMPAIGN = {
+  label: "Father's Day campaign",
+  targetBottles: 700,
+  start: "2026-07-01",
+  end: "2026-09-06", // Father's Day AU
+};
+
+const CampaignTracker = ({ orders }: { orders: DashOrder[] }) => {
+  const m = useMemo(() => {
+    const start = new Date(CAMPAIGN.start);
+    const end = new Date(CAMPAIGN.end);
+    const now = new Date();
+    const paid = orders.filter(
+      (o) => (o.status === "paid" || o.status === "fulfilled") && new Date(o.created_at) >= start,
+    );
+    const bottles = paid.reduce((s, o) => s + o.order_items.reduce((t, it) => t + it.bottles_each * it.quantity, 0), 0);
+    const revenue = paid.reduce((s, o) => s + o.total_cents, 0);
+    const dayMs = 86400000;
+    const totalDays = Math.max(1, Math.round((end.getTime() - start.getTime()) / dayMs));
+    const daysGone = Math.min(totalDays, Math.max(0, (now.getTime() - start.getTime()) / dayMs));
+    const daysLeft = Math.max(0, Math.ceil((end.getTime() - now.getTime()) / dayMs));
+    const evenPace = (CAMPAIGN.targetBottles / totalDays) * daysGone;
+    const needPerDay = daysLeft > 0 ? Math.max(0, CAMPAIGN.targetBottles - bottles) / daysLeft : 0;
+    return { bottles, revenue, orderCount: paid.length, daysLeft, evenPace, needPerDay };
+  }, [orders]);
+
+  const delta = Math.round(m.bottles - m.evenPace);
+  const done = m.bottles >= CAMPAIGN.targetBottles;
+
+  return (
+    <div className="space-y-7 border border-foreground p-5">
+      <div className="flex items-baseline justify-between">
+        <h2 className="font-typewriter text-sm uppercase tracking-widest text-foreground">
+          {CAMPAIGN.label} — {CAMPAIGN.targetBottles} bottles
+        </h2>
+        <span className="text-xs font-body text-muted-foreground">{m.daysLeft} days to Father's Day</span>
+      </div>
+      <Row
+        label="Bottles sold"
+        actual={`${m.bottles}`}
+        target={`${CAMPAIGN.targetBottles}`}
+        value={pct(m.bottles, CAMPAIGN.targetBottles)}
+        sub={
+          done
+            ? "Target hit. ✓"
+            : `${delta >= 0 ? `${delta} ahead of` : `${-delta} behind`} even pace · need ${m.needPerDay.toFixed(1)}/day from today · ${m.orderCount} orders · ${formatPrice(m.revenue)}`
+        }
+      />
+    </div>
+  );
+};
+
 const PlanTracker = ({ orders }: { orders: DashOrder[] }) => {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -66,7 +119,12 @@ const PlanTracker = ({ orders }: { orders: DashOrder[] }) => {
 
   if (!loaded) return <p className="font-body text-muted-foreground text-sm">Loading plan…</p>;
   if (!plan || plan.year1_units == null) {
-    return <p className="font-body text-muted-foreground text-sm">No plan targets set yet. (They live in the admin-only `plan` table.)</p>;
+    return (
+      <div className="max-w-[760px] space-y-8">
+        <CampaignTracker orders={orders} />
+        <p className="font-body text-muted-foreground text-sm">No plan targets set yet. (They live in the admin-only `plan` table.)</p>
+      </div>
+    );
   }
 
   const targetUnits = plan.year1_units ?? 0;
@@ -87,6 +145,8 @@ const PlanTracker = ({ orders }: { orders: DashOrder[] }) => {
 
   return (
     <div className="max-w-[760px] space-y-8">
+      <CampaignTracker orders={orders} />
+
       <div className="flex items-baseline justify-between">
         <h2 className="font-typewriter text-sm uppercase tracking-widest text-foreground">Year 1 vs plan</h2>
         {m!.started && <span className="text-xs font-body text-muted-foreground">Month {monthNo} of 12</span>}
