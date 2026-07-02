@@ -1,32 +1,11 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 const Home = () => {
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterHp, setNewsletterHp] = useState(""); // honeypot
-  const [isSubscribing, setIsSubscribing] = useState(false);
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubscribing(true);
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data, error } = await supabase.functions.invoke("subscribe", {
-      body: { email: newsletterEmail, source: "homepage", hp: newsletterHp },
-    });
-    setIsSubscribing(false);
-    if (error || (data as { error?: string })?.error) {
-      toast.error("Something went wrong. Please try again.");
-      return;
-    }
-    toast.success("You're subscribed. Updates only.");
-    setNewsletterEmail("");
-  };
-
   return (
     <main>
       <Helmet>
@@ -167,39 +146,7 @@ const Home = () => {
       </section>
 
       {/* Newsletter */}
-      <section className="section-padding">
-        <div className="max-w-[700px] mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
-            UPDATES ONLY. NO NOISE.
-          </h2>
-          <p className="mt-4 text-[17px] font-body text-muted-foreground">
-            New products, restocks, and nothing else.
-          </p>
-          <form onSubmit={handleNewsletterSubmit} className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
-              type="text"
-              name="company"
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden="true"
-              value={newsletterHp}
-              onChange={(e) => setNewsletterHp(e.target.value)}
-              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
-            />
-            <input
-              type="email"
-              placeholder="Your email"
-              aria-label="Email address for newsletter"
-              value={newsletterEmail}
-              onChange={(e) => setNewsletterEmail(e.target.value)}
-              className="input-field flex-1"
-              required />
-            <button type="submit" disabled={isSubscribing} className="btn-primary whitespace-nowrap disabled:opacity-50">
-              {isSubscribing ? "..." : "SUBSCRIBE"}
-            </button>
-          </form>
-        </div>
-      </section>
+      <NewsletterSignup source="homepage" />
     </main>
   );
 };

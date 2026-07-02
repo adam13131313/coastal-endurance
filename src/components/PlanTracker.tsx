@@ -38,15 +38,25 @@ const Row = ({ label, actual, target, value, sub }: { label: string; actual: str
   </div>
 );
 
-// Father's Day campaign: sell the validation batch (700 bottles) through by launch day.
+// Father's Day campaign: two goals — sell 200 bottles and recruit 20 Field Team
+// members for the free trial, by launch day.
 const CAMPAIGN = {
   label: "Father's Day campaign",
-  targetBottles: 700,
+  targetBottles: 200,
+  targetFieldTeam: 20,
   start: "2026-07-01",
   end: "2026-09-06", // Father's Day AU
 };
 
 const CampaignTracker = ({ orders }: { orders: DashOrder[] }) => {
+  const [fieldTeamCount, setFieldTeamCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    sb.from("approved_field_team_members")
+      .select("email", { count: "exact", head: true })
+      .then(({ count }: { count: number | null }) => setFieldTeamCount(count ?? 0));
+  }, []);
+
   const m = useMemo(() => {
     const start = new Date(CAMPAIGN.start);
     const end = new Date(CAMPAIGN.end);
@@ -67,12 +77,13 @@ const CampaignTracker = ({ orders }: { orders: DashOrder[] }) => {
 
   const delta = Math.round(m.bottles - m.evenPace);
   const done = m.bottles >= CAMPAIGN.targetBottles;
+  const ft = fieldTeamCount ?? 0;
 
   return (
     <div className="space-y-7 border border-foreground p-5">
       <div className="flex items-baseline justify-between">
         <h2 className="font-typewriter text-sm uppercase tracking-widest text-foreground">
-          {CAMPAIGN.label} — {CAMPAIGN.targetBottles} bottles
+          {CAMPAIGN.label}
         </h2>
         <span className="text-xs font-body text-muted-foreground">{m.daysLeft} days to Father's Day</span>
       </div>
@@ -85,6 +96,19 @@ const CampaignTracker = ({ orders }: { orders: DashOrder[] }) => {
           done
             ? "Target hit. ✓"
             : `${delta >= 0 ? `${delta} ahead of` : `${-delta} behind`} even pace · need ${m.needPerDay.toFixed(1)}/day from today · ${m.orderCount} orders · ${formatPrice(m.revenue)}`
+        }
+      />
+      <Row
+        label="Field Team recruited"
+        actual={`${ft}`}
+        target={`${CAMPAIGN.targetFieldTeam}`}
+        value={pct(ft, CAMPAIGN.targetFieldTeam)}
+        sub={
+          fieldTeamCount === null
+            ? "Loading…"
+            : ft >= CAMPAIGN.targetFieldTeam
+              ? "Target hit. ✓"
+              : `${CAMPAIGN.targetFieldTeam - ft} to go · issue codes in the Field team tab`
         }
       />
     </div>

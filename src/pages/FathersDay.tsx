@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Check } from "lucide-react";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 const FathersDay = () => {
   return (
@@ -98,6 +99,14 @@ const FathersDay = () => {
           </Link>
         </div>
       </section>
+
+      {/* Capture undecided gift-buyers */}
+      <NewsletterSignup
+        source="fathers-day"
+        heading="Not ready yet?"
+        subtext="Leave your email and we'll send one reminder when bottles ship, plus the order-by date for Father's Day delivery. Nothing else."
+        className="section-padding bg-secondary"
+      />
     </main>
   );
 };
