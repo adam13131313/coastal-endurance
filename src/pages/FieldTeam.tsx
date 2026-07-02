@@ -341,7 +341,7 @@ const FieldTeam = () => {
             <li className="flex gap-4"><span className="text-foreground font-semibold shrink-0">3.</span><span>Enter your code at checkout. The total drops to $0, no card needed.</span></li>
           </ol>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
-            You can order now. The first bottles ship from <strong className="text-foreground">18 August 2026</strong>, so you'll be among the very first to have it.
+            You can order now. The first bottles ship from <strong className="text-foreground">10 August 2026</strong>, so you'll be among the very first to have it.
           </p>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
             Lost your code? Enter your email below and we'll resend it.

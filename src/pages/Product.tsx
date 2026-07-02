@@ -160,7 +160,7 @@ const Product = () => {
               </p>
               {FIRST_SHIP_DATE > today && (
                 <p className="mt-2 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
-                  Available now · First bottles ship from 18 August 2026
+                  Available now · First bottles ship from 10 August 2026
                 </p>
               )}
 

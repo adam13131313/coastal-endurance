@@ -82,7 +82,7 @@ const Home = () => {
             Daily skin maintenance for Dad
           </span>
           <span className="hidden sm:inline font-body text-sm opacity-80">
-            Order now, ships from 18 August, in time for 6 September
+            Order now, ships from 10 August, in time for 6 September
           </span>
           <span className="inline-flex items-center font-typewriter text-xs uppercase tracking-widest border-b border-background/50 pb-0.5 group-hover:border-background">
             Shop

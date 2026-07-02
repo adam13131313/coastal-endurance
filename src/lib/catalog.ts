@@ -50,7 +50,7 @@ export function formatPrice(cents: number): string {
 
 // Orders are open now, but the first physical shipments go out from this date.
 // Keep in sync with FIRST_SHIP_DATE in supabase/functions/create-checkout.
-export const FIRST_SHIP_DATE = "2026-08-18";
+export const FIRST_SHIP_DATE = "2026-08-10";
 
 // The earliest a shipment can be scheduled: today, or the first-ship date if
 // that's still in the future.

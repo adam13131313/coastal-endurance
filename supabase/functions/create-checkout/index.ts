@@ -222,7 +222,7 @@ Deno.serve(async (req) => {
     const today = new Date().toISOString().slice(0, 10);
     // Orders open now; nothing ships before this date. Keep in sync with
     // FIRST_SHIP_DATE in src/lib/catalog.ts.
-    const FIRST_SHIP_DATE = "2026-08-18";
+    const FIRST_SHIP_DATE = "2026-08-10";
     const firstShip = today > FIRST_SHIP_DATE ? today : FIRST_SHIP_DATE;
     const floor = (d: string) => (d < firstShip ? firstShip : d);
 

@@ -16,8 +16,8 @@ const AdminGuide = () => (
       </p>
       <p className="mt-3">
         <strong>Launch window:</strong> orders are open now, but the first bottles ship from
-        <strong> 18 August 2026</strong>. Until then nothing is scheduled before that date, so the
-        To ship queue stays empty and the site reads "available now, ships from 18 August."
+        <strong> 10 August 2026</strong>. Until then nothing is scheduled before that date, so the
+        To ship queue stays empty and the site reads "available now, ships from 10 August."
       </p>
     </section>
 
