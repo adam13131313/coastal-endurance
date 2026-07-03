@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { sb, gramsFor, fmtGrams, type Formula as FormulaT, type FormulaComponent } from "@/lib/production";
+import { sb, gramsFor, fmtGrams, massForBottles, type Formula as FormulaT, type FormulaComponent } from "@/lib/production";
 
-// Read-only view of the active % w/w formula + a batch calculator: enter a batch
-// mass, get per-ingredient gram targets. Labelling-only carriers (Sunflower) are
-// never formula components, so they don't appear here or get weighed.
+// Read-only view of the active % w/w formula + a batch calculator: enter how many
+// bottles you want to make, get per-ingredient gram targets. Labelling-only carriers
+// (Sunflower) are never formula components, so they don't appear here or get weighed.
 const Formula = () => {
   const [formula, setFormula] = useState<FormulaT | null>(null);
   const [components, setComponents] = useState<FormulaComponent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mass, setMass] = useState("21000");
+  const [bottles, setBottles] = useState("220");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -27,10 +27,10 @@ const Formula = () => {
 
   useEffect(() => { load(); }, [load]);
 
-  const batchMass = Number(mass);
-  const validMass = Number.isFinite(batchMass) && batchMass > 0;
+  const bottleCount = Number(bottles);
+  const validBottles = Number.isFinite(bottleCount) && bottleCount > 0;
+  const batchMass = validBottles ? massForBottles(bottleCount) : 0; // 30 ml @ ~0.90 g/mL ≈ 27 g/bottle
   const totalPct = useMemo(() => components.reduce((s, c) => s + Number(c.percent_ww), 0), [components]);
-  const theoreticalUnits = validMass ? Math.floor((batchMass / 0.9) / 30) : 0; // ~0.90 g/mL, 30 ml bottles
 
   if (loading) return <p className="font-body text-muted-foreground">Loading formula…</p>;
   if (!formula) return <p className="font-body text-muted-foreground">No active formula found.</p>;
@@ -51,17 +51,17 @@ const Formula = () => {
       <section className="border border-border p-4">
         <label className="flex flex-wrap items-end gap-3">
           <span className="text-sm">
-            <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Batch mass (g)</span>
+            <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Bottles to make</span>
             <input
               type="number"
-              value={mass}
-              onChange={(e) => setMass(e.target.value)}
+              value={bottles}
+              onChange={(e) => setBottles(e.target.value)}
               className="w-40 px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
             />
           </span>
-          {validMass && (
+          {validBottles && (
             <span className="text-sm font-body text-muted-foreground pb-1">
-              ≈ {theoreticalUnits.toLocaleString("en-AU")} × 30 ml theoretical (before fill losses &amp; retains)
+              = {fmtGrams(batchMass)} of blend (theoretical, before fill losses &amp; retains — make a few extra)
             </span>
           )}
         </label>
@@ -82,13 +82,13 @@ const Formula = () => {
                 {c.raw_materials?.role && <span className="ml-2 text-[10px] font-typewriter uppercase tracking-widest text-muted-foreground">{c.raw_materials.role}</span>}
               </span>
               <span className="text-right w-20 font-body tabular-nums">{Number(c.percent_ww).toFixed(1)}</span>
-              <span className="text-right w-28 font-body tabular-nums">{validMass ? fmtGrams(gramsFor(Number(c.percent_ww), batchMass)) : "—"}</span>
+              <span className="text-right w-28 font-body tabular-nums">{validBottles ? fmtGrams(gramsFor(Number(c.percent_ww), batchMass)) : "—"}</span>
             </div>
           ))}
           <div className="grid grid-cols-[1fr_auto_auto] gap-4 px-4 py-2.5 text-sm font-medium bg-secondary/50">
             <span className="font-body">Total</span>
             <span className="text-right w-20 font-body tabular-nums">{totalPct.toFixed(1)}</span>
-            <span className="text-right w-28 font-body tabular-nums">{validMass ? fmtGrams(batchMass) : "—"}</span>
+            <span className="text-right w-28 font-body tabular-nums">{validBottles ? fmtGrams(batchMass) : "—"}</span>
           </div>
         </div>
         <p className="mt-3 text-xs font-body text-muted-foreground">

@@ -174,6 +174,21 @@ export function gramsFor(percentWw: number, batchMassG: number): number {
   return (percentWw / 100) * batchMassG;
 }
 
+// Bottle ↔ mass conversion. A 30 ml bottle of an anhydrous oil at ~0.90 g/mL holds
+// ~27 g of product. These mirror the same constants in the record-batch function.
+export const BOTTLE_ML = 30;
+export const DENSITY_G_PER_ML = 0.9;
+
+// Grams of blend needed to fill N 30 ml bottles (theoretical, before fill loss/retains).
+export function massForBottles(bottles: number): number {
+  return bottles * BOTTLE_ML * DENSITY_G_PER_ML;
+}
+
+// Theoretical 30 ml bottles a given blend mass yields.
+export function bottlesForMass(massG: number): number {
+  return Math.floor((massG / DENSITY_G_PER_ML) / BOTTLE_ML);
+}
+
 export const fmtDate = (s: string | null) =>
   s ? new Date(s).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) : "—";
 

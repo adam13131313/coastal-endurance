@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BatchGuide from "@/components/production/BatchGuide";
 import Materials from "@/components/production/Materials";
 import Formula from "@/components/production/Formula";
 import Batches from "@/components/production/Batches";
@@ -9,9 +10,10 @@ import Retains from "@/components/production/Retains";
 // Self-contained Production & QC module: a batch-manufacturing-record (BMR) system.
 // Reads from the existing world; writes only to its own tables. Does NOT touch
 // stock, orders, or the admins model.
-type SubTab = "materials" | "formula" | "batches" | "qc" | "trace" | "retains";
+type SubTab = "guide" | "materials" | "formula" | "batches" | "qc" | "trace" | "retains";
 
 const SUBTABS: { key: SubTab; label: string }[] = [
+  { key: "guide", label: "How to" },
   { key: "materials", label: "Materials" },
   { key: "formula", label: "Formula" },
   { key: "batches", label: "Batches" },
@@ -21,7 +23,7 @@ const SUBTABS: { key: SubTab; label: string }[] = [
 ];
 
 const ProductionAdmin = () => {
-  const [tab, setTab] = useState<SubTab>("materials");
+  const [tab, setTab] = useState<SubTab>("guide");
 
   return (
     <div>
@@ -46,6 +48,7 @@ const ProductionAdmin = () => {
         ))}
       </div>
 
+      {tab === "guide" && <BatchGuide />}
       {tab === "materials" && <Materials />}
       {tab === "formula" && <Formula />}
       {tab === "batches" && <Batches />}

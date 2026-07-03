@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  sb, fmtDate, fmtDateTime, fmtGrams, BATCH_STATUS_LABEL, qcPayload, allGatingPassed,
+  sb, fmtDate, fmtDateTime, fmtGrams, massForBottles, BATCH_STATUS_LABEL, qcPayload, allGatingPassed,
   type ProductionBatch, type BatchComponent, type QcCheck, type RawMaterialLot, type QcTemplate, type QcTemplateItem, type QcState,
 } from "@/lib/production";
 import QcChecklist from "@/components/production/QcChecklist";
@@ -23,7 +23,7 @@ const Batches = () => {
   const [checks, setChecks] = useState<QcCheck[]>([]);
 
   // New-batch + editing state.
-  const [newMass, setNewMass] = useState("21000");
+  const [newBottles, setNewBottles] = useState("220");
   const [newNumber, setNewNumber] = useState("");
   const [blend, setBlend] = useState<Record<string, { actualG: string; lotId: string }>>({});
   const [yieldUnits, setYieldUnits] = useState("");
@@ -77,10 +77,10 @@ const Batches = () => {
   const locked = batch?.status === "released" || batch?.status === "rejected";
 
   const createBatch = async () => {
-    if (!Number(newMass)) { toast.error("Enter a planned mass."); return; }
+    if (!Number(newBottles)) { toast.error("Enter how many bottles to make."); return; }
     setBusy("create");
     const { data, error } = await supabase.functions.invoke("record-batch", {
-      body: { action: "create", plannedMassG: Number(newMass), batchNumber: newNumber || undefined },
+      body: { action: "create", plannedMassG: massForBottles(Number(newBottles)), batchNumber: newNumber || undefined },
     });
     setBusy(null);
     if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not create the batch."); return; }
@@ -307,8 +307,8 @@ const Batches = () => {
         <h3 className="font-typewriter text-lg uppercase tracking-wider mb-3">New batch</h3>
         <div className="flex flex-wrap items-end gap-3">
           <label className="text-sm">
-            <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Planned mass (g)</span>
-            <input type="number" value={newMass} onChange={(e) => setNewMass(e.target.value)}
+            <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Bottles to make</span>
+            <input type="number" value={newBottles} onChange={(e) => setNewBottles(e.target.value)}
               className="w-32 px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
           </label>
           <label className="text-sm">
@@ -318,7 +318,10 @@ const Batches = () => {
           </label>
           <button onClick={createBatch} disabled={busy === "create"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "create" ? "…" : "Open batch"}</button>
         </div>
-        <p className="mt-2 text-xs font-body text-muted-foreground">Seeds gram targets from the active formula. Leave the number blank to auto-number FO-YYYYMMDD.</p>
+        <p className="mt-2 text-xs font-body text-muted-foreground">
+          {Number(newBottles) > 0 && <>≈ {fmtGrams(massForBottles(Number(newBottles)))} of blend. </>}
+          Seeds gram targets from the active formula. Make a few extra to cover fill loss + retains. Leave the number blank to auto-number FO-YYYYMMDD.
+        </p>
       </section>
 
       <section>
