@@ -24,6 +24,7 @@ async function sendReceipt(
   order: { total_cents: number; currency: string },
   items: Array<{ product_name: string; variant_label: string; quantity: number; unit_price_cents: number }>,
   deliveries: Array<{ scheduled_for: string; sequence: number }>,
+  pickup = false,
 ) {
   if (!RESEND_API_KEY || !to) return;
   const itemRows = items
@@ -33,8 +34,9 @@ async function sendReceipt(
         `<td style="padding:4px 0;text-align:right">${formatPrice(i.unit_price_cents * i.quantity)}</td></tr>`,
     )
     .join("");
-  const schedule =
-    deliveries.length > 1
+  const schedule = pickup
+    ? `<p style="font-size:14px;color:#333"><strong>Collecting in person.</strong> Nothing will ship. Reply to this email or write to hello@coastalendurance.com and we'll arrange a time for you to collect.</p>`
+    : deliveries.length > 1
       ? `<p style="font-size:14px;color:#333"><strong>Delivery schedule</strong><br/>${deliveries
           .sort((a, b) => a.sequence - b.sequence)
           .map((d) => `Bottle ${d.sequence}: ${d.scheduled_for}`)
@@ -93,7 +95,7 @@ async function sendRefundConfirmation(to: string, order: { total_cents: number; 
 // Notify the store's admins (from the public.admins allowlist) of a new paid order.
 async function sendAdminNotification(
   supa: ReturnType<typeof createClient>,
-  details: { orderId: string; email: string; totalCents: number; currency: string; shippingName: string | null },
+  details: { orderId: string; email: string; totalCents: number; currency: string; shippingName: string | null; pickup?: boolean },
   items: Array<{ product_name: string; variant_label: string; quantity: number; unit_price_cents: number }>,
   deliveries: Array<{ scheduled_for: string; sequence: number }>,
 ) {
@@ -116,6 +118,7 @@ async function sendAdminNotification(
     <div style="font-family:Inter,Arial,sans-serif;max-width:540px;margin:0 auto;padding:24px">
       <h2 style="font-size:18px;margin:0 0 12px">New order: ${formatPrice(details.totalCents)} ${details.currency}</h2>
       <p style="font-size:14px;color:#333">From <strong>${details.shippingName ?? details.email}</strong> (${details.email})</p>
+      ${details.pickup ? `<p style="font-size:14px;color:#b45309;font-weight:600">COLLECT IN PERSON — no shipment. Customer will contact you to arrange collection.</p>` : ""}
       <ul style="font-size:14px;color:#333;line-height:1.6">${itemRows}</ul>
       ${schedule}
       <p style="font-size:12px;color:#999;margin-top:20px">Order ${details.orderId}. Manage at https://coastalendurance.com/admin</p>
@@ -257,7 +260,7 @@ Deno.serve(async (req) => {
   // Idempotency: only process a pending order once.
   const { data: order } = await admin
     .from("orders")
-    .select("id, status, email, total_cents, currency")
+    .select("id, status, email, total_cents, currency, fulfillment_method")
     .eq("id", orderId)
     .maybeSingle();
 
@@ -336,7 +339,8 @@ Deno.serve(async (req) => {
     .select("scheduled_for, sequence")
     .eq("order_id", order.id);
 
-  await sendReceipt(email, { total_cents: session.amount_total ?? order.total_cents, currency: order.currency }, items ?? [], deliveries ?? []);
+  const pickup = (order as { fulfillment_method?: string }).fulfillment_method === "pickup";
+  await sendReceipt(email, { total_cents: session.amount_total ?? order.total_cents, currency: order.currency }, items ?? [], deliveries ?? [], pickup);
   await sendAdminNotification(
     admin,
     {
@@ -345,6 +349,7 @@ Deno.serve(async (req) => {
       totalCents: session.amount_total ?? order.total_cents,
       currency: order.currency,
       shippingName: shipping?.name ?? session.customer_details?.name ?? null,
+      pickup,
     },
     items ?? [],
     deliveries ?? [],

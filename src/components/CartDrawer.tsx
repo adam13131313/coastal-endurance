@@ -8,7 +8,7 @@ import snowyMountains from "@/assets/snowy-mountains.jpg";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, updateQuantity, removeItem, checkout, isCheckingOut } = useCartStore();
+  const { items, updateQuantity, removeItem, checkout, isCheckingOut, fulfillment, setFulfillment } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalCents = items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
@@ -95,6 +95,29 @@ export const CartDrawer = () => {
                 <p className="text-xs text-muted-foreground">
                   Free delivery within Australia. International shipping calculated at checkout.
                 </p>
+                <div className="flex gap-2">
+                  {([
+                    { key: "ship", label: "Ship it" },
+                    { key: "pickup", label: "Collect in person" },
+                  ] as const).map((opt) => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => setFulfillment(opt.key)}
+                      aria-pressed={fulfillment === opt.key}
+                      className={`flex-1 text-xs font-body py-2 border transition-colors ${
+                        fulfillment === opt.key ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {fulfillment === "pickup" && (
+                  <p className="text-xs text-muted-foreground">
+                    You'll arrange collection with us by email after ordering. No delivery address needed.
+                  </p>
+                )}
                 <button
                   onClick={handleCheckout}
                   className="btn-primary w-full flex items-center justify-center"

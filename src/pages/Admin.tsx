@@ -40,6 +40,7 @@ interface Order {
   status: string;
   total_cents: number;
   currency: string;
+  fulfillment_method: string | null;
   shipping_name: string | null;
   shipping_address: Record<string, unknown> | null;
   utm_source: string | null;
@@ -336,8 +337,15 @@ const Admin = () => {
                   <div key={o.id} className="border border-border p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="font-body font-medium">{o.shipping_name || o.email}</p>
-                        <p className="text-sm font-body text-muted-foreground">{formatAddress(o.shipping_address)}</p>
+                        <p className="font-body font-medium">
+                          {o.shipping_name || o.email}
+                          {o.fulfillment_method === "pickup" && (
+                            <span className="ml-2 text-[10px] font-typewriter uppercase tracking-widest bg-foreground text-background px-1.5 py-0.5">Collect in person</span>
+                          )}
+                        </p>
+                        <p className="text-sm font-body text-muted-foreground">
+                          {o.fulfillment_method === "pickup" ? "Pickup — customer will contact you to arrange collection." : formatAddress(o.shipping_address)}
+                        </p>
                         <p className="text-xs font-body text-muted-foreground mt-1">
                           {o.email}{o.phone ? ` · ${o.phone}` : ""} · {fmtDate(o.created_at)}
                         </p>

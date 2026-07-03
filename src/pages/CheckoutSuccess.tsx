@@ -8,6 +8,7 @@ const CheckoutSuccess = () => {
   const clearCart = useCartStore((s) => s.clearCart);
   // null = unknown (show the general message); true/false = bundle or not.
   const [boughtBundle, setBoughtBundle] = useState<boolean | null>(null);
+  const [pickup, setPickup] = useState(false);
 
   // Payment succeeded (the order is recorded server-side by the Stripe webhook);
   // clear the local cart and read what was just bought so we can tailor the message.
@@ -16,7 +17,9 @@ const CheckoutSuccess = () => {
     try {
       const raw = localStorage.getItem("ce-last-purchase");
       if (raw) {
-        setBoughtBundle(!!JSON.parse(raw)?.bundle);
+        const parsed = JSON.parse(raw);
+        setBoughtBundle(!!parsed?.bundle);
+        setPickup(!!parsed?.pickup);
         localStorage.removeItem("ce-last-purchase");
       }
     } catch { /* ignore */ }
@@ -35,7 +38,9 @@ const CheckoutSuccess = () => {
           </div>
           <h1 className="text-4xl md:text-5xl font-typewriter uppercase">Thank you</h1>
           <p className="mt-6 font-body text-muted-foreground text-[17px] leading-relaxed">
-            {boughtBundle
+            {pickup
+              ? "Your order is confirmed and we've emailed your receipt. You chose to collect in person — email hello@coastalendurance.com and we'll arrange a time. Nothing will ship."
+              : boughtBundle
               ? "Your order is confirmed and we've emailed your receipt, including the delivery schedule for your 12-month supply. We'll email tracking each time a bottle ships. To change a delivery date, just get in touch."
               : "Your order is confirmed and we've emailed your receipt. We'll email you when it ships."}
           </p>

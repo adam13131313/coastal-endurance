@@ -88,6 +88,10 @@ Deno.serve(async (req) => {
     const rawItems: IncomingItem[] = Array.isArray(body?.items) ? body.items : [];
     const email: string | undefined =
       typeof body?.email === "string" && body.email.includes("@") ? body.email : undefined;
+    // Collect in person instead of shipping. Pickup orders skip address
+    // collection and the dispatch/delivery schedule; the customer arranges
+    // collection with us afterwards.
+    const pickup = body?.fulfillment === "pickup";
     const attr = body?.attribution && typeof body.attribution === "object" ? (body.attribution as Record<string, unknown>) : null;
     const str = (v: unknown) => (typeof v === "string" && v.length > 0 ? v.slice(0, 300) : null);
 
@@ -168,6 +172,7 @@ Deno.serve(async (req) => {
         currency,
         subtotal_cents: subtotalCents,
         total_cents: subtotalCents,
+        fulfillment_method: pickup ? "pickup" : "ship",
       })
       .select("id")
       .single();
@@ -227,6 +232,7 @@ Deno.serve(async (req) => {
     const floor = (d: string) => (d < firstShip ? firstShip : d);
 
     for (const r of resolved) {
+      if (pickup) break; // pickup orders have no shipment schedule — collected in person
       const itemRow = insertedItems.find((x) => x.variant_id === r.variant.id);
       if (!itemRow) continue;
       if (r.variant.is_bundle) {
@@ -260,7 +266,8 @@ Deno.serve(async (req) => {
       customer_email: email,
       success_url: `${siteBase}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteBase}/checkout/cancel`,
-      shipping_address_collection: { allowed_countries: ["AU", "NZ", "GB", "US", "CA", "IE"] },
+      // Pickup: don't collect a shipping address (nothing ships).
+      ...(pickup ? {} : { shipping_address_collection: { allowed_countries: ["AU", "NZ", "GB", "US", "CA", "IE"] } }),
       phone_number_collection: { enabled: true },
       metadata: { order_id: order.id },
       payment_intent_data: { metadata: { order_id: order.id } },

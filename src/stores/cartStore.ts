@@ -21,9 +21,13 @@ export interface CartLine {
   deliveryDates: string[];
 }
 
+export type FulfillmentMethod = "ship" | "pickup";
+
 interface CartStore {
   items: CartLine[];
   isCheckingOut: boolean;
+  fulfillment: FulfillmentMethod;
+  setFulfillment: (method: FulfillmentMethod) => void;
   addItem: (line: CartLine) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
   setDeliveryDates: (variantId: string, dates: string[]) => void;
@@ -39,6 +43,9 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       isCheckingOut: false,
+      fulfillment: "ship",
+
+      setFulfillment: (method) => set({ fulfillment: method }),
 
       addItem: (line) => {
         const items = get().items;
@@ -100,6 +107,7 @@ export const useCartStore = create<CartStore>()(
             {
               body: {
                 email,
+                fulfillment: get().fulfillment,
                 attribution: getAttribution(),
                 items: items.map((i) => ({
                   variantId: i.variantId,
@@ -117,7 +125,7 @@ export const useCartStore = create<CartStore>()(
           // (read + cleared there). No PII, just whether a bundle was included.
           try {
             const hasBundle = items.some((i) => i.isBundle || i.deliveriesCount > 1);
-            localStorage.setItem("ce-last-purchase", JSON.stringify({ bundle: hasBundle }));
+            localStorage.setItem("ce-last-purchase", JSON.stringify({ bundle: hasBundle, pickup: get().fulfillment === "pickup" }));
           } catch { /* localStorage unavailable */ }
 
           window.location.href = data.url as string;
