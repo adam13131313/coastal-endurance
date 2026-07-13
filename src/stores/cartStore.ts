@@ -108,6 +108,7 @@ export const useCartStore = create<CartStore>()(
               body: {
                 email,
                 fulfillment: get().fulfillment,
+                currency: (typeof localStorage !== "undefined" && localStorage.getItem("ce-currency")) || "AUD",
                 attribution: getAttribution(),
                 items: items.map((i) => ({
                   variantId: i.variantId,

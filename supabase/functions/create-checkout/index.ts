@@ -121,6 +121,19 @@ Deno.serve(async (req) => {
 
     const byId = new Map((variants ?? []).map((v) => [v.id, v]));
 
+    // Resolve pricing currency (authoritative, server-side). AUD is the base on
+    // product_variants; other currencies come from variant_prices. Only switch
+    // currency if EVERY variant has a price in it, else fall back to AUD.
+    const reqCurrency = body?.currency === "GBP" ? "GBP" : "AUD";
+    let priceByVariant = new Map<string, number>();
+    let orderCurrency = "AUD";
+    if (reqCurrency !== "AUD") {
+      const { data: vp } = await admin.from("variant_prices").select("variant_id, price_cents").eq("currency", reqCurrency).in("variant_id", variantIds);
+      const m = new Map((vp ?? []).map((p) => [p.variant_id, p.price_cents]));
+      if (variantIds.every((id) => m.has(id))) { priceByVariant = m; orderCurrency = reqCurrency; }
+    }
+    const priceFor = (v: { id: string; price_cents: number }) => priceByVariant.get(v.id) ?? v.price_cents;
+
     // Build line items + tally bottles per product for the stock check.
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     const bottlesPerProduct = new Map<string, number>();
@@ -135,7 +148,8 @@ Deno.serve(async (req) => {
         return json({ error: "An item in your cart is no longer available." }, 400);
       }
       const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
-      subtotalCents += variant.price_cents * quantity;
+      const unit = priceFor(variant);
+      subtotalCents += unit * quantity;
       bottlesPerProduct.set(
         variant.product_id,
         (bottlesPerProduct.get(variant.product_id) ?? 0) + variant.bottles * quantity,
@@ -144,8 +158,8 @@ Deno.serve(async (req) => {
       lineItems.push({
         quantity,
         price_data: {
-          currency: (product.currency || "AUD").toLowerCase(),
-          unit_amount: variant.price_cents,
+          currency: orderCurrency.toLowerCase(),
+          unit_amount: unit,
           product_data: { name: `${product.name} — ${variant.label}` },
         },
       });
@@ -159,7 +173,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const currency = (resolved[0].variant.products?.currency || "AUD").toUpperCase();
+    const currency = orderCurrency;
     const userId = userIdFromAuth(req.headers.get("Authorization"));
 
     // Create a pending order; the webhook flips it to paid on payment success.

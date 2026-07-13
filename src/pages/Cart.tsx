@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { formatPrice } from "@/lib/catalog";
+import { useCurrency } from "@/context/CurrencyContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 const Cart = () => {
   const { items, updateQuantity, removeItem, checkout, isCheckingOut, fulfillment, setFulfillment } = useCartStore();
+  const { format, config } = useCurrency();
   const [user, setUser] = useState<{ email?: string } | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
@@ -117,7 +118,7 @@ const Cart = () => {
                     )}
 
                     <p className="font-body font-medium">
-                      {formatPrice(item.priceCents * item.quantity)} <span className="text-sm text-muted-foreground">AUD</span>
+                      {format(item.priceCents * item.quantity)} <span className="text-sm text-muted-foreground">{config.code}</span>
                     </p>
                   </div>
                 </div>
@@ -128,7 +129,7 @@ const Cart = () => {
           <div className="mt-12 pt-6 border-t border-border">
             <div className="flex justify-between items-center text-lg">
               <span className="font-body">Subtotal</span>
-              <span className="font-typewriter text-2xl">{formatPrice(totalCents)} AUD</span>
+              <span className="font-typewriter text-2xl">{format(totalCents)} {config.code}</span>
             </div>
             <p className="mt-2 text-sm font-body text-muted-foreground">
               Free delivery within Australia. International shipping calculated at checkout.

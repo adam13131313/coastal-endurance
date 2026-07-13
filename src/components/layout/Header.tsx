@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User, ShoppingBag } from "lucide-react";
+import { useCurrency, CURRENCIES, type Currency } from "@/context/CurrencyContext";
 
 const CartDrawer = lazy(() =>
   import("@/components/CartDrawer").then((module) => ({ default: module.CartDrawer }))
@@ -12,6 +13,24 @@ const navLinks = [
   { name: "ABOUT", path: "/about" },
   { name: "CONTACT", path: "/contact" },
 ];
+
+// Currency switcher (AUD / GBP). Defaults by locale; overrides persist. Switching
+// clears the cart so a single order is never mixed-currency.
+const CurrencySwitcher = () => {
+  const { currency, setCurrency } = useCurrency();
+  return (
+    <select
+      value={currency}
+      onChange={(e) => setCurrency(e.target.value as Currency)}
+      aria-label="Currency"
+      className="text-xs font-typewriter uppercase tracking-wider bg-transparent border border-border px-2 py-1 rounded-none focus:outline-none focus:ring-1 focus:ring-foreground cursor-pointer"
+    >
+      {Object.values(CURRENCIES).map((c) => (
+        <option key={c.code} value={c.code}>{c.code} {c.symbol}</option>
+      ))}
+    </select>
+  );
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,6 +98,7 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
+            <CurrencySwitcher />
             <Suspense
               fallback={
                 <button

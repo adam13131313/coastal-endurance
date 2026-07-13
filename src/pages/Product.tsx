@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Check, Minus, Plus, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { fetchProduct, defaultDeliveryDates, firstShipBase, FIRST_SHIP_DATE, type Product as CatalogProduct } from "@/lib/catalog";
+import { useCurrency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
@@ -15,13 +16,16 @@ const Product = () => {
   const [deliveryDates, setDeliveryDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const addItem = useCartStore((s) => s.addItem);
+  const { currency, config } = useCurrency();
+  const sym = config.symbol;
 
   useEffect(() => {
-    fetchProduct("field-oil")
+    setLoading(true);
+    fetchProduct("field-oil", currency)
       .then(setProduct)
       .catch((e) => console.error("Failed to fetch product:", e))
       .finally(() => setLoading(false));
-  }, []);
+  }, [currency]);
 
   const singleVariant = product?.variants.find((v) => !v.is_bundle);
   const bundleVariant = product?.variants.find((v) => v.is_bundle);
@@ -156,7 +160,7 @@ const Product = () => {
                 FIELD OIL
               </h2>
               <p className="mt-2 text-2xl font-body">
-                ${price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
+                {sym}{price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
               </p>
               {FIRST_SHIP_DATE > today && (
                 <p className="mt-2 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
@@ -199,7 +203,7 @@ const Product = () => {
                     <div>
                       <span className="block text-base font-body font-medium">One-Time Purchase</span>
                       <span className="block text-sm font-body text-muted-foreground mt-1">
-                        Single bottle, ${price.toFixed(2)} {currencyCode}
+                        Single bottle, {sym}{price.toFixed(2)} {currencyCode}
                       </span>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -268,10 +272,10 @@ const Product = () => {
 
                   <div className="mt-4 pt-4 border-t border-border">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-base font-body font-medium">${subscriptionPrice.toFixed(2)} {currencyCode} total</span>
+                      <span className="text-base font-body font-medium">{sym}{subscriptionPrice.toFixed(2)} {currencyCode} total</span>
                     </div>
                      <p className="text-sm font-body text-muted-foreground mt-1">
-                      {bundleBottles} bottles for the price of 3, save ${savingsAmount.toFixed(2)}
+                      {bundleBottles} bottles for the price of 3, save {sym}{savingsAmount.toFixed(2)}
                     </p>
                   </div>
 
@@ -326,7 +330,7 @@ const Product = () => {
                   ) : !inStock ? (
                     "SOLD OUT"
                   ) : (
-                    `ADD TO CART $${currentPrice.toFixed(2)} ${currencyCode}`
+                    `ADD TO CART ${sym}${currentPrice.toFixed(2)} ${currencyCode}`
                   )}
                 </button>
               </div>

@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingBag, Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { formatPrice } from "@/lib/catalog";
+import { useCurrency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import snowyMountains from "@/assets/snowy-mountains.jpg";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { items, updateQuantity, removeItem, checkout, isCheckingOut, fulfillment, setFulfillment } = useCartStore();
+  const { format, config } = useCurrency();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalCents = items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
 
@@ -63,7 +64,7 @@ export const CartDrawer = () => {
                             {item.deliveryDates.length} shipments · first {item.deliveryDates[0]}
                           </p>
                         )}
-                        <p className="text-sm font-medium mt-1">{formatPrice(item.priceCents)}</p>
+                        <p className="text-sm font-medium mt-1">{format(item.priceCents)}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         <button aria-label="Remove item from cart" onClick={() => removeItem(item.variantId)} className="p-1 text-muted-foreground hover:text-foreground">
@@ -90,7 +91,7 @@ export const CartDrawer = () => {
               <div className="flex-shrink-0 space-y-4 pt-4 border-t border-border">
                 <div className="flex justify-between items-center">
                   <span className="font-display text-lg">Total</span>
-                  <span className="font-display text-xl">{formatPrice(totalCents)} AUD</span>
+                  <span className="font-display text-xl">{format(totalCents)} {config.code}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Free delivery within Australia. International shipping calculated at checkout.
