@@ -40,17 +40,17 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-  const [currency, setCurrencyState] = useState<Currency>("AUD");
+  // Resolve synchronously (client-only SPA) so the cart isn't wrongly reconciled
+  // against a placeholder default on first render.
+  const [currency, setCurrencyState] = useState<Currency>(() => detectCurrency());
 
-  // Resolve the default on mount (localStorage/locale not read during initial render).
-  useEffect(() => { setCurrencyState(detectCurrency()); }, []);
+  // Keep the cart's currency in sync; a mismatch (currency switch, or a stale cart
+  // persisted from a prior session/before this feature) clears the cart.
+  useEffect(() => { useCartStore.getState().reconcileCurrency(currency); }, [currency]);
 
   const setCurrency = (c: Currency) => {
     if (c === currency) return;
     try { localStorage.setItem(STORAGE_KEY, c); } catch { /* ignore */ }
-    // Prices are captured per line in the active currency; switching currency
-    // clears the cart so we never mix currencies in one order.
-    useCartStore.getState().clearCart();
     setCurrencyState(c);
   };
 

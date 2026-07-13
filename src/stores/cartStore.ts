@@ -27,6 +27,11 @@ interface CartStore {
   items: CartLine[];
   isCheckingOut: boolean;
   fulfillment: FulfillmentMethod;
+  // The currency the cart's line prices are in. Kept in sync with the active
+  // storefront currency; a mismatch clears the cart so we never show or charge a
+  // price in the wrong currency.
+  currency: string;
+  reconcileCurrency: (active: string) => void;
   setFulfillment: (method: FulfillmentMethod) => void;
   addItem: (line: CartLine) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
@@ -44,6 +49,17 @@ export const useCartStore = create<CartStore>()(
       items: [],
       isCheckingOut: false,
       fulfillment: "ship",
+      currency: "AUD",
+
+      // Called whenever the active currency is known/changes. If the cart holds
+      // items priced in a different currency, drop them (no mixed-currency orders,
+      // and no stale prices from before a currency switch or a prior session).
+      reconcileCurrency: (active) => {
+        const { items, currency } = get();
+        if (currency !== active) {
+          set(items.length > 0 ? { items: [], currency: active } : { currency: active });
+        }
+      },
 
       setFulfillment: (method) => set({ fulfillment: method }),
 
@@ -141,7 +157,7 @@ export const useCartStore = create<CartStore>()(
     {
       name: "coastal-cart",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({ items: state.items, currency: state.currency }),
     },
   ),
 );
