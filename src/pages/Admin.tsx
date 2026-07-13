@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import AdminGuide from "@/components/AdminGuide";
+import AdminCockpit from "@/components/AdminCockpit";
 import AdminDashboard from "@/components/AdminDashboard";
 import PlanTracker from "@/components/PlanTracker";
 import PipelineTracker from "@/components/PipelineTracker";
@@ -17,6 +18,8 @@ import StaffAssistant from "@/components/StaffAssistant";
 import BrandGuide from "@/components/BrandGuide";
 import ProductionAdmin from "@/components/ProductionAdmin";
 import ProductIdeas from "@/components/ProductIdeas";
+import StockControl from "@/components/StockControl";
+import CustomersAdmin from "@/components/CustomersAdmin";
 
 interface OrderItem {
   id: string;
@@ -72,18 +75,22 @@ function formatAddress(a: Record<string, unknown> | null): string {
   return parts.join(", ");
 }
 
-// Grouped admin navigation (replaces the flat row of tabs).
+// Grouped admin navigation: Today (the cockpit) first, then verbs — Sell, Grow,
+// Make — and Reference for everything static.
 const NAV_GROUPS = [
-  { group: "Store", keys: ["overview", "dispatch", "orders", "field"] },
-  { group: "Marketing", keys: ["plan", "pipeline", "content", "social"] },
-  { group: "Production", keys: ["production", "ideas"] },
-  { group: "Team", keys: ["board", "assistant", "guide", "brand"] },
+  { group: "Today", keys: ["today"] },
+  { group: "Sell", keys: ["orders", "dispatch", "stock", "customers"] },
+  { group: "Grow", keys: ["campaign", "content", "field"] },
+  { group: "Make", keys: ["production", "ideas"] },
+  { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "social"] },
 ] as const;
 
 const TAB_LABEL: Record<string, string> = {
-  overview: "Overview", plan: "Plan", pipeline: "Pipeline", content: "Content",
-  social: "Social", dispatch: "To ship", orders: "Orders", field: "Field team",
-  production: "Production", ideas: "Product ideas", board: "Staff board", assistant: "Assistant", guide: "Staff guide", brand: "Brand",
+  today: "Today", overview: "Charts", campaign: "Campaign", content: "Content",
+  social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
+  customers: "Customers", field: "Field team", production: "Production",
+  ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
+  guide: "Staff guide", brand: "Brand",
 };
 
 const Admin = () => {
@@ -91,7 +98,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "content" | "social" | "dispatch" | "orders" | "field" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand">("overview");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -278,11 +285,21 @@ const Admin = () => {
 
             <div className="flex-1 min-w-0">
 
+          {tab === "today" && <AdminCockpit orders={orders} onGo={(t) => setTab(t as typeof tab)} />}
+
           {tab === "overview" && <AdminDashboard orders={orders} />}
 
-          {tab === "plan" && <PlanTracker orders={orders} />}
+          {tab === "campaign" && (
+            <div className="space-y-12">
+              <PlanTracker orders={orders} />
+              <hr className="border-border max-w-[760px]" />
+              <PipelineTracker orders={orders} />
+            </div>
+          )}
 
-          {tab === "pipeline" && <PipelineTracker orders={orders} />}
+          {tab === "stock" && <StockControl />}
+
+          {tab === "customers" && <CustomersAdmin />}
 
           {tab === "content" && <ContentGenerator />}
 

@@ -58,17 +58,22 @@ const AdminGuide = () => (
       <H>The tabs in this admin</H>
       <div className="border border-border divide-y divide-border">
         {[
-          ["Overview", "Sales, stock, and key metrics at a glance."],
-          ["Plan", "Live actuals against the Year-1 targets."],
-          ["Pipeline", "Where sales come from (channels) and the reach needed to hit target."],
-          ["Content", "Generate on-brand social, website, and email copy plus video shot lists."],
-          ["To ship", "The dispatch queue. Your main daily screen."],
+          ["Today", "The cockpit: shipments due, low stock, campaign pace, field-team follow-ups, open notes. Start here."],
           ["Orders", "Every order, with addresses and fulfilment status."],
-          ["Field team", "Issue free-bottle codes to field team members."],
+          ["To ship", "The dispatch queue."],
+          ["Stock", "Current stock, audited adjustments, and adding a released batch's yield."],
+          ["Customers", "Every contact (auto-captured from orders, field team, signups) with order history."],
+          ["Campaign", "Father's Day pace + Year-1 plan, plus where sales come from and reach needed."],
+          ["Content", "Generate on-brand social, website, and email copy plus video shot lists."],
+          ["Field team", "The recruitment pipeline board: invite → code → trial → advocate, with emails."],
+          ["Production", "Batch records (BMR), QC, traceability. How-to guide inside."],
+          ["Product ideas", "The future-product list."],
+          ["Charts", "Revenue and upcoming-shipment charts."],
           ["Staff board", "Issues, requests, suggestions, and questions for the team."],
           ["Assistant", "Ask plain questions about running the store."],
           ["Staff guide", "This handbook."],
           ["Brand", "Logo, colours, voice, and downloadable assets."],
+          ["Social guide", "Posting rules for Instagram & TikTok."],
         ].map(([t, d]) => (
           <div key={t} className="flex gap-4 p-3 text-sm">
             <span className="w-28 shrink-0 font-typewriter uppercase tracking-wider text-foreground">{t}</span>
