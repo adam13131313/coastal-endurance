@@ -10,7 +10,7 @@ import AdminDashboard from "@/components/AdminDashboard";
 import PlanTracker from "@/components/PlanTracker";
 import PipelineTracker from "@/components/PipelineTracker";
 import ContentGenerator from "@/components/ContentGenerator";
-import FieldTeamAdmin from "@/components/FieldTeamAdmin";
+import FieldTeamCRM from "@/components/FieldTeamCRM";
 import SocialGuide from "@/components/SocialGuide";
 import StaffBoard from "@/components/StaffBoard";
 import StaffAssistant from "@/components/StaffAssistant";
@@ -285,7 +285,7 @@ const Admin = () => {
 
           {tab === "content" && <ContentGenerator />}
 
-          {tab === "field" && <FieldTeamAdmin />}
+          {tab === "field" && <FieldTeamCRM />}
 
           {tab === "production" && <ProductionAdmin />}
 

@@ -1,0 +1,307 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import {
+  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, fmtDate, fmtDateTime,
+  type FieldTeamRow, type ContactEvent,
+} from "@/lib/crm";
+
+const TARGET = 15;
+
+const FieldTeamCRM = () => {
+  const [rows, setRows] = useState<FieldTeamRow[]>([]);
+  const [events, setEvents] = useState<Record<string, ContactEvent[]>>({});
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
+  const [form, setForm] = useState({ name: "", email: "", source: "" });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const { data } = await sb
+      .from("contact_pipelines")
+      .select("*, contacts(*)")
+      .eq("pipeline", "field_team")
+      .order("created_at", { ascending: true });
+    const list = (data as FieldTeamRow[]) ?? [];
+    setRows(list);
+    const ids = list.map((r) => r.contact_id);
+    if (ids.length) {
+      const { data: ev } = await sb.from("contact_events").select("*").in("contact_id", ids).order("created_at", { ascending: false });
+      const byContact: Record<string, ContactEvent[]> = {};
+      for (const e of (ev as ContactEvent[]) ?? []) (byContact[e.contact_id] ??= []).push(e);
+      setEvents(byContact);
+    } else {
+      setEvents({});
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const adminEmail = useCallback(async () => (await supabase.auth.getSession()).data.session?.user?.email ?? "admin", []);
+
+  const logEvent = useCallback(async (contactId: string, type: string, note: string | null, meta: Record<string, unknown> = {}) => {
+    await sb.from("contact_events").insert({ contact_id: contactId, type, note, meta, actor: await adminEmail() });
+  }, [adminEmail]);
+
+  const active = useMemo(() => rows.filter((r) => r.status === "active"), [rows]);
+  const lost = useMemo(() => rows.filter((r) => r.status === "lost"), [rows]);
+  const confirmedCount = active.filter((r) => CONFIRMED_STAGES.has(r.stage)).length;
+  const byStage = useCallback((stage: string) => active.filter((r) => r.stage === stage), [active]);
+
+  const addProspect = async () => {
+    const email = form.email.trim().toLowerCase();
+    if (!email.includes("@")) { toast.error("Enter a valid email."); return; }
+    setBusy("add");
+    try {
+      const { data: contact, error: cErr } = await sb
+        .from("contacts")
+        .upsert({ email, name: form.name.trim() || null, source: "field_team" }, { onConflict: "email" })
+        .select("id")
+        .maybeSingle();
+      if (cErr || !contact) throw cErr || new Error("no contact");
+      const { error: pErr } = await sb.from("contact_pipelines").insert({ contact_id: contact.id, pipeline: "field_team", stage: "prospect" });
+      if (pErr && !String(pErr.message).includes("duplicate")) throw pErr;
+      await logEvent(contact.id, "note", `Added as prospect${form.source ? ` (${form.source.trim()})` : ""}`, {});
+      toast.success("Prospect added.");
+      setForm({ name: "", email: "", source: "" });
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Couldn't add that.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const setStage = async (row: FieldTeamRow, stage: string) => {
+    if (stage === row.stage) return;
+    setBusy(row.id);
+    await sb.from("contact_pipelines").update({ stage, status: "active", stage_entered_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", row.id);
+    await logEvent(row.contact_id, "stage_change", `→ ${FT_STAGE_LABEL[stage] ?? stage}`, {});
+    setBusy(null);
+    load();
+  };
+
+  const markLost = async (row: FieldTeamRow, reason: string) => {
+    setBusy(row.id);
+    await sb.from("contact_pipelines").update({ status: "lost", lost_reason: reason, updated_at: new Date().toISOString() }).eq("id", row.id);
+    await logEvent(row.contact_id, "note", `Marked lost: ${reason}`, {});
+    setBusy(null);
+    load();
+  };
+
+  const reactivate = async (row: FieldTeamRow) => {
+    setBusy(row.id);
+    await sb.from("contact_pipelines").update({ status: "active", lost_reason: null, updated_at: new Date().toISOString() }).eq("id", row.id);
+    await logEvent(row.contact_id, "note", "Reactivated", {});
+    setBusy(null);
+    load();
+  };
+
+  const issueCode = async (row: FieldTeamRow) => {
+    setBusy(row.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("field-team", { body: { action: "issue", email: row.contacts.email } });
+      if (error || (data as { error?: string })?.error) throw new Error((data as { error?: string })?.error || "Issue failed");
+      const code = (data as { code?: string })?.code;
+      await sb.from("contact_pipelines").update({ stage: "code_sent", status: "active", stage_entered_at: new Date().toISOString(), meta: { ...row.meta, discount_code: code }, updated_at: new Date().toISOString() }).eq("id", row.id);
+      await logEvent(row.contact_id, "code_issued", `Code ${code} issued + emailed`, { discount_code: code });
+      toast.success(`Code ${code} issued and emailed.`);
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Couldn't issue a code.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const saveNote = async (row: FieldTeamRow) => {
+    const text = (noteDraft[row.id] ?? "").trim();
+    if (!text) return;
+    setBusy(row.id);
+    await logEvent(row.contact_id, "note", text, {});
+    setNoteDraft((d) => ({ ...d, [row.id]: "" }));
+    setBusy(null);
+    load();
+  };
+
+  if (loading) return <p className="font-body text-muted-foreground">Loading pipeline…</p>;
+
+  return (
+    <div className="space-y-8">
+      {/* Header: progress + funnel */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-typewriter uppercase">Field Team</h2>
+          <p className="mt-1 text-sm font-body text-muted-foreground">
+            {confirmedCount} of {TARGET} confirmed · {active.length} in pipeline{lost.length ? ` · ${lost.length} lost` : ""}
+          </p>
+          <div className="h-2 bg-muted w-64 mt-2">
+            <div className="h-2 bg-foreground" style={{ width: `${Math.min(100, (confirmedCount / TARGET) * 100)}%` }} />
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs font-typewriter uppercase tracking-widest text-muted-foreground">
+          {FT_STAGES.map((s) => <span key={s.key}>{s.label}: <span className="text-foreground">{byStage(s.key).length}</span></span>)}
+        </div>
+      </div>
+
+      {/* Add prospect */}
+      <div className="border border-border p-4 flex flex-wrap items-end gap-3">
+        <Field label="Name" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} w="w-40" />
+        <Field label="Email" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} w="w-56" />
+        <Field label="How you know them" value={form.source} onChange={(v) => setForm((f) => ({ ...f, source: v }))} w="w-52" />
+        <button onClick={addProspect} disabled={busy === "add"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "add" ? "…" : "Add prospect"}</button>
+      </div>
+
+      {/* Board */}
+      <div className="overflow-x-auto pb-3">
+        <div className="flex gap-3 min-w-max">
+          {FT_STAGES.map((s) => (
+            <div key={s.key} className="w-64 shrink-0">
+              <div className="mb-2">
+                <p className="font-typewriter text-xs uppercase tracking-widest">{s.label} <span className="text-muted-foreground">({byStage(s.key).length})</span></p>
+                <p className="text-[11px] font-body text-muted-foreground">{s.hint}</p>
+              </div>
+              <div className="space-y-2">
+                {byStage(s.key).map((row) => (
+                  <Card
+                    key={row.id} row={row} busy={busy === row.id} expanded={expanded === row.id}
+                    events={events[row.contact_id] ?? []}
+                    noteDraft={noteDraft[row.id] ?? ""}
+                    onToggle={() => setExpanded(expanded === row.id ? null : row.id)}
+                    onStage={(st) => setStage(row, st)}
+                    onIssue={() => issueCode(row)}
+                    onLost={(reason) => markLost(row, reason)}
+                    onNoteChange={(v) => setNoteDraft((d) => ({ ...d, [row.id]: v }))}
+                    onSaveNote={() => saveNote(row)}
+                  />
+                ))}
+                {byStage(s.key).length === 0 && <p className="text-xs font-body text-muted-foreground/60 border border-dashed border-border p-3">—</p>}
+              </div>
+            </div>
+          ))}
+
+          {/* Lost column */}
+          {lost.length > 0 && (
+            <div className="w-64 shrink-0">
+              <p className="font-typewriter text-xs uppercase tracking-widest mb-2 text-muted-foreground">Lost ({lost.length})</p>
+              <div className="space-y-2">
+                {lost.map((row) => (
+                  <div key={row.id} className="border border-border p-3 opacity-70">
+                    <p className="font-body text-sm font-medium">{row.contacts.name || row.contacts.email}</p>
+                    <p className="text-xs font-body text-muted-foreground">{row.lost_reason}</p>
+                    <button onClick={() => reactivate(row)} disabled={busy === row.id} className="mt-2 text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">Reactivate</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ---- Card ----------------------------------------------------------------
+const Card = ({
+  row, busy, expanded, events, noteDraft, onToggle, onStage, onIssue, onLost, onNoteChange, onSaveNote,
+}: {
+  row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string;
+  onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onLost: (reason: string) => void;
+  onNoteChange: (v: string) => void; onSaveNote: () => void;
+}) => {
+  const c = row.contacts;
+  const code = row.meta?.discount_code;
+  return (
+    <div className="border border-border bg-background p-3">
+      <div className="flex items-start justify-between gap-2">
+        <button onClick={onToggle} className="text-left min-w-0">
+          <p className="font-body text-sm font-medium truncate">{c.name || c.email}</p>
+          <p className="text-[11px] font-body text-muted-foreground truncate">{c.email}</p>
+        </button>
+        {busy && <span className="text-xs text-muted-foreground">…</span>}
+      </div>
+
+      <div className="mt-1.5 flex flex-wrap gap-1">
+        {code && <Chip>Code ✓</Chip>}
+        {c.source && c.source !== "field_team" && <Chip>{c.source}</Chip>}
+        {c.country && <Chip>{c.country}</Chip>}
+      </div>
+
+      {/* Move stage */}
+      <select
+        value={row.stage}
+        onChange={(e) => onStage(e.target.value)}
+        disabled={busy}
+        className="mt-2 w-full text-xs px-2 py-1 border border-border bg-background rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+      >
+        {FT_STAGES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
+      </select>
+
+      {/* Quick actions */}
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        {(row.stage === "confirmed" || row.stage === "code_sent") && (
+          <button onClick={onIssue} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
+            {code ? "Resend code" : "Issue code"}
+          </button>
+        )}
+        <LostButton onLost={onLost} disabled={busy} />
+      </div>
+
+      {expanded && (
+        <div className="mt-3 pt-3 border-t border-border space-y-2">
+          <div className="flex gap-2">
+            <input
+              value={noteDraft}
+              onChange={(e) => onNoteChange(e.target.value)}
+              placeholder="Log a note / reply…"
+              className="flex-1 text-xs px-2 py-1 border border-border bg-background rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+            />
+            <button onClick={onSaveNote} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-50">Log</button>
+          </div>
+          <ul className="space-y-1">
+            {events.slice(0, 12).map((e) => (
+              <li key={e.id} className="text-[11px] font-body text-muted-foreground leading-snug">
+                <span className="text-foreground">{e.note || e.type.replace(/_/g, " ")}</span> · {fmtDateTime(e.created_at)}
+              </li>
+            ))}
+            {events.length === 0 && <li className="text-[11px] font-body text-muted-foreground/60">No activity yet.</li>}
+          </ul>
+          <p className="text-[11px] font-body text-muted-foreground/60">Added {fmtDate(c.created_at)}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Chip = ({ children }: { children: React.ReactNode }) => (
+  <span className="text-[10px] font-typewriter uppercase tracking-widest text-muted-foreground border border-border px-1.5 py-0.5">{children}</span>
+);
+
+const LostButton = ({ onLost, disabled }: { onLost: (r: string) => void; disabled: boolean }) => {
+  const [open, setOpen] = useState(false);
+  if (!open) return <button onClick={() => setOpen(true)} disabled={disabled} className="text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-destructive disabled:opacity-50">Lost</button>;
+  return (
+    <select
+      autoFocus
+      defaultValue=""
+      onChange={(e) => { if (e.target.value) onLost(e.target.value); setOpen(false); }}
+      onBlur={() => setOpen(false)}
+      className="text-[11px] px-1 py-1 border border-border bg-background rounded-none focus:outline-none"
+    >
+      <option value="" disabled>Reason…</option>
+      {LOST_REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
+    </select>
+  );
+};
+
+const Field = ({ label, value, onChange, w }: { label: string; value: string; onChange: (v: string) => void; w: string }) => (
+  <label className="text-sm">
+    <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">{label}</span>
+    <input value={value} onChange={(e) => onChange(e.target.value)} className={`${w} px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground`} />
+  </label>
+);
+
+export default FieldTeamCRM;
