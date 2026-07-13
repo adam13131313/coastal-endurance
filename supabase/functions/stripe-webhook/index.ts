@@ -304,6 +304,29 @@ Deno.serve(async (req) => {
     if (phoneErr) console.warn("phone not stored (apply order_phone migration?)", phoneErr.message);
   }
 
+  // CRM: upsert a contact for this customer and log the order on their timeline.
+  // Best-effort — non-fatal if the CRM migration isn't applied yet.
+  try {
+    const addr = (shipping?.address ?? anySession.customer_details?.address ?? null) as { country?: string } | null;
+    const { data: contactId } = await admin.rpc("upsert_contact_from_order", {
+      p_email: email,
+      p_name: shipping?.name ?? session.customer_details?.name ?? null,
+      p_phone: phone,
+      p_country: addr?.country ?? null,
+      p_currency: order.currency,
+    });
+    if (contactId) {
+      await admin.from("contact_events").insert({
+        contact_id: contactId,
+        type: "order_placed",
+        meta: { order_id: order.id, total_cents: session.amount_total ?? order.total_cents, currency: order.currency },
+        actor: "system",
+      });
+    }
+  } catch (e) {
+    console.warn("contact sync skipped (apply CRM migration?)", e instanceof Error ? e.message : e);
+  }
+
   // Decrement inventory per product (atomic; guards against overselling).
   const { data: items } = await admin
     .from("order_items")
