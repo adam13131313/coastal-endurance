@@ -2,9 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, EMAIL_TEMPLATES, fmtDate, fmtDateTime,
+  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, interpolate, fmtDate, fmtDateTime,
   type FieldTeamRow, type ContactEvent, type EmailTemplate,
 } from "@/lib/crm";
+import CommsLibrary from "@/components/CommsLibrary";
 
 const TARGET = 15;
 
@@ -18,9 +19,13 @@ const FieldTeamCRM = () => {
   const [form, setForm] = useState({ name: "", email: "", source: "" });
   const [compose, setCompose] = useState<{ row: FieldTeamRow; tpl: EmailTemplate; subject: string; body: string } | null>(null);
   const [sending, setSending] = useState(false);
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [showLibrary, setShowLibrary] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
+    const { data: tpls } = await sb.from("email_templates").select("*").eq("active", true).order("sort", { ascending: true });
+    setTemplates((tpls as EmailTemplate[]) ?? []);
     const { data } = await sb
       .from("contact_pipelines")
       .select("*, contacts(*)")
@@ -130,13 +135,13 @@ const FieldTeamCRM = () => {
   };
 
   const openCompose = (row: FieldTeamRow, tpl: EmailTemplate) =>
-    setCompose({ row, tpl, subject: tpl.subject(row.contacts), body: tpl.body(row.contacts) });
+    setCompose({ row, tpl, subject: interpolate(tpl.subject, row.contacts), body: interpolate(tpl.body, row.contacts) });
 
   const advanceAfterSend = async (row: FieldTeamRow, tpl: EmailTemplate) => {
-    if (tpl.stageOnSend && row.stage !== tpl.stageOnSend) {
+    if (tpl.stage_on_send && row.stage !== tpl.stage_on_send) {
       const now = new Date().toISOString();
-      await sb.from("contact_pipelines").update({ stage: tpl.stageOnSend, status: "active", stage_entered_at: now, updated_at: now }).eq("id", row.id);
-      await logEvent(row.contact_id, "stage_change", `→ ${FT_STAGE_LABEL[tpl.stageOnSend]}`, {});
+      await sb.from("contact_pipelines").update({ stage: tpl.stage_on_send, status: "active", stage_entered_at: now, updated_at: now }).eq("id", row.id);
+      await logEvent(row.contact_id, "stage_change", `→ ${FT_STAGE_LABEL[tpl.stage_on_send] ?? tpl.stage_on_send}`, {});
     }
   };
 
@@ -145,7 +150,7 @@ const FieldTeamCRM = () => {
     setSending(true);
     try {
       const { data, error } = await supabase.functions.invoke("send-contact-email", {
-        body: { contactId: compose.row.contact_id, to: compose.row.contacts.email, subject: compose.subject, text: compose.body, eventType: compose.tpl.eventType },
+        body: { contactId: compose.row.contact_id, to: compose.row.contacts.email, subject: compose.subject, text: compose.body, eventType: compose.tpl.event_type },
       });
       if (error || (data as { error?: string })?.error) throw new Error((data as { error?: string })?.error || "Send failed");
       await advanceAfterSend(compose.row, compose.tpl);
@@ -172,7 +177,7 @@ const FieldTeamCRM = () => {
   const markSentManually = async () => {
     if (!compose) return;
     setSending(true);
-    await logEvent(compose.row.contact_id, compose.tpl.eventType, `Sent manually: ${compose.subject}`, { subject: compose.subject, via: "manual" });
+    await logEvent(compose.row.contact_id, compose.tpl.event_type, `Sent manually: ${compose.subject}`, { subject: compose.subject, via: "manual" });
     await advanceAfterSend(compose.row, compose.tpl);
     toast.success("Logged as sent.");
     setCompose(null);
@@ -182,12 +187,17 @@ const FieldTeamCRM = () => {
 
   if (loading) return <p className="font-body text-muted-foreground">Loading pipeline…</p>;
 
+  if (showLibrary) return <CommsLibrary onBack={() => { setShowLibrary(false); load(); }} />;
+
   return (
     <div className="space-y-8">
       {/* Header: progress + funnel */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-typewriter uppercase">Field Team</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-typewriter uppercase">Field Team</h2>
+            <button onClick={() => setShowLibrary(true)} className="text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground hover:text-foreground border border-border px-2 py-0.5">Comms library</button>
+          </div>
           <p className="mt-1 text-sm font-body text-muted-foreground">
             {confirmedCount} of {TARGET} confirmed · {active.length} in pipeline{lost.length ? ` · ${lost.length} lost` : ""}
           </p>
@@ -227,6 +237,7 @@ const FieldTeamCRM = () => {
                     onStage={(st) => setStage(row, st)}
                     onIssue={() => issueCode(row)}
                     onLost={(reason) => markLost(row, reason)}
+                    templates={templates}
                     onCompose={(tpl) => openCompose(row, tpl)}
                     onNoteChange={(v) => setNoteDraft((d) => ({ ...d, [row.id]: v }))}
                     onSaveNote={() => saveNote(row)}
@@ -289,9 +300,9 @@ const FieldTeamCRM = () => {
 
 // ---- Card ----------------------------------------------------------------
 const Card = ({
-  row, busy, expanded, events, noteDraft, onToggle, onStage, onIssue, onLost, onCompose, onNoteChange, onSaveNote,
+  row, busy, expanded, events, noteDraft, templates, onToggle, onStage, onIssue, onLost, onCompose, onNoteChange, onSaveNote,
 }: {
-  row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string;
+  row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string; templates: EmailTemplate[];
   onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onLost: (reason: string) => void;
   onCompose: (tpl: EmailTemplate) => void;
   onNoteChange: (v: string) => void; onSaveNote: () => void;
@@ -333,12 +344,12 @@ const Card = ({
         )}
         <select
           value=""
-          onChange={(e) => { const t = EMAIL_TEMPLATES.find((x) => x.key === e.target.value); if (t) onCompose(t); e.target.value = ""; }}
-          disabled={busy}
+          onChange={(e) => { const t = templates.find((x) => x.key === e.target.value); if (t) onCompose(t); e.target.value = ""; }}
+          disabled={busy || templates.length === 0}
           className="text-[11px] font-typewriter uppercase tracking-wider px-2 py-1 border border-border bg-background rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
         >
           <option value="">Email ▾</option>
-          {EMAIL_TEMPLATES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
+          {templates.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
         </select>
         <LostButton onLost={onLost} disabled={busy} />
       </div>
