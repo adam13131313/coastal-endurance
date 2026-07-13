@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, fmtDate, fmtDateTime,
-  type FieldTeamRow, type ContactEvent,
+  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, EMAIL_TEMPLATES, fmtDate, fmtDateTime,
+  type FieldTeamRow, type ContactEvent, type EmailTemplate,
 } from "@/lib/crm";
 
 const TARGET = 15;
@@ -16,6 +16,8 @@ const FieldTeamCRM = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
   const [form, setForm] = useState({ name: "", email: "", source: "" });
+  const [compose, setCompose] = useState<{ row: FieldTeamRow; tpl: EmailTemplate; subject: string; body: string } | null>(null);
+  const [sending, setSending] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -127,6 +129,57 @@ const FieldTeamCRM = () => {
     load();
   };
 
+  const openCompose = (row: FieldTeamRow, tpl: EmailTemplate) =>
+    setCompose({ row, tpl, subject: tpl.subject(row.contacts), body: tpl.body(row.contacts) });
+
+  const advanceAfterSend = async (row: FieldTeamRow, tpl: EmailTemplate) => {
+    if (tpl.stageOnSend && row.stage !== tpl.stageOnSend) {
+      const now = new Date().toISOString();
+      await sb.from("contact_pipelines").update({ stage: tpl.stageOnSend, status: "active", stage_entered_at: now, updated_at: now }).eq("id", row.id);
+      await logEvent(row.contact_id, "stage_change", `→ ${FT_STAGE_LABEL[tpl.stageOnSend]}`, {});
+    }
+  };
+
+  const sendViaApp = async () => {
+    if (!compose) return;
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-contact-email", {
+        body: { contactId: compose.row.contact_id, to: compose.row.contacts.email, subject: compose.subject, text: compose.body, eventType: compose.tpl.eventType },
+      });
+      if (error || (data as { error?: string })?.error) throw new Error((data as { error?: string })?.error || "Send failed");
+      await advanceAfterSend(compose.row, compose.tpl);
+      toast.success(`Emailed ${compose.row.contacts.email}.`);
+      setCompose(null);
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Couldn't send.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const copyCompose = async () => {
+    if (!compose) return;
+    try {
+      await navigator.clipboard.writeText(`Subject: ${compose.subject}\n\n${compose.body}`);
+      toast.success("Copied — paste it into your own email.");
+    } catch {
+      toast.error("Couldn't copy.");
+    }
+  };
+
+  const markSentManually = async () => {
+    if (!compose) return;
+    setSending(true);
+    await logEvent(compose.row.contact_id, compose.tpl.eventType, `Sent manually: ${compose.subject}`, { subject: compose.subject, via: "manual" });
+    await advanceAfterSend(compose.row, compose.tpl);
+    toast.success("Logged as sent.");
+    setCompose(null);
+    setSending(false);
+    load();
+  };
+
   if (loading) return <p className="font-body text-muted-foreground">Loading pipeline…</p>;
 
   return (
@@ -174,6 +227,7 @@ const FieldTeamCRM = () => {
                     onStage={(st) => setStage(row, st)}
                     onIssue={() => issueCode(row)}
                     onLost={(reason) => markLost(row, reason)}
+                    onCompose={(tpl) => openCompose(row, tpl)}
                     onNoteChange={(v) => setNoteDraft((d) => ({ ...d, [row.id]: v }))}
                     onSaveNote={() => saveNote(row)}
                   />
@@ -200,16 +254,46 @@ const FieldTeamCRM = () => {
           )}
         </div>
       </div>
+
+      {/* Compose modal */}
+      {compose && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => !sending && setCompose(null)}>
+          <div className="bg-background border border-border w-full max-w-lg p-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="font-typewriter text-sm uppercase tracking-widest">{compose.tpl.label}</h3>
+              <span className="text-xs font-body text-muted-foreground">to {compose.row.contacts.email}</span>
+            </div>
+            <label className="block text-sm mb-3">
+              <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Subject</span>
+              <input value={compose.subject} onChange={(e) => setCompose((c) => c && { ...c, subject: e.target.value })}
+                className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
+            </label>
+            <label className="block text-sm mb-4">
+              <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Message (edit freely)</span>
+              <textarea value={compose.body} onChange={(e) => setCompose((c) => c && { ...c, body: e.target.value })} rows={11}
+                className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground leading-relaxed" />
+            </label>
+            <div className="flex flex-wrap items-center gap-2">
+              <button onClick={sendViaApp} disabled={sending} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{sending ? "…" : "Send via app"}</button>
+              <button onClick={copyCompose} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Copy</button>
+              <button onClick={markSentManually} disabled={sending} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-50">Mark as sent</button>
+              <button onClick={() => setCompose(null)} disabled={sending} className="ml-auto text-xs font-body text-muted-foreground hover:text-foreground">Cancel</button>
+            </div>
+            <p className="mt-3 text-[11px] font-body text-muted-foreground">Send via app = we email it (reply-to hello@) and log it. Copy = paste into your own email, then Mark as sent to log it.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // ---- Card ----------------------------------------------------------------
 const Card = ({
-  row, busy, expanded, events, noteDraft, onToggle, onStage, onIssue, onLost, onNoteChange, onSaveNote,
+  row, busy, expanded, events, noteDraft, onToggle, onStage, onIssue, onLost, onCompose, onNoteChange, onSaveNote,
 }: {
   row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string;
   onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onLost: (reason: string) => void;
+  onCompose: (tpl: EmailTemplate) => void;
   onNoteChange: (v: string) => void; onSaveNote: () => void;
 }) => {
   const c = row.contacts;
@@ -247,6 +331,15 @@ const Card = ({
             {code ? "Resend code" : "Issue code"}
           </button>
         )}
+        <select
+          value=""
+          onChange={(e) => { const t = EMAIL_TEMPLATES.find((x) => x.key === e.target.value); if (t) onCompose(t); e.target.value = ""; }}
+          disabled={busy}
+          className="text-[11px] font-typewriter uppercase tracking-wider px-2 py-1 border border-border bg-background rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+        >
+          <option value="">Email ▾</option>
+          {EMAIL_TEMPLATES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
+        </select>
         <LostButton onLost={onLost} disabled={busy} />
       </div>
 
