@@ -80,7 +80,7 @@ const FathersDay = () => {
             so it's with him in good time for Father's Day, <strong className="text-foreground">Sunday 6 September</strong>.
           </p>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
-            Sending it straight to him? Just enter his address at checkout. Free delivery within Australia.
+            Sending it straight to him? Just enter his address at checkout. Free standard shipping in Australia and the UK.
           </p>
         </div>
       </section>

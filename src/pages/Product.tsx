@@ -178,8 +178,8 @@ const Product = () => {
                   "30ml, approximately 3 months of daily use",
                   "Fast-absorbing, non-greasy finish",
                   "No fragrance or essential oils",
-                  "Free delivery within Australia",
-                  "International shipping costs apply outside Australia",
+                  "Free standard shipping in Australia and the UK",
+                  "Express shipping available at checkout",
                   "Made in Australia",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-sm font-body">
@@ -281,7 +281,7 @@ const Product = () => {
 
                   <ul className="mt-5 space-y-2.5">
                      {[
-                      "Free delivery within Australia",
+                      "Free standard shipping in Australia and the UK",
                       "Pay once, no recurring charges",
                       "Choose when each bottle ships",
                     ].map((benefit, index) => (

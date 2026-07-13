@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 const Cart = () => {
-  const { items, updateQuantity, removeItem, checkout, isCheckingOut, fulfillment, setFulfillment } = useCartStore();
+  const { items, updateQuantity, removeItem, checkout, isCheckingOut } = useCartStore();
   const { format, config } = useCurrency();
   const [user, setUser] = useState<{ email?: string } | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
@@ -132,37 +132,8 @@ const Cart = () => {
               <span className="font-typewriter text-2xl">{format(totalCents)} {config.code}</span>
             </div>
             <p className="mt-2 text-sm font-body text-muted-foreground">
-              Free delivery within Australia. International shipping calculated at checkout.
+              Free standard shipping in Australia and the UK. Express available at checkout.
             </p>
-
-            {/* Fulfilment method */}
-            <div className="mt-8">
-              <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-3">How would you like it?</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {([
-                  { key: "ship", title: "Ship it to me", desc: "Enter your address at checkout." },
-                  { key: "pickup", title: "Collect in person", desc: "We'll email you to arrange a time." },
-                ] as const).map((opt) => (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    onClick={() => setFulfillment(opt.key)}
-                    aria-pressed={fulfillment === opt.key}
-                    className={`text-left border p-4 transition-colors ${
-                      fulfillment === opt.key ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"
-                    }`}
-                  >
-                    <span className="block font-typewriter text-sm uppercase tracking-wider">{opt.title}</span>
-                    <span className={`block mt-1 text-xs font-body ${fulfillment === opt.key ? "text-background/80" : "text-muted-foreground"}`}>{opt.desc}</span>
-                  </button>
-                ))}
-              </div>
-              {fulfillment === "pickup" && (
-                <p className="mt-3 text-sm font-body text-muted-foreground">
-                  After you order, email <a href="mailto:hello@coastalendurance.com" className="text-foreground underline underline-offset-4">hello@coastalendurance.com</a> and we'll arrange a collection time. Nothing ships — you won't need a delivery address.
-                </p>
-              )}
-            </div>
 
             {authChecked && !user && (
               <div className="mt-6 p-4 border border-border bg-muted/30 space-y-3">
