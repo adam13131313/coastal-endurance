@@ -1,5 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
 
+// variant_prices isn't in the generated Supabase types yet; read it loosely.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const looseFrom = (table: string) => (supabase as any).from(table);
+
 export interface ProductVariant {
   id: string;
   slug: string;
@@ -24,8 +28,10 @@ export interface Product {
 }
 
 // Fetch an active product with its active variants (ordered). RLS already
-// restricts both to active rows, so no extra filtering is needed.
-export async function fetchProduct(slug: string): Promise<Product | null> {
+// restricts both to active rows, so no extra filtering is needed. When a non-AUD
+// currency is requested, each variant's price_cents is swapped for that currency's
+// price point (variant_prices); AUD is the base on product_variants.price_cents.
+export async function fetchProduct(slug: string, currency: string = "AUD"): Promise<Product | null> {
   const { data, error } = await supabase
     .from("products")
     .select(
@@ -38,10 +44,27 @@ export async function fetchProduct(slug: string): Promise<Product | null> {
 
   if (error || !data) return null;
 
-  const variants = [...(data.product_variants ?? [])].sort(
-    (a, b) => a.sort_order - b.sort_order,
-  );
-  return { ...data, variants };
+  let variants = [...(data.product_variants ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+  let resolvedCurrency = "AUD";
+
+  if (currency && currency !== "AUD") {
+    const ids = variants.map((v) => v.id);
+    const { data: prices } = await looseFrom("variant_prices")
+      .select("variant_id, price_cents")
+      .eq("currency", currency)
+      .in("variant_id", ids);
+    const byVariant = new Map(
+      ((prices ?? []) as { variant_id: string; price_cents: number }[]).map((p) => [p.variant_id, p.price_cents]),
+    );
+    // Only switch currency if every variant has a price in it, so we never show a
+    // mix or an AUD amount labelled as another currency.
+    if (ids.every((id) => byVariant.has(id))) {
+      variants = variants.map((v) => ({ ...v, price_cents: byVariant.get(v.id)! }));
+      resolvedCurrency = currency;
+    }
+  }
+
+  return { ...data, currency: resolvedCurrency, variants };
 }
 
 export function formatPrice(cents: number): string {
