@@ -83,14 +83,14 @@ async function sendCodeEmail(to: string, code: string) {
       <h1 style="font-size:22px;margin:0 0 16px">You're on the Field Team</h1>
       <p style="font-size:15px;color:#333;line-height:1.6">Here's your code for a free bottle of Field Oil:</p>
       <p style="font-size:24px;letter-spacing:2px;font-weight:600;margin:16px 0;padding:14px 18px;border:1px solid #d6cfc4;text-align:center">${code}</p>
-      <p style="font-size:15px;color:#333;line-height:1.6"><strong>Sign in first</strong> with Google at <a href="${SITE}/auth" style="color:#000">coastalendurance.com</a> using this email, then add a single bottle at <a href="${SITE}/product" style="color:#000">the product page</a> and enter this code at checkout. Signing in first means your order shows up in your account, with your Field Team badge.</p>
-      <p style="font-size:15px;color:#333;line-height:1.6">The code covers one bottle and works once.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6"><strong>How to claim it:</strong> add a <strong>single bottle</strong> at <a href="${SITE}/product" style="color:#000">the product page</a>, then <strong>enter this code at checkout</strong> — the total drops to <strong>$0</strong> and you won't be charged. Choose <strong>ship to me</strong> or <strong>collect in person</strong>. First bottles ship from 10 August.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6">Sign in with Google or email first if you'd like it in your account with your Field Team badge — or just check out as a guest. The code covers one bottle and works once.</p>
       <p style="font-size:13px;color:#999;margin-top:24px">Coastal Endurance · Made in Australia</p>
     </div>`;
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: FROM_ADDRESS, to, subject: "Your Coastal Endurance field team code", html }),
+    body: JSON.stringify({ from: FROM_ADDRESS, to, reply_to: "hello@coastalendurance.com", subject: "Your Coastal Endurance field team code", html }),
   });
   if (!res.ok) console.error("field team email failed", res.status, await res.text().catch(() => ""));
 }
