@@ -280,8 +280,29 @@ Deno.serve(async (req) => {
       customer_email: email,
       success_url: `${siteBase}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteBase}/checkout/cancel`,
-      // Pickup: don't collect a shipping address (nothing ships).
-      ...(pickup ? {} : { shipping_address_collection: { allowed_countries: ["AU", "NZ", "GB", "US", "CA", "IE"] } }),
+      // Launch markets only: ship to AU + UK. Standard shipping free, express 9.95
+      // in the order currency. (Pickup path is retained but no longer offered in the UI.)
+      ...(pickup ? {} : {
+        shipping_address_collection: { allowed_countries: ["AU", "GB"] },
+        shipping_options: [
+          {
+            shipping_rate_data: {
+              type: "fixed_amount",
+              fixed_amount: { amount: 0, currency: orderCurrency.toLowerCase() },
+              display_name: "Standard (free)",
+              delivery_estimate: { minimum: { unit: "business_day", value: 3 }, maximum: { unit: "business_day", value: 7 } },
+            },
+          },
+          {
+            shipping_rate_data: {
+              type: "fixed_amount",
+              fixed_amount: { amount: 995, currency: orderCurrency.toLowerCase() },
+              display_name: "Express",
+              delivery_estimate: { minimum: { unit: "business_day", value: 1 }, maximum: { unit: "business_day", value: 3 } },
+            },
+          },
+        ],
+      }),
       phone_number_collection: { enabled: true },
       metadata: { order_id: order.id },
       payment_intent_data: { metadata: { order_id: order.id } },
