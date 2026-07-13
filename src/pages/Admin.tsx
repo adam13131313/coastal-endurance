@@ -16,6 +16,7 @@ import StaffBoard from "@/components/StaffBoard";
 import StaffAssistant from "@/components/StaffAssistant";
 import BrandGuide from "@/components/BrandGuide";
 import ProductionAdmin from "@/components/ProductionAdmin";
+import ProductIdeas from "@/components/ProductIdeas";
 
 interface OrderItem {
   id: string;
@@ -75,14 +76,14 @@ function formatAddress(a: Record<string, unknown> | null): string {
 const NAV_GROUPS = [
   { group: "Store", keys: ["overview", "dispatch", "orders", "field"] },
   { group: "Marketing", keys: ["plan", "pipeline", "content", "social"] },
-  { group: "Production", keys: ["production"] },
+  { group: "Production", keys: ["production", "ideas"] },
   { group: "Team", keys: ["board", "assistant", "guide", "brand"] },
 ] as const;
 
 const TAB_LABEL: Record<string, string> = {
   overview: "Overview", plan: "Plan", pipeline: "Pipeline", content: "Content",
   social: "Social", dispatch: "To ship", orders: "Orders", field: "Field team",
-  production: "Production", board: "Staff board", assistant: "Assistant", guide: "Staff guide", brand: "Brand",
+  production: "Production", ideas: "Product ideas", board: "Staff board", assistant: "Assistant", guide: "Staff guide", brand: "Brand",
 };
 
 const Admin = () => {
@@ -90,7 +91,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "content" | "social" | "dispatch" | "orders" | "field" | "production" | "board" | "assistant" | "guide" | "brand">("overview");
+  const [tab, setTab] = useState<"overview" | "plan" | "pipeline" | "content" | "social" | "dispatch" | "orders" | "field" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand">("overview");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -288,6 +289,8 @@ const Admin = () => {
           {tab === "field" && <FieldTeamCRM />}
 
           {tab === "production" && <ProductionAdmin />}
+
+          {tab === "ideas" && <ProductIdeas />}
 
           {tab === "dispatch" && (
             dispatch.length === 0 ? (
