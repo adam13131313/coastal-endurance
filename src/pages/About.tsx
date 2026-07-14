@@ -34,8 +34,8 @@ const About = () => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
             ABOUT FIELD OIL
           </h1>
-          <p className="mt-8 text-xl md:text-2xl font-body text-muted-foreground leading-relaxed max-w-xl">
-            Equipment maintenance for a life in a sunburnt country.
+          <p className="mt-8 text-xl md:text-2xl font-body text-muted-foreground leading-relaxed max-w-3xl md:whitespace-nowrap">
+            Equipment maintenance for life in a sunburnt country.
           </p>
         </div>
       </section>
