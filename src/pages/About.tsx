@@ -30,11 +30,11 @@ const About = () => {
           <img src={sweepingPlains} alt="Vast Australian outback" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/30" />
         </div>
-        <div className="container-narrow relative z-10 py-24 md:py-32">
+        <div className="container-narrow relative z-10 py-24 md:py-32 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
             ABOUT FIELD OIL
           </h1>
-          <p className="mt-8 text-xl md:text-2xl font-body text-muted-foreground leading-relaxed max-w-3xl md:whitespace-nowrap">
+          <p className="mt-8 text-xl md:text-2xl font-body text-muted-foreground leading-relaxed max-w-3xl mx-auto md:whitespace-nowrap">
             Equipment maintenance for life in a sunburnt country.
           </p>
         </div>
