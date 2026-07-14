@@ -35,7 +35,7 @@ const About = () => {
             ABOUT FIELD OIL
           </h1>
           <p className="mt-8 text-xl md:text-2xl font-body text-muted-foreground leading-relaxed max-w-xl">
-            Equipment maintenance for outdoor-exposed skin.
+            Equipment maintenance for a life in a sunburnt country.
           </p>
         </div>
       </section>
