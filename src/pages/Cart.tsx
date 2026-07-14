@@ -12,6 +12,8 @@ const Cart = () => {
   const [user, setUser] = useState<{ email?: string } | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
+  const [signInEmail, setSignInEmail] = useState("");
+  const [linkSent, setLinkSent] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -37,6 +39,19 @@ const Cart = () => {
       toast({ title: "Sign in failed", description: error.message, variant: "destructive" });
       setSigningIn(false);
     }
+  };
+
+  const handleEmailLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signInEmail.includes("@")) return;
+    setSigningIn(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email: signInEmail.trim(),
+      options: { emailRedirectTo: window.location.origin + "/cart" },
+    });
+    setSigningIn(false);
+    if (error) { toast({ title: "Couldn't send the link", description: error.message, variant: "destructive" }); return; }
+    setLinkSent(true);
   };
 
   const handleCheckout = async () => {
@@ -151,6 +166,23 @@ const Cart = () => {
                   </svg>
                   {signingIn ? "Signing in..." : "Continue with Google"}
                 </button>
+
+                {linkSent ? (
+                  <p className="text-xs font-body text-muted-foreground">Check your inbox — we've emailed a sign-in link to <strong>{signInEmail}</strong>.</p>
+                ) : (
+                  <form onSubmit={handleEmailLink} className="flex gap-2">
+                    <input
+                      type="email"
+                      value={signInEmail}
+                      onChange={(e) => setSignInEmail(e.target.value)}
+                      placeholder="or email me a link"
+                      aria-label="Email address for sign-in link"
+                      className="flex-1 px-3 py-2 border border-border bg-background text-sm font-body rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+                    />
+                    <button type="submit" disabled={signingIn} className="btn-outline text-xs px-3 py-2 disabled:opacity-50 whitespace-nowrap">Send</button>
+                  </form>
+                )}
+                <p className="text-xs font-body text-muted-foreground">Optional — you can also just check out as a guest.</p>
               </div>
             )}
 
