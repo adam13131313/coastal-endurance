@@ -20,6 +20,7 @@ import ProductionAdmin from "@/components/ProductionAdmin";
 import ProductIdeas from "@/components/ProductIdeas";
 import StockControl from "@/components/StockControl";
 import CustomersAdmin from "@/components/CustomersAdmin";
+import CompetitorsAdmin from "@/components/CompetitorsAdmin";
 
 interface OrderItem {
   id: string;
@@ -82,7 +83,7 @@ const NAV_GROUPS = [
   { group: "Sell", keys: ["orders", "dispatch", "stock", "customers"] },
   { group: "Grow", keys: ["campaign", "content", "field"] },
   { group: "Make", keys: ["production", "ideas"] },
-  { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "social"] },
+  { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "social"] },
 ] as const;
 
 const TAB_LABEL: Record<string, string> = {
@@ -90,7 +91,7 @@ const TAB_LABEL: Record<string, string> = {
   social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
   customers: "Customers", field: "Field team", production: "Production",
   ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
-  guide: "Staff guide", brand: "Brand",
+  guide: "Staff guide", brand: "Brand", positioning: "Positioning",
 };
 
 const Admin = () => {
@@ -98,7 +99,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand">("today");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -443,6 +444,8 @@ const Admin = () => {
           {tab === "guide" && <AdminGuide />}
 
           {tab === "brand" && <BrandGuide />}
+
+          {tab === "positioning" && <CompetitorsAdmin />}
 
           {tab === "social" && <SocialGuide />}
             </div>
