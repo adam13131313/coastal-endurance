@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import Markdown from "@/components/Markdown";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -21,22 +20,6 @@ interface Idea {
 
 const STATUSES: Idea["status"][] = ["idea", "exploring", "planned", "parked"];
 const STATUS_LABEL: Record<Idea["status"], string> = { idea: "Idea", exploring: "Exploring", planned: "Planned", parked: "Parked" };
-
-// Brand-styled markdown for the exploration briefs.
-const md = {
-  h1: (p: React.HTMLAttributes<HTMLHeadingElement>) => <h1 className="font-typewriter text-xl uppercase tracking-wider mt-2 mb-3" {...p} />,
-  h2: (p: React.HTMLAttributes<HTMLHeadingElement>) => <h2 className="font-typewriter text-sm uppercase tracking-widest mt-6 mb-2" {...p} />,
-  h3: (p: React.HTMLAttributes<HTMLHeadingElement>) => <h3 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mt-4 mb-2" {...p} />,
-  p: (p: React.HTMLAttributes<HTMLParagraphElement>) => <p className="font-body text-sm text-muted-foreground leading-relaxed mb-3" {...p} />,
-  ul: (p: React.HTMLAttributes<HTMLUListElement>) => <ul className="list-disc pl-5 space-y-1.5 mb-3 font-body text-sm text-muted-foreground" {...p} />,
-  ol: (p: React.HTMLAttributes<HTMLOListElement>) => <ol className="list-decimal pl-5 space-y-1.5 mb-3 font-body text-sm text-muted-foreground" {...p} />,
-  strong: (p: React.HTMLAttributes<HTMLElement>) => <strong className="text-foreground font-medium" {...p} />,
-  hr: () => <hr className="border-border my-5" />,
-  table: (p: React.TableHTMLAttributes<HTMLTableElement>) => <div className="overflow-x-auto mb-4"><table className="w-full text-sm border border-border" {...p} /></div>,
-  th: (p: React.ThHTMLAttributes<HTMLTableCellElement>) => <th className="text-left font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground border border-border px-2.5 py-1.5" {...p} />,
-  td: (p: React.TdHTMLAttributes<HTMLTableCellElement>) => <td className="font-body text-muted-foreground border border-border px-2.5 py-1.5 align-top" {...p} />,
-  em: (p: React.HTMLAttributes<HTMLElement>) => <em className="italic" {...p} />,
-};
 
 const ProductIdeas = () => {
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -177,7 +160,7 @@ const ProductIdeas = () => {
                   </div>
                 ) : (
                   <div>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={md}>{idea.brief ?? ""}</ReactMarkdown>
+                    <Markdown>{idea.brief ?? ""}</Markdown>
                     <button onClick={() => startEditBrief(idea)} className="mt-2 text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">Edit brief</button>
                   </div>
                 )}
