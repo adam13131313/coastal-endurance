@@ -50,14 +50,26 @@ const About = () => {
               I started using it on mine, too.
             </p>
             <p>
-              My skin runs dry and sensitive, and it just worked. Over the years I'd tried moisturisers and
-              lotions and never got on with the feel of them: the film, the heaviness.
+              My skin runs dry and sensitive, and it just worked. It's had a lot to put up with. I've surfed,
+              skated and snowboarded, played rugby, hiked, and sat through more kids' sport on the sideline
+              than I can count, with years of air-conditioned offices and air-conditioned planes in between.
+              My skin has been taking a beating for a long time.
             </p>
             <p>
-              Read the label on most of them and you see why. To survive a warehouse, a shipping container,
-              a shelf and a hot car, and to stay consistent for months at any temperature, a cream ends up
-              carrying a long list of synthetics. It becomes a small pharmaceutical process to deliver
-              something that should be simple.
+              These days I run marathons, one a year. It started simply enough, getting fit so I could be a
+              good dad, and then it escalated; by 2019 I was running the distance. Long runs are hard on your
+              skin: sun, wind, sweat, and the way training strips you down as you build through the phases. My
+              skin needed all the help it could get.
+            </p>
+            <p>
+              I'd tried moisturisers and lotions over the years and never got on with the feel of them: the
+              film, the heaviness. And read the label on most of them and you see the other problem. To survive
+              a warehouse, a shipping container, a shelf and a hot car, and to stay consistent for months at any
+              temperature, a cream ends up carrying a long list of synthetics. It becomes a small pharmaceutical
+              process to deliver something that should be simple.
+            </p>
+            <p>
+              I use it every day. So the last thing I wanted anywhere near my skin was synthetics. It had to be natural.
             </p>
             <p className="text-foreground text-lg font-medium">
               So I asked a simpler question: what do you actually need?
