@@ -40,20 +40,44 @@ const About = () => {
         </div>
       </section>
 
-      {/* Opening */}
+      {/* Founder story */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase mb-8">How it started</h2>
           <div className="space-y-6 font-body text-muted-foreground leading-relaxed text-[17px]">
             <p>
-              Field Oil is a barrier maintenance face oil for men who love the outdoors. 
-              Not anti-aging. Not grooming. Not luxury ritual. Equipment maintenance.
+              Eleven years ago, when our daughter was born, we rubbed a little sunflower oil into her skin.
+              I started using it on mine, too.
             </p>
             <p>
-              If you're spending serious time outdoors, surfing, cycling, working in the sun, your 
-              skin needs maintenance. Not when it's visibly damaged. Now. While you're still doing the thing.
+              My skin runs dry and sensitive, and it just worked. Over the years I'd tried moisturisers and
+              lotions and never got on with the feel of them: the film, the heaviness.
+            </p>
+            <p>
+              Read the label on most of them and you see why. To survive a warehouse, a shipping container,
+              a shelf and a hot car, and to stay consistent for months at any temperature, a cream ends up
+              carrying a long list of synthetics. It becomes a small pharmaceutical process to deliver
+              something that should be simple.
             </p>
             <p className="text-foreground text-lg font-medium">
-              Active barrier-support oils, Australian-grown carriers, a natural antioxidant system. Each ingredient with a purpose.
+              So I asked a simpler question: what do you actually need?
+            </p>
+            <p>
+              Naturally derived oils, many of them close to the oils your skin already makes. A couple of
+              actives to do the work. Carriers to spread them light and even. And antioxidants to keep the
+              whole thing stable and honest for as long as you'll use it: in your bag, at the beach, in the
+              car, wherever it lives.
+            </p>
+            <p>
+              You can do all of that with natural ingredients. No water, no emulsion, no cream. Field Oil is
+              anhydrous. There's no water in it, so none of that complexity has to exist. The formula is short.
+              You can read every line of it.
+            </p>
+            <p className="text-foreground text-lg font-medium">
+              And honestly, it just feels better to rub a little oil into your skin than any of the other stuff.
+            </p>
+            <p className="pt-2 font-typewriter text-sm uppercase tracking-widest text-foreground">
+              Adam Hyde, Founder
             </p>
           </div>
         </div>
