@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { Helmet } from "react-helmet-async";
 import sweepingPlains from "@/assets/sweeping-plains.jpg";
 import ruggedCoast from "@/assets/rugged-coast.jpg";
@@ -95,161 +94,90 @@ const About = () => {
         </div>
       </section>
 
-      {/* Why Field Oil Exists */}
+      {/* The long game */}
       <section className="relative py-24 md:py-32">
         <div className="absolute inset-0">
-          <img src={droughtAndRain} alt="Cracked earth under approaching storm clouds" className="w-full h-full object-cover" loading="lazy" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
+          <img src={droughtAndRain} alt="Cracked earth under an approaching storm" className="w-full h-full object-cover" loading="lazy" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/50" />
         </div>
         <div className="max-w-[700px] mx-auto px-6 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">WHY FIELD OIL EXISTS</h2>
-
-          <div className="mt-10">
-            <h3 className="text-xl font-typewriter uppercase">THE PROBLEM</h3>
-            <div className="mt-4 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
-              <p>
-                Most face oils target chronological aging ("look younger") or are built around luxury 
-                rituals (10-step routines, aromatherapy, self-care). Neither works for men who spend 
-                real time outdoors and care primarily about function and practical maintenance.
-              </p>
-              <p>
-                If you surf, ride, or work outside regularly, your skin is 
-                constantly exposed to sun, wind, and salt. You need maintenance to keep going, not repair after 
-                things break down.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-12">
-            <h3 className="text-xl font-typewriter uppercase">THE SOLUTION</h3>
-            <div className="mt-4 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
-              <p>Field Oil treats barrier maintenance the same way you'd treat any other gear.</p>
-              <p>
-                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach, maintenance 
-                while you're actively doing the thing, not repair after the fact.
-              </p>
-              <p>
-                The active oils, Rosehip and Hemp, do the barrier-support work. Australian ingredients built
-                for Australian conditions (Tasmanian Hemp, Australian Jojoba, Australian 
-                Macadamia). Function over ritual. 60 seconds, once daily.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What Makes It Different */}
-      <section className="section-padding">
-        <div className="max-w-[700px] mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">WHAT MAKES IT DIFFERENT</h2>
-
-          <div className="mt-12 space-y-10">
-            <div>
-              <h3 className="text-xl font-typewriter uppercase">1. EQUIPMENT MAINTENANCE</h3>
-              <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                Your wetsuit gets rinsed. Your bike gets serviced. Your skin needs the same approach, 
-                regular upkeep for gear that's constantly exposed to harsh conditions.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-typewriter uppercase">2. BUILT FOR OUTDOOR PEOPLE</h3>
-              <div className="mt-3 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
-                <p>
-                  Built for men who love being outdoors, whether that's daily sessions, weekend rides, 
-                  or years on the tools. If you're out there regularly and want to keep doing it, 
-                  maintenance matters.
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-typewriter uppercase">3. CLINICAL-DOSE ACTIVES</h3>
-              <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                Rosehip and Hemp are the active oils, the working core of the formula. Where many face oils run a small dose of active in a large carrier base, here the actives lead. 
-                We keep the actives high and the formula simple, made to support the skin's barrier.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-typewriter uppercase">4. AUSTRALIAN-GROWN</h3>
-              <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                Tasmanian Hemp Seed Oil. Australian Jojoba. Australian Macadamia. Sourced from Australian 
-                farms, built for harsh Australian conditions. Not imported ingredients with "Australian brand" 
-                marketing, actual Australian-grown ingredients.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-typewriter uppercase">5. FUNCTION OVER FORM</h3>
-              <p className="mt-3 font-body text-muted-foreground leading-relaxed text-[17px]">
-                Zero fragrance. Zero essential oils. 100% naturally derived. No aromatherapy. No luxury
-                ritual. No 10-step routine. Apply 3–4 drops to damp skin once daily. Absorbs in 2 minutes. Done.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Who It's For */}
-      <section className="relative py-24 md:py-32">
-        <div className="absolute inset-0">
-          <img src={ruggedCoast} alt="Rugged Australian coastline" className="w-full h-full object-cover" loading="lazy" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
-        </div>
-        <div className="max-w-[700px] mx-auto px-6 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">WHO IT'S FOR</h2>
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">The long game</h2>
           <div className="mt-8 space-y-6 font-body text-muted-foreground leading-relaxed text-[17px]">
-            <p className="text-foreground font-medium">Men who love the outdoors:</p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Surfers, whether it's dawn patrol every day or weekend sessions</li>
-              <li>Swimmers, open water, wild swimming, or daily lap sessions in the pool</li>
-              <li>Cyclists putting in miles on the road or the trail</li>
-              <li>Outdoor workers, tradies, builders, farmers, utility and municipal crews</li>
-              <li>Dads who spend every spare hour outside with their kids</li>
-              <li>Anyone whose outdoor time adds up, week after week</li>
-            </ul>
             <p>
-              <strong className="text-foreground">Defining characteristic:</strong> You spend real time outdoors, 
-              and you want to keep doing it. Whether that's daily or every weekend, cumulative exposure matters.
+              Most skincare waits for the damage, then sells you the rescue. Anti-ageing. Repair. A
+              ten-step fix for a problem you didn't have yet.
+            </p>
+            <p>
+              I don't think like that. If you train for anything, you already know the opposite is true:
+              you look after the gear while it's still in the fight, so it stays in the fight. Small,
+              daily, unglamorous. It's how you keep doing the thing for years instead of weeks.
             </p>
             <p className="text-foreground font-medium">
-              You don't need to wait for visible damage. If you're out there regularly, maintenance keeps you going.
+              Skin's no different. Sun, wind, salt, sweat, week after week. So the smart move is the dull
+              one: look after it daily, before you're the one needing rescuing.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Formula & Provenance CTA */}
-      <section className="bg-secondary/50 section-padding">
-        <div className="max-w-[700px] mx-auto px-6 text-center">
-          <p className="text-lg font-body text-foreground font-medium">
-            Seven ingredients. Each with a purpose.
-          </p>
-          <p className="mt-4 font-body text-muted-foreground text-[17px] leading-relaxed">
-            Active barrier-support oils, Australian-grown carriers. Zero synthetics, zero essential oils, zero fragrance.
-          </p>
+      {/* What's in it */}
+      <section className="section-padding">
+        <div className="max-w-[700px] mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase mb-8">What's in it</h2>
+          <div className="space-y-6 font-body text-muted-foreground leading-relaxed text-[17px]">
+            <p>The formula is short, and you can read every line.</p>
+            <p>
+              Naturally derived oils, chosen for what they do, not what they smell like. Rosehip and hemp
+              are the actives. Australian jojoba and macadamia carry them, light and clean. Vitamin E and
+              rosemary keep the whole thing stable and honest.
+            </p>
+            <p className="text-foreground font-medium">
+              Majority Australian-grown. Zero fragrance. Zero synthetics. No water, so no preservative
+              circus. That's the lot.
+            </p>
+          </div>
           <Link
             to="/ingredients"
             className="inline-flex items-center mt-8 font-typewriter text-sm uppercase tracking-wider border-b border-foreground/50 pb-1 hover:border-foreground transition-colors"
           >
-            FULL INGREDIENT BREAKDOWN
+            Every oil, every reason
             <ArrowRight className="ml-2 w-4 h-4" />
           </Link>
         </div>
       </section>
 
-      <Separator className="max-w-[700px] mx-auto" />
+      {/* Who it's for */}
+      <section className="relative py-24 md:py-32">
+        <div className="absolute inset-0">
+          <img src={ruggedCoast} alt="Rugged Australian coastline" className="w-full h-full object-cover" loading="lazy" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/50" />
+        </div>
+        <div className="max-w-[700px] mx-auto px-6 relative z-10">
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">Who it's for</h2>
+          <div className="mt-8 space-y-6 font-body text-muted-foreground leading-relaxed text-[17px]">
+            <p>
+              Men who've spent their lives outdoors and paid for it in weathered skin. Surfers and
+              swimmers, riders and runners, tradies and dads on the sideline.
+            </p>
+            <p className="text-foreground font-medium">
+              But honestly, if your skin has copped its share of sun, salt, wind and years, it's for you.
+            </p>
+            <p>
+              You don't have to wait for the damage to show. If you're still out there, start looking
+              after it now.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      {/* Closing / Mission + Contact */}
+      {/* Close */}
       <section className="section-padding">
         <div className="max-w-[700px] mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">KEEP DOING THE THING</h2>
+          <h2 className="text-3xl md:text-4xl font-typewriter uppercase">Look after the gear</h2>
           <div className="mt-8 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
-            <p>Barrier maintenance for men who are serious about outdoor activity.</p>
-            <p>Not anti-aging. Not luxury ritual. Equipment maintenance.</p>
-            <p className="mt-6">
-              Questions about the product, ingredients, or approach?{" "}
+            <p>One product. Once a day. Made properly, in Australia, for a life spent out in it.</p>
+            <p>
+              Questions about the oil, the ingredients, or the thinking?{" "}
               <a href="mailto:hello@coastalendurance.com" className="text-foreground underline underline-offset-4 hover:text-primary transition-colors">
                 hello@coastalendurance.com
               </a>
@@ -259,7 +187,7 @@ const About = () => {
             to="/product"
             className="inline-flex items-center mt-12 font-typewriter text-sm uppercase tracking-wider border-b border-foreground/50 pb-1 hover:border-foreground transition-colors"
           >
-            MAINTAIN YOUR BARRIER
+            Get Field Oil
             <ArrowRight className="ml-2 w-4 h-4" />
           </Link>
         </div>
