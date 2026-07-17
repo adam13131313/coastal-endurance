@@ -91,7 +91,7 @@ const Home = () => {
                 THE HERO PRODUCT
               </span>
               <h2 className="mt-4 text-3xl md:text-5xl font-typewriter uppercase">
-                FIELD OIL
+                FIELD OIL 001
               </h2>
               <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
                 A barrier oil that supports your skin's natural barrier. 
@@ -120,7 +120,7 @@ const Home = () => {
               <div className="aspect-square bg-muted overflow-hidden">
                 <img
                   src={fieldOilImage}
-                  alt="Field Oil 30ml bottle"
+                  alt="Field Oil 001 30ml bottle"
                   className="w-full h-full object-cover"
                   loading="lazy" />
               </div>

@@ -217,7 +217,7 @@ Deno.serve(async (req) => {
         resolved.map((r) => ({
           order_id: order.id,
           variant_id: r.variant.id,
-          product_name: r.variant.products?.name ?? "Field Oil",
+          product_name: r.variant.products?.name ?? "Field Oil 001",
           variant_label: r.variant.label,
           quantity: r.incoming.quantity,
           unit_price_cents: r.variant.price_cents,

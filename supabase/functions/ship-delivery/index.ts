@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
         <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 28px">
           <p style="font-size:13px;font-weight:600;letter-spacing:3px;margin:0">COASTAL ENDURANCE</p>
           <hr style="border:none;border-top:1px solid #d6cfc4;margin:16px 0 24px"/>
-          <h1 style="font-size:22px;margin:0 0 16px">Your Field Oil is on its way</h1>
+          <h1 style="font-size:22px;margin:0 0 16px">Your Field Oil 001 is on its way</h1>
           <p style="font-size:15px;color:#333;line-height:1.6">Shipment ${delivery.sequence} of your order has been dispatched.</p>
           ${trackingLine}
           <p style="font-size:13px;color:#999;margin-top:24px">Coastal Endurance · Made in Australia</p>

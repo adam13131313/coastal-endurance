@@ -35,10 +35,16 @@ const BrandGuide = () => (
     <section>
       <H>Positioning</H>
       <p>
-        Coastal Endurance makes <strong>Field Oil</strong>, a daily skin-maintenance face oil for men.
+        Coastal Endurance makes <strong>Field Oil 001</strong>, a daily skin-maintenance face oil for men.
         It is functional, no-nonsense, and Australian. The frame is <strong>maintenance, not anti-aging or
         luxury</strong>: looking after your skin the way you'd look after any other kit. It speaks to men who
         spend time outdoors, without excluding the man who spends his day indoors and still wants healthy skin.
+      </p>
+      <p className="mt-3">
+        <strong>Naming:</strong> products carry numbered designations — Field Oil 001 is the first; future
+        products take 002, 003… (suggestion from Laurence Thomson, creative director). Use the full
+        designation where the product is formally named (product page, checkout, order emails); "Field Oil"
+        alone is fine mid-sentence as the line name.
       </p>
     </section>
 
