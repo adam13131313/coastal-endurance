@@ -134,8 +134,10 @@ const FieldTeamCRM = () => {
     load();
   };
 
-  const openCompose = (row: FieldTeamRow, tpl: EmailTemplate) =>
-    setCompose({ row, tpl, subject: interpolate(tpl.subject, row.contacts), body: interpolate(tpl.body, row.contacts) });
+  const openCompose = (row: FieldTeamRow, tpl: EmailTemplate) => {
+    const extras = { code: (row.meta?.discount_code as string | undefined) ?? null };
+    setCompose({ row, tpl, subject: interpolate(tpl.subject, row.contacts, extras), body: interpolate(tpl.body, row.contacts, extras) });
+  };
 
   const advanceAfterSend = async (row: FieldTeamRow, tpl: EmailTemplate) => {
     if (tpl.stage_on_send && row.stage !== tpl.stage_on_send) {
