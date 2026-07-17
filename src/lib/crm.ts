@@ -78,9 +78,13 @@ export interface EmailTemplate {
   active: boolean;
 }
 
-// Fill template placeholders for a contact.
-export function interpolate(text: string, c: Contact): string {
-  return (text ?? "").replace(/\{\{\s*first_name\s*\}\}/g, firstName(c));
+// Fill template placeholders for a contact. {{code}} comes from the pipeline row's
+// issued discount code; if none exists yet the placeholder says so (visible in the
+// editable compose box, so it can't slip out unnoticed).
+export function interpolate(text: string, c: Contact, extras?: { code?: string | null }): string {
+  return (text ?? "")
+    .replace(/\{\{\s*first_name\s*\}\}/g, firstName(c))
+    .replace(/\{\{\s*code\s*\}\}/g, extras?.code || "[no code issued yet — click Issue code first]");
 }
 
 export const fmtDate = (s: string | null) =>

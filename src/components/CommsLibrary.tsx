@@ -58,7 +58,7 @@ const CommsLibrary = ({ onBack }: { onBack: () => void }) => {
         <button onClick={onBack} className="text-sm font-body text-muted-foreground hover:text-foreground">← Back to pipeline</button>
       </div>
       <p className="text-sm font-body text-muted-foreground">
-        Edit the wording sent from the pipeline. <code className="text-foreground">{"{{first_name}}"}</code> is replaced with each person's first name when you compose. You can still tweak any email before it sends.
+        Edit the wording sent from the pipeline. <code className="text-foreground">{"{{first_name}}"}</code> is replaced with each person's first name when you compose, and <code className="text-foreground">{"{{code}}"}</code> with their issued free-bottle code. You can still tweak any email before it sends.
       </p>
 
       <div className="space-y-5">
