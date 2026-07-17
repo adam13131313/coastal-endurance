@@ -92,7 +92,7 @@ const Product = () => {
         quantity,
         deliveryDates: [],
       });
-      toast.success(`Added ${quantity} × Field Oil to cart`);
+      toast.success(`Added ${quantity} × Field Oil 001 to cart`);
       setQuantity(1);
     }
   };
@@ -100,17 +100,17 @@ const Product = () => {
   return (
     <main className="pt-20" id="top">
       <Helmet>
-        <title>Field Oil: Daily Barrier Face Oil | Coastal Endurance</title>
-        <meta name="description" content="Field Oil: a naturally derived daily face oil. Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, no added fragrance. $78 AUD. Made in Australia." />
+        <title>Field Oil 001: Daily Barrier Face Oil | Coastal Endurance</title>
+        <meta name="description" content="Field Oil 001: a naturally derived daily face oil. Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, no added fragrance. $78 AUD. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/product" />
-        <meta property="og:title" content="Field Oil: Daily Barrier Face Oil" />
+        <meta property="og:title" content="Field Oil 001: Daily Barrier Face Oil" />
         <meta property="og:description" content="A naturally derived daily face oil. Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. $78 AUD. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/product" />
         <meta property="og:type" content="product" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
-          name: "Field Oil",
+          name: "Field Oil 001",
           description: "A daily face oil for healthy skin. Naturally derived: Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, plus a natural antioxidant system. No added fragrance, zero essential oils. 30ml. Made in Australia.",
           image: "https://coastalendurance.com/og-image.png",
           brand: { "@type": "Brand", name: "Coastal Endurance" },
@@ -133,7 +133,7 @@ const Product = () => {
             100% NATURALLY DERIVED
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
-            FIELD OIL
+            FIELD OIL 001
           </h1>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
             100% naturally derived. Every ingredient has a job: actives, carriers, antioxidants.
@@ -148,7 +148,7 @@ const Product = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
             <div className="space-y-4">
               <div className="aspect-square bg-muted overflow-hidden">
-                <img src={productImage} alt="Field Oil 30ml bottle" className="w-full h-full object-cover" />
+                <img src={productImage} alt="Field Oil 001 30ml bottle" className="w-full h-full object-cover" />
               </div>
             </div>
 
@@ -157,7 +157,7 @@ const Product = () => {
                 DAILY BARRIER OIL FOR YOUR FACE
               </span>
               <h2 className="mt-4 text-4xl md:text-5xl font-typewriter uppercase">
-                FIELD OIL
+                FIELD OIL 001
               </h2>
               <p className="mt-2 text-2xl font-body">
                 {sym}{price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>

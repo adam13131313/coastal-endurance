@@ -41,7 +41,7 @@ const SECTIONS = [
 
   { h: "1 · Locked brand facts" },
   { facts: [
-    ["Product", "Field Oil"],
+    ["Product", "Field Oil 001"],
     ["Size", "30ml"],
     ["Price", "A$78 (single bottle)"],
     ["Positioning line", "“We don't make skincare. We make equipment maintenance.”"],
