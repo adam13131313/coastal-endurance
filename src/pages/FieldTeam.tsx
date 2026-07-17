@@ -6,10 +6,10 @@ const FieldTeam = () => {
   return (
     <main className="pt-20">
       <Helmet>
-        <title>Field Oil: Field Team Guide | Coastal Endurance</title>
+        <title>Field Oil 001: Field Team Guide | Coastal Endurance</title>
         <meta
           name="description"
-          content="Field team guide for Field Oil by Coastal Endurance. How to redeem your code, how to use the oil, ingredients, and how to send feedback."
+          content="Field team guide for Field Oil 001 by Coastal Endurance. How to redeem your code, how to use the oil, ingredients, and how to send feedback."
         />
         <link rel="canonical" href="https://coastalendurance.com/field-team" />
         <meta name="robots" content="noindex, nofollow" />
@@ -22,13 +22,13 @@ const FieldTeam = () => {
             COASTAL ENDURANCE
           </p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-typewriter uppercase tracking-tight">
-            FIELD OIL: FIELD TEAM GUIDE
+            FIELD OIL 001: FIELD TEAM GUIDE
           </h1>
           <p className="mt-4 text-xl md:text-2xl font-typewriter text-foreground">
             Welcome to the Field Team
           </p>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
-            You're on the Field Team: people who get Field Oil free in exchange for
+            You're on the Field Team: people who get Field Oil 001 free in exchange for
             honest feedback. This page has everything you need: how to redeem your
             code, how to use the oil, and how to tell us what you think.
           </p>
@@ -120,7 +120,7 @@ const FieldTeam = () => {
             WHAT THIS IS
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-6">
-            Field Oil is a 100% naturally derived daily face oil. Not anti-aging. Not a luxury
+            Field Oil 001 is a 100% naturally derived daily face oil. Not anti-aging. Not a luxury
             ritual. Daily maintenance for skin that takes sun, salt, wind, and time.
           </p>
           <ul className="space-y-3 text-[17px] font-body text-muted-foreground leading-relaxed">
@@ -359,7 +359,7 @@ const FieldTeam = () => {
             THANKS AGAIN
           </h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-8">
-            We built Field Oil to outperform anything else we put it against, and
+            We built Field Oil 001 to outperform anything else we put it against, and
             we're proud of what it is. You're among the very first to use it, so
             your honest feedback is what proves it out and helps us make it better.
           </p>
