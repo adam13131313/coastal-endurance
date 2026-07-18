@@ -12,6 +12,7 @@ import PlanTracker from "@/components/PlanTracker";
 import PipelineTracker from "@/components/PipelineTracker";
 import ContentGenerator from "@/components/ContentGenerator";
 import FieldTeamCRM from "@/components/FieldTeamCRM";
+import CommsLibrary from "@/components/CommsLibrary";
 import SocialGuide from "@/components/SocialGuide";
 import StaffBoard from "@/components/StaffBoard";
 import StaffAssistant from "@/components/StaffAssistant";
@@ -81,7 +82,7 @@ function formatAddress(a: Record<string, unknown> | null): string {
 const NAV_GROUPS = [
   { group: "Today", keys: ["today"] },
   { group: "Sell", keys: ["orders", "dispatch", "stock", "customers"] },
-  { group: "Grow", keys: ["campaign", "content", "field"] },
+  { group: "Grow", keys: ["campaign", "content", "field", "comms"] },
   { group: "Make", keys: ["production", "ideas"] },
   { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "social"] },
 ] as const;
@@ -89,7 +90,7 @@ const NAV_GROUPS = [
 const TAB_LABEL: Record<string, string> = {
   today: "Today", overview: "Charts", campaign: "Campaign", content: "Content",
   social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
-  customers: "Customers", field: "Field team", production: "Production",
+  customers: "Customers", field: "Field team", comms: "Comms", production: "Production",
   ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
   guide: "Staff guide", brand: "Brand", positioning: "Positioning",
 };
@@ -99,7 +100,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning">("today");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "comms" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -305,6 +306,8 @@ const Admin = () => {
           {tab === "content" && <ContentGenerator />}
 
           {tab === "field" && <FieldTeamCRM />}
+
+          {tab === "comms" && <CommsLibrary />}
 
           {tab === "production" && <ProductionAdmin />}
 

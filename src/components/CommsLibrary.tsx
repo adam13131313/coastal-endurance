@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { sb, type EmailTemplate } from "@/lib/crm";
 
-// Edit the CRM email templates (subject + body). {{first_name}} is filled per contact
-// when you compose. Admin-only (RLS). This is the "communications library".
-const CommsLibrary = ({ onBack }: { onBack: () => void }) => {
+// The communications library: every editable outbound message template lives here.
+// {{first_name}} / {{code}} are filled per contact when you compose. Admin-only (RLS).
+// Mounts as its own admin destination, and also inline from the Field Team pipeline
+// (which passes onBack for a "back to pipeline" link).
+const CommsLibrary = ({ onBack }: { onBack?: () => void }) => {
   const [rows, setRows] = useState<EmailTemplate[]>([]);
   const [draft, setDraft] = useState<Record<string, { label: string; subject: string; body: string; active: boolean }>>({});
   const [loading, setLoading] = useState(true);
@@ -54,11 +56,11 @@ const CommsLibrary = ({ onBack }: { onBack: () => void }) => {
   return (
     <div className="max-w-[720px] space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-typewriter uppercase">Comms library</h2>
-        <button onClick={onBack} className="text-sm font-body text-muted-foreground hover:text-foreground">← Back to pipeline</button>
+        <h2 className="text-2xl font-typewriter uppercase">Comms</h2>
+        {onBack && <button onClick={onBack} className="text-sm font-body text-muted-foreground hover:text-foreground">← Back to pipeline</button>}
       </div>
       <p className="text-sm font-body text-muted-foreground">
-        Edit the wording sent from the pipeline. <code className="text-foreground">{"{{first_name}}"}</code> is replaced with each person's first name when you compose, and <code className="text-foreground">{"{{code}}"}</code> with their issued free-bottle code. You can still tweak any email before it sends.
+        Every outbound message template, in one place. <code className="text-foreground">{"{{first_name}}"}</code> is replaced with each person's first name when you compose, and <code className="text-foreground">{"{{code}}"}</code> with their issued free-bottle code. You can still tweak any email before it sends.
       </p>
 
       <div className="space-y-5">
