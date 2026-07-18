@@ -5,7 +5,8 @@ import { fetchProduct, defaultDeliveryDates, firstShipBase, FIRST_SHIP_DATE, typ
 import { useCurrency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
-import fieldOilImage from "@/assets/field-oil-bottle.jpg";
+import ruggedCoast from "@/assets/rugged-coast.jpg";
+import sweepingPlains from "@/assets/sweeping-plains.jpg";
 
 type PurchaseType = "one-time" | "subscription";
 
@@ -32,7 +33,9 @@ const Product = () => {
 
   const price = singleVariant ? singleVariant.price_cents / 100 : 78;
   const currencyCode = product?.currency || "AUD";
-  const productImage = product?.image_url || fieldOilImage;
+  // Until the real bottle shoot: prefer a DB-set image_url (drop-in, no deploy),
+  // fall back to brand-world landscape rather than an AI bottle render.
+  const productImage = product?.image_url || sweepingPlains;
   const bundleBottles = bundleVariant?.bottles ?? 4;
   const subscriptionPrice = bundleVariant ? bundleVariant.price_cents / 100 : price * 3;
   const savingsAmount = price * bundleBottles - subscriptionPrice;
@@ -126,17 +129,25 @@ const Product = () => {
         })}</script>
       </Helmet>
 
-      {/* Header Banner */}
-      <section className="section-padding bg-secondary">
-        <div className="max-w-[700px] mx-auto px-6 text-center">
-          <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-4">
+      {/* Header Banner — image-led; swaps cleanly for a real bottle shot when it exists */}
+      <section className="relative py-28 md:py-40 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={ruggedCoast}
+            alt="Rugged Australian coastline"
+            className="w-full h-full object-cover animate-hero-settle"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/40 to-black/25" />
+        </div>
+        <div className="max-w-[700px] mx-auto px-6 text-center relative z-10 text-background">
+          <p className="font-typewriter text-xs uppercase tracking-[0.25em] text-background/70 mb-4 animate-slide-up">
             100% NATURALLY DERIVED
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase animate-slide-up" style={{ animationDelay: "0.05s" }}>
             FIELD OIL 001
           </h1>
-          <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
-            100% naturally derived. Every ingredient has a job: actives, carriers, antioxidants.
+          <p className="mt-6 text-[17px] font-body text-background/80 leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            Every ingredient has a job: actives, carriers, antioxidants.
             No synthetics, no fragrance. Made with Australian-grown oils.
           </p>
         </div>
@@ -146,10 +157,15 @@ const Product = () => {
       <section className="section-padding">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div className="aspect-square bg-muted overflow-hidden">
-                <img src={productImage} alt="Field Oil 001 30ml bottle" className="w-full h-full object-cover" />
+                <img src={productImage} alt={product?.image_url ? "Field Oil 001 30ml bottle" : "Sweeping Australian plains at golden hour"} className="w-full h-full object-cover" />
               </div>
+              {!product?.image_url && (
+                <p className="font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground text-right">
+                  Bottle photography with the first batch
+                </p>
+              )}
             </div>
 
             <div className="lg:sticky lg:top-32 lg:self-start">

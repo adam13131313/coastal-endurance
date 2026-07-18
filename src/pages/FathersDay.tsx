@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Check } from "lucide-react";
-import fieldOilImage from "@/assets/field-oil-bottle.jpg";
+import sweepingPlains from "@/assets/sweeping-plains.jpg";
 import NewsletterSignup from "@/components/NewsletterSignup";
 
 const FathersDay = () => {
@@ -45,7 +45,7 @@ const FathersDay = () => {
               </div>
             </div>
             <div className="order-first lg:order-last">
-              <img src={fieldOilImage} alt="Field Oil bottle" className="w-full border border-border" />
+              <img src={sweepingPlains} alt="Sweeping Australian plains at golden hour" className="w-full border border-border" />
             </div>
           </div>
         </div>
