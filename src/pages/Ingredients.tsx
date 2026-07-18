@@ -188,6 +188,30 @@ const Ingredients = () => {
         </div>
       </section>
 
+      {/* Provenance */}
+      <section className="section-padding bg-secondary">
+        <div className="max-w-[700px] mx-auto px-6">
+          <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-3">
+            WHERE IT COMES FROM
+          </p>
+          <h2 className="text-2xl md:text-3xl font-typewriter uppercase">PROVENANCE</h2>
+          <div className="mt-6 space-y-4 font-body text-muted-foreground leading-relaxed text-[17px]">
+            <p>
+              <strong className="text-foreground">65% of the formula by weight is Australian-grown.</strong>{" "}
+              The jojoba that forms the base, the hemp seed oil grown in Tasmania, and the macadamia,
+              from a tree native to this country. They're the three biggest ingredients in the bottle,
+              grown in the conditions the oil is made for.
+            </p>
+            <p>
+              The rest we import, because Australia doesn't grow them at the quality the formula needs.
+              We'd rather use the right oil from elsewhere than the wrong oil from nearby, and we'd
+              rather tell you that than round up. Every ingredient is on this page, with its job next
+              to it.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Ingredients List */}
       <section className="pb-20 md:pb-32">
         <div className="max-w-[700px] mx-auto px-6">
