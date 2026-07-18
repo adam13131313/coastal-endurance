@@ -125,6 +125,27 @@
     animation: slideUp 0.8s ease-out forwards;
   }
 
+  /* One-time slow settle on hero imagery — quiet, not a loop. */
+  .animate-hero-settle {
+    animation: heroSettle 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    transform-origin: center;
+  }
+
+  @keyframes heroSettle {
+    from { transform: scale(1.08); }
+    to { transform: scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-slide-up,
+    .animate-fade-in,
+    .animate-hero-settle {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;

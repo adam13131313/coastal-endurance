@@ -3,7 +3,9 @@ import { ArrowRight } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
 import fieldOilImage from "@/assets/field-oil-bottle.jpg";
+import heroLandscape from "@/assets/coastal-landscape.jpg";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import Reveal from "@/components/Reveal";
 
 const Home = () => {
   return (
@@ -17,30 +19,39 @@ const Home = () => {
         <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-background border-b border-border">
-        <div className="container-wide relative z-10 pt-20">
-          <div className="max-w-2xl">
-            <p className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-4 animate-slide-up">
+      {/* Hero Section — image-led, cinematic. Landscape backdrop is a placeholder
+          pending real photography; the layout swaps to any hero image cleanly. */}
+      <section className="relative min-h-screen flex items-end overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={heroLandscape}
+            alt="Rugged Australian coastline at dusk, surf against cliffs"
+            className="w-full h-full object-cover animate-hero-settle"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/20" />
+        </div>
+        <div className="container-wide relative z-10 pb-20 md:pb-28 pt-40">
+          <div className="max-w-2xl text-background">
+            <p className="font-typewriter text-xs uppercase tracking-[0.25em] text-background/70 mb-5 animate-slide-up">
               100% NATURALLY DERIVED
             </p>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-tight animate-slide-up text-foreground" style={{ animationDelay: "0.05s" }}>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-[1.05] animate-slide-up" style={{ animationDelay: "0.05s" }}>
               FIELD OIL: DAILY SKIN MAINTENANCE
             </h1>
-            <p className="mt-4 text-xl md:text-2xl font-typewriter animate-slide-up text-foreground" style={{ animationDelay: "0.08s" }}>
-              For Sun, Salt, Wind, & Time
+            <p className="mt-6 text-xl md:text-2xl font-typewriter text-background/90 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+              For Sun, Salt, Wind, &amp; Time
             </p>
             <p
-              className="mt-6 text-lg font-body text-muted-foreground leading-relaxed animate-slide-up max-w-lg"
-              style={{ animationDelay: "0.1s" }}>
+              className="mt-5 text-lg font-body text-background/75 leading-relaxed animate-slide-up max-w-lg"
+              style={{ animationDelay: "0.15s" }}>
               Field Oil maintains what the elements wear down.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
-              <Link to="/product" className="inline-flex items-center justify-center px-6 py-3 bg-foreground text-background font-typewriter text-sm uppercase tracking-wider hover:bg-foreground/90 transition-colors">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+              <Link to="/product" className="group inline-flex items-center justify-center px-6 py-3 bg-background text-foreground font-typewriter text-sm uppercase tracking-wider hover:bg-background/90 transition-colors">
                 MAINTAIN YOUR BARRIER
-                <ArrowRight className="ml-2 w-4 h-4" />
+                <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
-              <Link to="/about" className="inline-flex items-center justify-center px-6 py-3 border border-foreground text-foreground font-typewriter text-sm uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors">
+              <Link to="/about" className="inline-flex items-center justify-center px-6 py-3 border border-background/60 text-background font-typewriter text-sm uppercase tracking-wider hover:bg-background hover:text-foreground transition-colors">
                 ABOUT US
               </Link>
             </div>
@@ -72,21 +83,21 @@ const Home = () => {
 
       {/* Problem Section */}
       <section className="section-padding bg-secondary">
-        <div className="max-w-[700px] mx-auto px-6 text-center">
+        <Reveal className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
             FOR LIFE IN THE OUTDOORS
           </h2>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
             Field Oil is a daily face oil built for those who spend their days outside, surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       {/* Product Introduction */}
       <section className="section-padding">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="order-2 lg:order-1">
+            <Reveal className="order-2 lg:order-1">
               <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
                 THE HERO PRODUCT
               </span>
@@ -115,23 +126,23 @@ const Home = () => {
                 DISCOVER FIELD OIL
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
-            </div>
-            <div className="order-1 lg:order-2">
+            </Reveal>
+            <Reveal className="order-1 lg:order-2" delay={0.1}>
               <div className="aspect-square bg-muted overflow-hidden">
                 <img
                   src={fieldOilImage}
                   alt="Field Oil 001 30ml bottle"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-[1.03]"
                   loading="lazy" />
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* Philosophy Preview */}
       <section className="section-padding bg-primary text-primary-foreground">
-        <div className="max-w-[700px] mx-auto px-6 text-center">
+        <Reveal className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
             BETTER PERFORMANCE
           </h2>
@@ -142,7 +153,7 @@ const Home = () => {
             READ OUR STORY
             <ArrowRight className="ml-2 w-4 h-4" />
           </Link>
-        </div>
+        </Reveal>
       </section>
 
       {/* Newsletter */}
