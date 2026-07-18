@@ -129,27 +129,24 @@ const Product = () => {
         })}</script>
       </Helmet>
 
-      {/* Header Banner — image-led; swaps cleanly for a real bottle shot when it exists */}
-      <section className="relative py-28 md:py-40 overflow-hidden">
+      {/* Header band — quiet and slim. The home page carries the cinematic moment;
+          here the product and the buy experience lead. */}
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={ruggedCoast}
             alt="Rugged Australian coastline"
-            className="w-full h-full object-cover animate-hero-settle"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/40 to-black/25" />
+          <div className="absolute inset-0 bg-black/55" />
         </div>
         <div className="max-w-[700px] mx-auto px-6 text-center relative z-10 text-background">
-          <p className="font-typewriter text-xs uppercase tracking-[0.25em] text-background/70 mb-4 animate-slide-up">
+          <p className="font-typewriter text-xs uppercase tracking-[0.25em] text-background/70 mb-3">
             100% NATURALLY DERIVED
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-typewriter uppercase animate-slide-up" style={{ animationDelay: "0.05s" }}>
+          <h1 className="text-3xl md:text-4xl font-typewriter uppercase">
             FIELD OIL 001
           </h1>
-          <p className="mt-6 text-[17px] font-body text-background/80 leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
-            Every ingredient has a job: actives, carriers, antioxidants.
-            No synthetics, no fragrance. Made with Australian-grown oils.
-          </p>
         </div>
       </section>
 
@@ -157,15 +154,10 @@ const Product = () => {
       <section className="section-padding">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-            <div className="space-y-2">
+            <div className="space-y-4">
               <div className="aspect-square bg-muted overflow-hidden">
                 <img src={productImage} alt={product?.image_url ? "Field Oil 001 30ml bottle" : "Sweeping Australian plains at golden hour"} className="w-full h-full object-cover" />
               </div>
-              {!product?.image_url && (
-                <p className="font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground text-right">
-                  Bottle photography with the first batch
-                </p>
-              )}
             </div>
 
             <div className="lg:sticky lg:top-32 lg:self-start">
