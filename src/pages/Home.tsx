@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
-import ruggedCoast from "@/assets/rugged-coast.jpg";
+import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 import heroLandscape from "@/assets/coastal-landscape.jpg";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import Reveal from "@/components/Reveal";
@@ -130,8 +130,8 @@ const Home = () => {
             <Reveal className="order-1 lg:order-2" delay={0.1}>
               <div className="aspect-square bg-muted overflow-hidden">
                 <img
-                  src={ruggedCoast}
-                  alt="Rugged Australian coastline, the conditions Field Oil is made for"
+                  src={fieldOilImage}
+                  alt="Field Oil 001 30ml bottle on driftwood, coastal backdrop"
                   className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-[1.03]"
                   loading="lazy" />
               </div>

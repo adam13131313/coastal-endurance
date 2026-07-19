@@ -6,7 +6,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import ruggedCoast from "@/assets/rugged-coast.jpg";
-import sweepingPlains from "@/assets/sweeping-plains.jpg";
+import fieldOilImage from "@/assets/field-oil-bottle.jpg";
 
 type PurchaseType = "one-time" | "subscription";
 
@@ -33,9 +33,9 @@ const Product = () => {
 
   const price = singleVariant ? singleVariant.price_cents / 100 : 78;
   const currencyCode = product?.currency || "AUD";
-  // Until the real bottle shoot: prefer a DB-set image_url (drop-in, no deploy),
-  // fall back to brand-world landscape rather than an AI bottle render.
-  const productImage = product?.image_url || sweepingPlains;
+  // Prefer a DB-set image_url (drop-in, no deploy); fall back to the Field Oil
+  // bottle shot so the product image always shows the actual product.
+  const productImage = product?.image_url || fieldOilImage;
   const bundleBottles = bundleVariant?.bottles ?? 4;
   const subscriptionPrice = bundleVariant ? bundleVariant.price_cents / 100 : price * 3;
   const savingsAmount = price * bundleBottles - subscriptionPrice;
@@ -156,7 +156,7 @@ const Product = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
             <div className="space-y-4">
               <div className="aspect-square bg-muted overflow-hidden">
-                <img src={productImage} alt={product?.image_url ? "Field Oil 001 30ml bottle" : "Sweeping Australian plains at golden hour"} className="w-full h-full object-cover" />
+                <img src={productImage} alt="Field Oil 001 30ml bottle on driftwood, coastal backdrop" className="w-full h-full object-cover" />
               </div>
             </div>
 
