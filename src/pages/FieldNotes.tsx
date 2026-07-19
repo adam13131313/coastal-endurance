@@ -55,7 +55,7 @@ const FieldNotes = () => {
           </p>
           <h1 className="text-4xl md:text-5xl font-typewriter uppercase">FIELD NOTES</h1>
           <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
-            Occasional notes on maintenance, endurance, and what goes into the bottle. Written by the founder, when there's something worth saying.
+            Occasional notes on maintenance, endurance, and what goes into the bottle. Written by our team, when there's something worth saying.
           </p>
         </div>
       </section>
