@@ -11,10 +11,10 @@ const Home = () => {
   return (
     <main>
       <Helmet>
-        <title>Field Oil: Daily Skin Maintenance</title>
+        <title>Field Oil 001: Daily Skin Maintenance</title>
         <meta name="description" content="A daily face oil for healthy skin. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/" />
-        <meta property="og:title" content="Field Oil: Daily Skin Maintenance" />
+        <meta property="og:title" content="Field Oil 001: Daily Skin Maintenance" />
         <meta property="og:description" content="A daily face oil for healthy skin. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
@@ -36,7 +36,7 @@ const Home = () => {
               100% NATURALLY DERIVED
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-[1.05] animate-slide-up" style={{ animationDelay: "0.05s" }}>
-              FIELD OIL: DAILY SKIN MAINTENANCE
+              FIELD OIL 001: DAILY SKIN MAINTENANCE
             </h1>
             <p className="mt-6 text-xl md:text-2xl font-typewriter text-background/90 animate-slide-up" style={{ animationDelay: "0.1s" }}>
               For Sun, Salt, Wind, &amp; Time
