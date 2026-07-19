@@ -10,6 +10,7 @@ const CartDrawer = lazy(() =>
 const navLinks = [
   { name: "SHOP", path: "/product" },
   { name: "INGREDIENTS", path: "/ingredients" },
+  { name: "FIELD NOTES", path: "/field-notes" },
   { name: "ABOUT", path: "/about" },
   { name: "CONTACT", path: "/contact" },
 ];
