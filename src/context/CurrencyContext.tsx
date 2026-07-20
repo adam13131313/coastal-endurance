@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useCartStore } from "@/stores/cartStore";
 
-export type Currency = "AUD" | "GBP";
+export type Currency = "AUD" | "GBP" | "USD";
 
 interface CurrencyConfig {
   code: Currency;
@@ -12,20 +12,22 @@ interface CurrencyConfig {
 export const CURRENCIES: Record<Currency, CurrencyConfig> = {
   AUD: { code: "AUD", symbol: "$", label: "AUD $" },
   GBP: { code: "GBP", symbol: "£", label: "GBP £" },
+  USD: { code: "USD", symbol: "$", label: "USD $" },
 };
 
 const STORAGE_KEY = "ce-currency";
 
 // Default currency from the visitor's locale/timezone (a privacy-friendly hint; no
-// IP lookup). UK → GBP, everyone else → AUD. The manual switcher overrides this.
+// IP lookup). UK → GBP, US → USD, everyone else → AUD. The manual switcher overrides this.
 function detectCurrency(): Currency {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "AUD" || stored === "GBP") return stored;
+    if (stored === "AUD" || stored === "GBP" || stored === "USD") return stored;
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
     if (tz === "Europe/London") return "GBP";
     const region = new Intl.Locale(navigator.language).maximize().region;
     if (region === "GB") return "GBP";
+    if (region === "US") return "USD";
   } catch { /* ignore */ }
   return "AUD";
 }
