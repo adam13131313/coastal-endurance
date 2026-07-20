@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import AdminGuide from "@/components/AdminGuide";
 import AdminCockpit from "@/components/AdminCockpit";
 import AdminDashboard from "@/components/AdminDashboard";
+import FinancialModel from "@/components/FinancialModel";
 import PlanTracker from "@/components/PlanTracker";
 import PipelineTracker from "@/components/PipelineTracker";
 import ContentGenerator from "@/components/ContentGenerator";
@@ -290,7 +291,13 @@ const Admin = () => {
 
           {tab === "today" && <AdminCockpit orders={orders} onGo={(t) => setTab(t as typeof tab)} />}
 
-          {tab === "overview" && <AdminDashboard orders={orders} />}
+          {tab === "overview" && (
+            <div className="space-y-12">
+              <AdminDashboard orders={orders} />
+              <hr className="border-border" />
+              <FinancialModel />
+            </div>
+          )}
 
           {tab === "campaign" && (
             <div className="space-y-12">
