@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
     // Resolve pricing currency (authoritative, server-side). AUD is the base on
     // product_variants; other currencies come from variant_prices. Only switch
     // currency if EVERY variant has a price in it, else fall back to AUD.
-    const reqCurrency = body?.currency === "GBP" ? "GBP" : "AUD";
+    const reqCurrency = body?.currency === "GBP" || body?.currency === "USD" ? body.currency : "AUD";
     let priceByVariant = new Map<string, number>();
     let orderCurrency = "AUD";
     if (reqCurrency !== "AUD") {
