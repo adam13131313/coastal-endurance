@@ -107,6 +107,16 @@ const Admin = () => {
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [heard, setHeard] = useState<Record<string, string>>({});
+  // Mobile nav: which group's tabs are shown in the two-level picker. Desktop
+  // shows every group at once (sidebar), so this only drives the < md layout.
+  const [mobileGroup, setMobileGroup] = useState<string>("Today");
+
+  // Keep the mobile group in sync with the active tab, so navigating from
+  // elsewhere (e.g. the Today cockpit's shortcuts) reveals the right group.
+  useEffect(() => {
+    const g = NAV_GROUPS.find((s) => (s.keys as readonly string[]).includes(tab))?.group;
+    if (g) setMobileGroup(g);
+  }, [tab]);
 
   const loadOrders = useCallback(async () => {
     setLoading(true);
@@ -261,8 +271,43 @@ const Admin = () => {
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 md:gap-10">
-            <aside className="md:w-48 md:shrink-0">
-              <nav className="flex md:flex-col gap-x-2 gap-y-6 overflow-x-auto md:overflow-visible pb-3 md:pb-0 border-b md:border-b-0 md:border-r border-border md:pr-6">
+            {/* Mobile: two-level grouped nav. A row of group chips reveals that
+                group's tabs in the row below (2–7 items, no blind scrolling);
+                the active tab stays highlighted. Desktop uses the sidebar. */}
+            <div className="md:hidden border-b border-border pb-3">
+              <div className="flex gap-1 overflow-x-auto pb-2 mb-2 border-b border-dashed border-border">
+                {NAV_GROUPS.map((section) => (
+                  <button
+                    key={section.group}
+                    onClick={() => setMobileGroup(section.group)}
+                    className={`whitespace-nowrap px-3 py-1.5 text-xs font-typewriter uppercase tracking-wider transition-colors ${
+                      mobileGroup === section.group ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {section.group}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-1 overflow-x-auto">
+                {(NAV_GROUPS.find((s) => s.group === mobileGroup) ?? NAV_GROUPS[0]).keys.map((k) => {
+                  const label = k === "dispatch" ? `To ship (${dispatch.length})` : k === "orders" ? `Orders (${orders.length})` : TAB_LABEL[k];
+                  return (
+                    <button
+                      key={k}
+                      onClick={() => setTab(k)}
+                      className={`whitespace-nowrap px-3 py-1.5 text-sm font-typewriter uppercase tracking-wider transition-colors ${
+                        tab === k ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <aside className="hidden md:block md:w-48 md:shrink-0">
+              <nav className="flex flex-col gap-y-6 border-r border-border pr-6">
                 {NAV_GROUPS.map((section) => (
                   <div key={section.group} className="shrink-0">
                     <p className="hidden md:block font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground mb-2">{section.group}</p>
