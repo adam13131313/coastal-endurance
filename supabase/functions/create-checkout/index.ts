@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
     // Resolve pricing currency (authoritative, server-side). AUD is the base on
     // product_variants; other currencies come from variant_prices. Only switch
     // currency if EVERY variant has a price in it, else fall back to AUD.
-    const reqCurrency = body?.currency === "GBP" || body?.currency === "USD" ? body.currency : "AUD";
+    const reqCurrency = ["GBP", "USD", "EUR"].includes(body?.currency) ? body.currency : "AUD";
     let priceByVariant = new Map<string, number>();
     let orderCurrency = "AUD";
     if (reqCurrency !== "AUD") {
@@ -280,10 +280,19 @@ Deno.serve(async (req) => {
       customer_email: email,
       success_url: `${siteBase}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteBase}/checkout/cancel`,
-      // Launch markets only: ship to AU + UK. Standard shipping free, express 9.95
-      // in the order currency. (Pickup path is retained but no longer offered in the UI.)
+      // Ship to AU, UK, the US, and the 27 EU states. Standard shipping free,
+      // express 9.95 in the order currency. NOTE: international postage from AU
+      // costs more than the $10/unit the model absorbs — margin on US/EU orders
+      // is thinner until per-region shipping rates are added.
+      // (Pickup path is retained but no longer offered in the UI.)
       ...(pickup ? {} : {
-        shipping_address_collection: { allowed_countries: ["AU", "GB"] },
+        shipping_address_collection: {
+          allowed_countries: [
+            "AU", "GB", "US",
+            "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU",
+            "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE",
+          ],
+        },
         shipping_options: [
           {
             shipping_rate_data: {
