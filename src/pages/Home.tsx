@@ -11,11 +11,11 @@ const Home = () => {
   return (
     <main>
       <Helmet>
-        <title>Field Oil 001: Daily Skin Maintenance</title>
-        <meta name="description" content="A daily face oil for healthy skin. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
+        <title>Field Oil 001: Daily Skin Barrier Maintenance</title>
+        <meta name="description" content="A daily face oil that supports and maintains your skin barrier. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
         <link rel="canonical" href="https://coastalendurance.com/" />
-        <meta property="og:title" content="Field Oil 001: Daily Skin Maintenance" />
-        <meta property="og:description" content="A daily face oil for healthy skin. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
+        <meta property="og:title" content="Field Oil 001: Daily Skin Barrier Maintenance" />
+        <meta property="og:description" content="A daily face oil that supports and maintains your skin barrier. Naturally derived, Rosehip and Hemp actives, Australian-grown carriers, no added fragrance. Made in Australia." />
         <meta property="og:url" content="https://coastalendurance.com/" />
       </Helmet>
 
