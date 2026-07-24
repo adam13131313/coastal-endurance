@@ -79,6 +79,7 @@ const BrandGuide = () => (
             <li>Anti-aging, luxury, or hype / superlatives.</li>
             <li>"For outdoor men only" or specific activity quantities.</li>
             <li>Stacked percentages, or em dashes (use commas / colons).</li>
+            <li>Comparative or accusatory copy: never straw-man "the industry" or imply others act in bad faith. Say what we do and why; let readers compare.</li>
           </ul>
         </div>
       </div>

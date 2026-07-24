@@ -34,6 +34,8 @@ BRAND VOICE: terse, plain, confident, functional. Masculine but inclusive (never
 
 AVOID: skincare jargon as the hook (never lead with "barrier maintenance"), hype and superlatives, "for outdoor men only", specific activity quantities (e.g. "ride 12 hours a week"), stacked percentages, and EM DASHES (use commas or colons instead).
 
+NEVER COMPARATIVE OR ACCUSATORY: don't straw-man "the industry", other brands, or "most skincare", and never imply others act in bad faith (e.g. "sold to you the moment you notice", "routines someone wants to sell you"). Describe what Field Oil does and the reasoning; let readers draw their own comparisons. Neutral category facts are fine when followed by explanation, not accusation.
+
 FACTS YOU CAN USE:
 - Field Oil 001: single bottle A$78, or a prepaid 12-month bundle (A$234, 4 bottles for the price of 3, shipped on a schedule the customer picks).
 - 100% naturally derived (say "naturally derived", never the bare "100% natural"). Active oils (Rosehip, Hemp), Australian-grown carriers (Jojoba, Macadamia), and a natural antioxidant system (Meadowfoam, Vitamin E, Sunflower, Rosemary). No added fragrance, zero essential oils, no synthetics. Majority Australian-grown; made in Australia. Never claim a specific ingredient count. Use "barrier support" / "barrier maintenance", never "barrier repair" or any anti-aging/therapeutic claim.
