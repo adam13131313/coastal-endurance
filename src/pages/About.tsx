@@ -104,17 +104,18 @@ const About = () => {
           <h2 className="text-3xl md:text-4xl font-typewriter uppercase">The long game</h2>
           <div className="mt-8 space-y-6 font-body text-muted-foreground leading-relaxed text-[17px]">
             <p>
-              Most skincare waits for the damage, then sells you the rescue. Anti-ageing. Repair. A
-              ten-step fix for a problem you didn't have yet.
+              Repair is what you do after something breaks. Maintenance is what you do so it doesn't
+              break in the first place. Anyone who owns good gear knows which of the two is easier,
+              cheaper and kinder to the gear.
             </p>
             <p>
-              I don't think like that. If you train for anything, you already know the opposite is true:
-              you look after the gear while it's still in the fight, so it stays in the fight. Small,
-              daily, unglamorous. It's how you keep doing the thing for years instead of weeks.
+              If you train for anything, you already live by it: you look after the gear while it's
+              still in the fight, so it stays in the fight. Small, daily, unglamorous. It's how you
+              keep doing the thing for years instead of weeks.
             </p>
             <p className="text-foreground font-medium">
-              Skin's no different. Sun, wind, salt, sweat, week after week. So the smart move is the dull
-              one: look after it daily, before you're the one needing rescuing.
+              Skin's no different. Sun, wind, salt, sweat, week after week. So the smart move is the
+              dull one: look after it daily.
             </p>
           </div>
         </div>
