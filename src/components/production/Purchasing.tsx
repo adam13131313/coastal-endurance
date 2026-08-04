@@ -393,7 +393,23 @@ const Purchasing = () => {
           </div>
           <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
             <Meta label="Order date" value={fmtDate(po.order_date)} />
-            <Meta label="Batch" value={batches.find((b) => b.id === po.batch_calculation_id)?.batch_ref ?? "—"} />
+            <div>
+              <p className="font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground">Batch</p>
+              <select
+                value={po.batch_calculation_id ?? ""}
+                onChange={async (e) => {
+                  const v = e.target.value || null;
+                  await sb.from("purchase_orders").update({ batch_calculation_id: v }).eq("id", po.id);
+                  setViewing({ ...po, batch_calculation_id: v });
+                  toast.success(v ? "Linked to batch." : "Unlinked.");
+                  load();
+                }}
+                className="mt-0.5 w-full px-1.5 py-1 border border-border bg-background text-xs rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+              >
+                <option value="">— none —</option>
+                {batches.map((b) => <option key={b.id} value={b.id}>{b.batch_ref} · {b.label}</option>)}
+              </select>
+            </div>
             <Meta label="Total (inc GST)" value={fmtMoney(po.total_cents, po.currency)} />
             <Meta label="Logged" value={fmtDate(po.created_at)} />
             <Meta label="Payment" value={po.payment_method ?? "—"} />
