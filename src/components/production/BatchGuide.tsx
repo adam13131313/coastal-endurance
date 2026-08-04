@@ -16,6 +16,18 @@ const PRINCIPLES = [
 const STEPS = [
   {
     n: 1,
+    tab: "Batch sizing",
+    h: "Size the batch & buy the materials",
+    items: [
+      "Batch sizing tab: enter bottles → it works back to litres/kg per ingredient, rounded up to supplier pack sizes, with surplus shown. Save it (you'll get a FO-B reference) — the saved snapshot is the basis for ordering.",
+      "Copy the order sheet and place orders on each supplier's site as usual.",
+      "Purchasing tab: paste each order confirmation → Parse → check the numbers and matches → Save order, linked to the FO-B batch. The Coverage panel shows required vs ordered vs outstanding per ingredient.",
+      "Records: open the saved order and paste the payment receipt (and later the tax invoice) under Records. Everything is retained permanently — that's the tax paper trail.",
+      "When a delivery arrives: open the order → Receive. That creates quarantined lots automatically; add the supplier lot number from the drum label, then run incoming QC (next step).",
+    ],
+  },
+  {
+    n: 2,
     tab: "Materials",
     h: "Receive & release every raw material",
     items: [
@@ -26,7 +38,7 @@ const STEPS = [
     ],
   },
   {
-    n: 2,
+    n: 3,
     tab: "Formula",
     h: "Work out your quantities",
     items: [
@@ -35,7 +47,7 @@ const STEPS = [
     ],
   },
   {
-    n: 3,
+    n: 4,
     tab: "Batches",
     h: "Open the batch",
     items: [
@@ -44,7 +56,7 @@ const STEPS = [
     ],
   },
   {
-    n: 4,
+    n: 5,
     tab: "—",
     h: "Prep (before you weigh anything)",
     items: [
@@ -54,7 +66,7 @@ const STEPS = [
     ],
   },
   {
-    n: 5,
+    n: 6,
     tab: "Batches",
     h: "Blend — order matters",
     items: [
@@ -66,7 +78,7 @@ const STEPS = [
     ],
   },
   {
-    n: 6,
+    n: 7,
     tab: "Batches",
     h: "In-process QC",
     items: [
@@ -76,7 +88,7 @@ const STEPS = [
     ],
   },
   {
-    n: 7,
+    n: 8,
     tab: "Batches",
     h: "Fill & pack",
     items: [
@@ -87,7 +99,7 @@ const STEPS = [
     ],
   },
   {
-    n: 8,
+    n: 9,
     tab: "Batches",
     h: "Finished QC",
     items: [
@@ -97,7 +109,7 @@ const STEPS = [
     ],
   },
   {
-    n: 9,
+    n: 10,
     tab: "Retains",
     h: "Keep retains",
     items: [
@@ -106,7 +118,7 @@ const STEPS = [
     ],
   },
   {
-    n: 10,
+    n: 11,
     tab: "Batches",
     h: "Release",
     items: [

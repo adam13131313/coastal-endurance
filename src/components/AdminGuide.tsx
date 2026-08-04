@@ -41,6 +41,8 @@ const AdminGuide = () => (
         <li><strong>Add a staff member:</strong> Supabase → Table Editor → <code>admins</code> → insert their Google login email. That grants this admin area and the notification emails.</li>
         <li><strong>Send a newsletter / restock update:</strong> Resend dashboard → Broadcasts → the <strong>Coastal Endurance updates</strong> audience → compose and send. Unsubscribe is handled automatically. Website signups feed this list.</li>
         <li><strong>Issue a field team free bottle:</strong> see the Field team tab and its own section below.</li>
+        <li><strong>Log a supplier order:</strong> Production → Purchasing → paste the order confirmation → Parse → review → Save. Then open the saved order and paste the payment receipt (and the tax invoice when it comes) under <strong>Records</strong> — kept permanently, that's our tax paper trail. When the goods arrive: open the order → <strong>Receive</strong>, which creates quarantined lots for incoming QC.</li>
+        <li><strong>Size a production batch / order materials:</strong> Production → Batch sizing → enter bottles → Save batch (FO-B reference) → Copy order sheet. The Purchasing tab's Coverage panel shows what's still outstanding per ingredient.</li>
       </ul>
     </section>
 
@@ -66,7 +68,9 @@ const AdminGuide = () => (
           ["Campaign", "Father's Day pace + Year-1 plan, plus where sales come from and reach needed."],
           ["Content", "Generate on-brand social, website, and email copy plus video shot lists."],
           ["Field team", "The recruitment pipeline board: invite → code → trial → advocate, with emails."],
-          ["Production", "Batch records (BMR), QC, traceability. How-to guide inside."],
+          ["Comms", "The email templates the pipeline sends ({{first_name}} and {{code}} fill automatically)."],
+          ["Field Notes", "The public journal at /field-notes: write, preview, publish."],
+          ["Production", "Batch sizing, purchasing (supplier orders + retained records), batch records (BMR), QC, traceability. How-to guide inside."],
           ["Product ideas", "The future-product list."],
           ["Charts", "Revenue and upcoming-shipment charts."],
           ["Staff board", "Issues, requests, suggestions, and questions for the team."],
