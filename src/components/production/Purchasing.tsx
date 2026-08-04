@@ -47,6 +47,17 @@ interface Po {
   purchase_order_items: PoItem[];
 }
 interface Candidate { id: string; kind: "raw_material" | "packaging_component"; name: string; }
+interface PoDoc {
+  id: string; doc_type: string; file_url: string | null; raw_text: string | null;
+  uploaded_by: string | null; uploaded_at: string;
+}
+const DOC_TYPES = [
+  { key: "payment_receipt", label: "Payment receipt" },
+  { key: "tax_invoice", label: "Tax invoice" },
+  { key: "order_confirmation", label: "Order confirmation" },
+  { key: "shipping", label: "Shipping / delivery" },
+  { key: "other", label: "Other" },
+];
 interface SavedBatchLite {
   id: string; batch_ref: string; label: string; archived_at: string | null;
   results_snapshot: BatchResults;
@@ -100,6 +111,14 @@ const Purchasing = () => {
   const [showArchived, setShowArchived] = useState(false);
   const [coverageBatch, setCoverageBatch] = useState<string>("");
 
+  // Records retention: supporting documents per PO (payment receipts, tax
+  // invoices…). Pasted text or uploaded file; kept permanently, no delete UI.
+  const [docs, setDocs] = useState<PoDoc[]>([]);
+  const [docKind, setDocKind] = useState("payment_receipt");
+  const [docText, setDocText] = useState("");
+  const [docFile, setDocFile] = useState<File | null>(null);
+  const [docOpen, setDocOpen] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     setLoading(true);
     const [{ data: poData }, { data: batchData }, { data: mats }, { data: comps }] = await Promise.all([
@@ -120,6 +139,53 @@ const Purchasing = () => {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    if (!viewing) { setDocs([]); return; }
+    (async () => {
+      const { data } = await sb.from("production_documents")
+        .select("id, doc_type, file_url, raw_text, uploaded_by, uploaded_at")
+        .eq("entity_type", "purchase_order").eq("entity_id", viewing.id)
+        .order("uploaded_at", { ascending: false });
+      setDocs((data as PoDoc[]) ?? []);
+    })();
+  }, [viewing]);
+
+  const addDoc = async () => {
+    if (!viewing) return;
+    if (!docText.trim() && !docFile) { toast.error("Paste the document text or choose a file."); return; }
+    setBusy("doc");
+    const { data: userData } = await supabase.auth.getUser();
+    let filePath: string | null = null;
+    if (docFile) {
+      filePath = `purchase-order/${viewing.id}/${Date.now()}-${docFile.name.replace(/[^\w.\-]/g, "_")}`;
+      const { error: upErr } = await supabase.storage.from("production-docs").upload(filePath, docFile);
+      if (upErr) { setBusy(null); toast.error("Upload failed."); return; }
+    }
+    const { error } = await sb.from("production_documents").insert({
+      doc_type: docKind,
+      entity_type: "purchase_order",
+      entity_id: viewing.id,
+      file_url: filePath,
+      raw_text: docText.trim() || null,
+      uploaded_by: userData?.user?.email ?? null,
+    });
+    setBusy(null);
+    if (error) { toast.error("Couldn't save the record."); return; }
+    toast.success("Record retained.");
+    setDocText(""); setDocFile(null);
+    const { data } = await sb.from("production_documents")
+      .select("id, doc_type, file_url, raw_text, uploaded_by, uploaded_at")
+      .eq("entity_type", "purchase_order").eq("entity_id", viewing.id)
+      .order("uploaded_at", { ascending: false });
+    setDocs((data as PoDoc[]) ?? []);
+  };
+
+  const openDocFile = async (path: string) => {
+    const { data, error } = await supabase.storage.from("production-docs").createSignedUrl(path, 60);
+    if (error || !data?.signedUrl) { toast.error("Couldn't open the file."); return; }
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
 
   const candidateById = useMemo(() => new Map(candidates.map((c) => [c.id, c])), [candidates]);
 
@@ -370,6 +436,69 @@ const Purchasing = () => {
               <pre className="mt-2 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap border border-border p-3 max-h-64 overflow-y-auto">{po.raw_text}</pre>
             </details>
           )}
+        </div>
+
+        {/* Records: supporting documents, retained permanently (no delete). */}
+        <div className="border border-border p-4">
+          <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground">Records</p>
+          <p className="mt-1 text-xs font-body text-muted-foreground">
+            Payment receipts, tax invoices, delivery notices. Paste the text or attach the file; records are kept permanently against this order.
+          </p>
+
+          {docs.length > 0 && (
+            <div className="mt-3 border border-border divide-y divide-border">
+              {docs.map((d) => (
+                <div key={d.id} className="px-3 py-2 text-sm font-body">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      <span className="font-typewriter text-[10px] uppercase tracking-widest border border-border px-1.5 py-0.5 mr-2">
+                        {DOC_TYPES.find((t) => t.key === d.doc_type)?.label ?? d.doc_type}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{fmtDate(d.uploaded_at)}{d.uploaded_by ? ` · ${d.uploaded_by}` : ""}</span>
+                    </span>
+                    <span className="flex gap-2">
+                      {d.raw_text && (
+                        <button onClick={() => setDocOpen(docOpen === d.id ? null : d.id)} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                          {docOpen === d.id ? "Close" : "View"}
+                        </button>
+                      )}
+                      {d.file_url && (
+                        <button onClick={() => openDocFile(d.file_url as string)} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">
+                          Open file
+                        </button>
+                      )}
+                    </span>
+                  </div>
+                  {docOpen === d.id && d.raw_text && (
+                    <pre className="mt-2 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap border border-border p-3 max-h-64 overflow-y-auto">{d.raw_text}</pre>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-3 space-y-2">
+            <div className="flex flex-wrap gap-2 items-center">
+              <select value={docKind} onChange={(e) => setDocKind(e.target.value)} className={`${inputCls} text-xs`}>
+                {DOC_TYPES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
+              </select>
+              <input
+                type="file"
+                onChange={(e) => setDocFile(e.target.files?.[0] ?? null)}
+                className="text-xs font-body text-muted-foreground"
+              />
+            </div>
+            <textarea
+              value={docText}
+              onChange={(e) => setDocText(e.target.value)}
+              rows={3}
+              placeholder="…or paste the receipt / invoice text here, verbatim"
+              className={`${inputCls} w-full font-mono text-xs leading-relaxed`}
+            />
+            <button onClick={addDoc} disabled={busy === "doc"} className="btn-outline text-xs px-3 py-1.5 disabled:opacity-50">
+              {busy === "doc" ? "…" : "Retain record"}
+            </button>
+          </div>
         </div>
       </div>
     );
