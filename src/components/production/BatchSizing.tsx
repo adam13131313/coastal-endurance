@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { sb } from "@/lib/production";
+import { fetchLots, rollUp, onHandInUnit, type OnHand } from "@/lib/inventory";
 import {
   computeBatch, validateBatch, buildSnapshots,
   type IngredientInput, type ComponentInput, type BatchResults, type ValidationFlag,
@@ -142,6 +143,11 @@ const BatchSizing = () => {
   const [loss, setLoss] = useState("8");
   const [buffer, setBuffer] = useState("10");
 
+  // On-hand per material NAME (works for fresh and duplicated rows alike):
+  // released-lot stock, netted off the buy quantity and shown in the tables.
+  const [onHandByName, setOnHandByName] = useState<Map<string, OnHand>>(new Map());
+  const [materialIdByName, setMaterialIdByName] = useState<Map<string, string>>(new Map());
+
   const [saveOpen, setSaveOpen] = useState(false);
   const [saveLabel, setSaveLabel] = useState("");
   const [saveNotes, setSaveNotes] = useState("");
@@ -191,6 +197,19 @@ const BatchSizing = () => {
       minOrderPacks: p.min_order_packs != null ? String(p.min_order_packs) : "",
     })));
     setSaved((bs as SavedBatch[]) ?? []);
+    const [lots, { data: matNames }] = await Promise.all([
+      fetchLots(),
+      sb.from("raw_materials").select("id, name").eq("active", true),
+    ]);
+    const { released } = rollUp(lots);
+    const idByName = new Map<string, string>(((matNames as { id: string; name: string }[]) ?? []).map((m) => [m.name, m.id]));
+    const byName = new Map<string, OnHand>();
+    for (const [name, id] of idByName) {
+      const oh = released.get(id);
+      if (oh) byName.set(name, oh);
+    }
+    setMaterialIdByName(idByName);
+    setOnHandByName(byName);
     const initial = formulaList[0]?.id ?? null;
     setFormulaId(initial);
     if (initial) await loadFormula(initial);
@@ -348,6 +367,87 @@ const BatchSizing = () => {
     toast.success(`${b.batch_ref} loaded into the calculator as a new draft. Note: master-data commits are disabled for duplicated rows.`);
   };
 
+  // Build draft purchase orders from a saved batch: shortfall per ingredient
+  // (required incl. buffer, minus released on-hand stock, re-rounded to packs),
+  // grouped by supplier. Drafts are editable in Purchasing; nothing is
+  // committed with a supplier until you order and attach the confirmation.
+  const buildDraftPos = async (b: SavedBatch) => {
+    const r = b.results_snapshot;
+    type DraftLine = { name: string; qty: number; unit: "L" | "kg" | "units"; raw_material_id: string | null; packaging_component_id: string | null; note: string };
+    const bySupplier = new Map<string, DraftLine[]>();
+    const push = (supplier: string | null, line: DraftLine) => {
+      const key = supplier?.trim() || "Supplier unconfirmed";
+      if (!bySupplier.has(key)) bySupplier.set(key, []);
+      (bySupplier.get(key) as DraftLine[]).push(line);
+    };
+
+    for (const ing of r.ingredients) {
+      const unit: "L" | "kg" = ing.packUnit ?? (ing.orderVolumeMl != null ? "L" : "kg");
+      const required = ing.requiredInPackUnit
+        ?? (unit === "L" ? (ing.orderVolumeMl ?? 0) / 1000 : ing.orderMassG / 1000);
+      const onHand = onHandInUnit(onHandByName.get(ing.name), unit, ing.densityGMl);
+      let shortfall = Math.max(0, required - onHand);
+      if (shortfall <= 0.0005) continue; // covered by inventory
+      let note = onHand > 0 ? `${onHand.toFixed(2)} ${unit} on hand netted off` : "";
+      if (ing.packSize != null && ing.packSize > 0) {
+        const packs = Math.max(Math.ceil(shortfall / ing.packSize - 1e-9), ing.minOrderPacks ?? 1);
+        shortfall = packs * ing.packSize;
+        note = `${packs} × ${ing.packSize} ${unit}${note ? "; " + note : ""}`;
+      }
+      push(ing.supplier, {
+        name: ing.name, qty: shortfall, unit,
+        raw_material_id: materialIdByName.get(ing.name) ?? null,
+        packaging_component_id: null, note,
+      });
+    }
+    for (const c of r.components) {
+      let qty = c.requiredUnits;
+      let note = "";
+      if (c.packSize != null && c.packSize > 0) {
+        const packs = Math.max(Math.ceil(qty / c.packSize - 1e-9), c.minOrderPacks ?? 1);
+        qty = packs * c.packSize;
+        note = `${packs} × ${c.packSize}`;
+      }
+      if (qty <= 0) continue;
+      push(c.supplier, {
+        name: c.name, qty, unit: "units",
+        raw_material_id: null,
+        packaging_component_id: compRows.find((x) => x.name === c.name)?.id ?? null,
+        note,
+      });
+    }
+
+    if (bySupplier.size === 0) { toast.error("Nothing to buy — inventory covers this batch."); return; }
+    if (!confirm(`Create ${bySupplier.size} draft purchase order(s) from ${b.batch_ref} (${[...bySupplier.keys()].join(", ")})? On-hand stock is already netted off.`)) return;
+
+    setBusy("drafts");
+    const { data: userData } = await supabase.auth.getUser();
+    for (const [supplier, lines] of bySupplier) {
+      const { data: po, error } = await sb.from("purchase_orders").insert({
+        supplier, status: "draft", currency: "AUD",
+        batch_calculation_id: b.id,
+        notes: `Draft built from ${b.batch_ref} · ${b.label}`,
+        parsed_by: "manual",
+        created_by: userData?.user?.id ?? null,
+      }).select("id").single();
+      if (error || !po) { setBusy(null); toast.error(`Couldn't create the ${supplier} draft.`); return; }
+      await sb.from("purchase_order_items").insert(lines.map((l, i) => ({
+        purchase_order_id: (po as { id: string }).id,
+        line_no: i + 1,
+        name: l.name,
+        quantity: l.qty,
+        unit: l.unit,
+        raw_material_id: l.raw_material_id,
+        packaging_component_id: l.packaging_component_id,
+        qty_in_base: l.qty,
+        base_unit: l.unit,
+        product_code: null,
+      })));
+    }
+    setBusy(null);
+    toast.success(`${bySupplier.size} draft PO(s) created — see Supply → Purchasing.`);
+  };
+
   const copySheet = (r: BatchResults, f: ValidationFlag[], ref: string | null, label: string | null, fl: string | null) => {
     navigator.clipboard.writeText(orderSheet(r, f, ref, label, fl))
       .then(() => toast.success("Order sheet copied."))
@@ -407,6 +507,7 @@ const BatchSizing = () => {
           )}
 
           <div className="mt-4 flex flex-wrap gap-2">
+            <button onClick={() => buildDraftPos(viewing)} disabled={busy === "drafts"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "drafts" ? "…" : "Build purchase orders"}</button>
             <button onClick={() => duplicateIntoCalculator(viewing)} className="btn-outline text-xs px-3 py-1.5">Duplicate into calculator</button>
             <button onClick={() => { setActualsFor(viewing); setABottles(viewing.actual_bottles_filled != null ? String(viewing.actual_bottles_filled) : ""); setAVolume(viewing.actual_batch_volume_ml != null ? String(Number(viewing.actual_batch_volume_ml)) : ""); setANotes(viewing.actual_notes ?? ""); }} className="btn-outline text-xs px-3 py-1.5">Record actuals</button>
             <button onClick={() => copySheet(r, vFlags, viewing.batch_ref, viewing.label, viewing.formula_version_label)} className="btn-outline text-xs px-3 py-1.5">Copy order sheet</button>
@@ -486,6 +587,7 @@ const BatchSizing = () => {
         onComp={setComp}
         onCommitDensity={duplicatedRows ? undefined : commitDensity}
         busy={busy}
+        onHandByName={onHandByName}
       />
 
       {/* Actions */}
@@ -598,7 +700,7 @@ const FlagPanel = ({ flags }: { flags: ValidationFlag[] }) => (
 // Ingredient + component tables. In edit mode, % / density / pack cells are
 // live inputs; in readonly (saved detail) mode everything renders as text.
 const ResultTables = ({
-  results, ingRows, compRows, onIng, onComp, onCommitDensity, busy, readonly = false,
+  results, ingRows, compRows, onIng, onComp, onCommitDensity, busy, readonly = false, onHandByName,
 }: {
   results: BatchResults;
   ingRows?: IngRow[];
@@ -608,6 +710,7 @@ const ResultTables = ({
   onCommitDensity?: (r: IngRow) => void;
   busy?: string | null;
   readonly?: boolean;
+  onHandByName?: Map<string, OnHand>;
 }) => (
   <div className="space-y-6">
     <section className="border border-border overflow-x-auto">
@@ -665,6 +768,19 @@ const ResultTables = ({
                     ? fmtKgL(line.requiredInPackUnit, line.packUnit)
                     : `${(line.orderMassG / 1000).toFixed(3)} kg`}
                   {line.packs == null && <span className="block text-[9px] text-muted-foreground">pack size unknown</span>}
+                  {(() => {
+                    if (!onHandByName) return null;
+                    const unit: "L" | "kg" = line.packUnit ?? (line.orderVolumeMl != null ? "L" : "kg");
+                    const oh = onHandInUnit(onHandByName.get(line.name), unit, line.densityGMl);
+                    if (oh <= 0) return null;
+                    const req = line.requiredInPackUnit ?? (unit === "L" ? (line.orderVolumeMl ?? 0) / 1000 : line.orderMassG / 1000);
+                    const buy = Math.max(0, req - oh);
+                    return (
+                      <span className="block text-[9px] text-muted-foreground">
+                        {oh.toFixed(2)} {unit} on hand · {buy <= 0.0005 ? "covered ✓" : `buy ${buy.toFixed(2)} ${unit}`}
+                      </span>
+                    );
+                  })()}
                 </td>
                 <td className="px-2 py-2 text-right w-32">
                   {readonly || !row || !onIng ? (

@@ -16,14 +16,14 @@ const PRINCIPLES = [
 const STEPS = [
   {
     n: 1,
-    tab: "Batch sizing",
-    h: "Size the batch & buy the materials",
+    tab: "—",
+    h: "Size the batch & buy the materials (Supply)",
     items: [
-      "Batch sizing tab: enter bottles → it works back to litres/kg per ingredient, rounded up to supplier pack sizes, with surplus shown. Save it (you'll get a FO-B reference) — the saved snapshot is the basis for ordering.",
-      "Copy the order sheet and place orders on each supplier's site as usual.",
-      "Purchasing tab: paste each order confirmation → Parse → check the numbers and matches → Save order, linked to the FO-B batch. The Coverage panel shows required vs ordered vs outstanding per ingredient.",
-      "Records: open the saved order and paste the payment receipt (and later the tax invoice) under Records. Everything is retained permanently — that's the tax paper trail.",
-      "When a delivery arrives: open the order → Receive. That creates quarantined lots automatically; add the supplier lot number from the drum label, then run incoming QC (next step).",
+      "Supply → Batch sizing: enter bottles → litres/kg per ingredient, rounded to supplier packs, with on-hand inventory netted off (required → on hand → to buy). Save it (FO-B reference).",
+      "On the saved batch: Build purchase orders → one editable draft PO per supplier, covering only what inventory doesn't.",
+      "Place each order on the supplier's site as usual, then open its draft in Supply → Purchasing → Attach confirmation → paste it → review → save. The draft becomes a live order with their order number and real prices.",
+      "Records: paste the payment receipt (and later the tax invoice) under the order's Records. Retained permanently — that's the tax paper trail.",
+      "When a delivery arrives: open the order → Receive. That creates quarantined lots and adds them to Inventory; add the supplier lot number from the drum label, then run incoming QC (next step).",
     ],
   },
   {

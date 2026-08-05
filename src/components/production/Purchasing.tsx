@@ -37,7 +37,7 @@ interface Po {
   total_cents: number | null;
   payment_method: string | null;
   payment_ref: string | null;
-  status: "ordered" | "received" | "cancelled";
+  status: "draft" | "ordered" | "received" | "cancelled";
   batch_calculation_id: string | null;
   raw_text: string | null;
   notes: string | null;
@@ -74,6 +74,8 @@ interface Draft {
   subtotal: string; shipping: string; gst: string; total: string;
   batch_id: string; notes: string; raw_text: string; parsed_by: "ai" | "manual";
   items: DraftItem[]; warnings: string[];
+  editingPoId: string | null;              // set = update that PO instead of inserting
+  saveAsStatus: "draft" | "ordered";       // drafts stay drafts; attached confirmations flip to ordered
 }
 
 const BLANK_ITEM: DraftItem = { line_no: 1, product_code: "", name: "", quantity: "1", unit: "", unit_price: "", total: "", match: "", qty_in_base: "", base_unit: "" };
@@ -81,6 +83,7 @@ const blankDraft = (): Draft => ({
   supplier: "", supplier_order_no: "", customer_no: "", order_date: "", currency: "AUD",
   payment_method: "", payment_ref: "", subtotal: "", shipping: "", gst: "", total: "",
   batch_id: "", notes: "", raw_text: "", parsed_by: "manual", items: [{ ...BLANK_ITEM }], warnings: [],
+  editingPoId: null, saveAsStatus: "ordered",
 });
 
 const num = (s: string): number | null => {
@@ -107,6 +110,7 @@ const Purchasing = () => {
 
   const [pasteText, setPasteText] = useState("");
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [attachFor, setAttachFor] = useState<Po | null>(null); // draft PO awaiting its confirmation
   const [viewing, setViewing] = useState<Po | null>(null);
   const [showArchived, setShowArchived] = useState(false);
   const [coverageBatch, setCoverageBatch] = useState<string>("");
@@ -205,7 +209,7 @@ const Purchasing = () => {
       warnings?: string[];
     };
     setDraft({
-      supplier: p.supplier ?? "",
+      supplier: p.supplier ?? attachFor?.supplier ?? "",
       supplier_order_no: p.supplier_order_no ?? "",
       customer_no: p.customer_no ?? "",
       order_date: p.order_date ?? "",
@@ -216,10 +220,12 @@ const Purchasing = () => {
       shipping: centsToDollars(p.shipping_cents ?? null),
       gst: centsToDollars(p.gst_cents ?? null),
       total: centsToDollars(p.total_cents ?? null),
-      batch_id: batches[0]?.id ?? "",
-      notes: "",
+      batch_id: attachFor?.batch_calculation_id ?? batches[0]?.id ?? "",
+      notes: attachFor?.notes ?? "",
       raw_text: pasteText,
       parsed_by: "ai",
+      editingPoId: attachFor?.id ?? null,
+      saveAsStatus: "ordered",
       items: (p.items ?? []).map((it, i) => ({
         line_no: it.line_no ?? i + 1,
         product_code: it.product_code ?? "",
@@ -245,7 +251,7 @@ const Purchasing = () => {
     if (items.length === 0) { toast.error("At least one line item."); return; }
     setBusy("save");
     const { data: userData } = await supabase.auth.getUser();
-    const { data: po, error } = await sb.from("purchase_orders").insert({
+    const header = {
       supplier: draft.supplier.trim(),
       supplier_order_no: draft.supplier_order_no.trim() || null,
       customer_no: draft.customer_no.trim() || null,
@@ -261,13 +267,28 @@ const Purchasing = () => {
       raw_text: draft.raw_text || null,
       parsed_by: draft.parsed_by,
       notes: draft.notes.trim() || null,
-      created_by: userData?.user?.id ?? null,
-    }).select("id").single();
-    if (error || !po) { setBusy(null); toast.error("Couldn't save the order."); return; }
+    };
+    let poId: string | null = null;
+    if (draft.editingPoId) {
+      const { error } = await sb.from("purchase_orders")
+        .update({ ...header, status: draft.saveAsStatus })
+        .eq("id", draft.editingPoId);
+      if (error) { setBusy(null); toast.error("Couldn't update the order."); return; }
+      await sb.from("purchase_order_items").delete().eq("purchase_order_id", draft.editingPoId);
+      poId = draft.editingPoId;
+    } else {
+      const { data: po, error } = await sb.from("purchase_orders").insert({
+        ...header,
+        status: draft.saveAsStatus,
+        created_by: userData?.user?.id ?? null,
+      }).select("id").single();
+      if (error || !po) { setBusy(null); toast.error("Couldn't save the order."); return; }
+      poId = (po as { id: string }).id;
+    }
     const { error: itemErr } = await sb.from("purchase_order_items").insert(items.map((i, idx) => {
       const cand = i.match ? candidateById.get(i.match) : undefined;
       return {
-        purchase_order_id: (po as { id: string }).id,
+        purchase_order_id: poId,
         line_no: i.line_no || idx + 1,
         product_code: i.product_code.trim() || null,
         name: i.name.trim(),
@@ -283,9 +304,55 @@ const Purchasing = () => {
     }));
     setBusy(null);
     if (itemErr) { toast.error("Order saved but line items failed; edit it in the list."); }
-    else toast.success("Order logged.");
-    setDraft(null); setPasteText("");
+    else toast.success(draft.editingPoId ? (draft.saveAsStatus === "ordered" ? "Confirmation attached — order is live." : "Draft updated.") : "Order logged.");
+    setDraft(null); setPasteText(""); setAttachFor(null);
     load();
+  };
+
+  // Load an existing PO into the review form (edit a draft, or fix a live one).
+  const loadPoIntoForm = (po: Po, saveAsStatus: "draft" | "ordered") => {
+    setViewing(null);
+    setDraft({
+      supplier: po.supplier,
+      supplier_order_no: po.supplier_order_no ?? "",
+      customer_no: po.customer_no ?? "",
+      order_date: po.order_date ?? "",
+      currency: po.currency,
+      payment_method: po.payment_method ?? "",
+      payment_ref: po.payment_ref ?? "",
+      subtotal: centsToDollars(po.subtotal_ex_gst_cents),
+      shipping: centsToDollars(po.shipping_cents),
+      gst: centsToDollars(po.gst_cents),
+      total: centsToDollars(po.total_cents),
+      batch_id: po.batch_calculation_id ?? "",
+      notes: po.notes ?? "",
+      raw_text: po.raw_text ?? "",
+      parsed_by: "manual",
+      editingPoId: po.id,
+      saveAsStatus,
+      warnings: [],
+      items: po.purchase_order_items.sort((a, b) => a.line_no - b.line_no).map((i) => ({
+        line_no: i.line_no,
+        product_code: i.product_code ?? "",
+        name: i.name,
+        quantity: String(Number(i.quantity)),
+        unit: i.unit ?? "",
+        unit_price: centsToDollars(i.unit_price_cents),
+        total: centsToDollars(i.total_cents),
+        match: i.raw_material_id ?? i.packaging_component_id ?? "",
+        qty_in_base: i.qty_in_base != null ? String(Number(i.qty_in_base)) : "",
+        base_unit: (i.base_unit ?? "") as DraftItem["base_unit"],
+      })),
+    });
+  };
+
+  const deleteDraft = async (po: Po) => {
+    if (po.status !== "draft") return;
+    if (!confirm(`Delete the ${po.supplier} draft? Drafts aren't records yet, so this removes it completely.`)) return;
+    await sb.from("purchase_order_items").delete().eq("purchase_order_id", po.id);
+    await sb.from("purchase_orders").delete().eq("id", po.id);
+    setViewing(null); load();
+    toast.success("Draft deleted.");
   };
 
   // ----------------------------------------------------------------- receive
@@ -338,7 +405,7 @@ const Purchasing = () => {
   const coverage = useMemo(() => {
     const batch = batches.find((b) => b.id === coverageBatch);
     if (!batch?.results_snapshot?.ingredients) return null;
-    const relevant = pos.filter((p) => p.batch_calculation_id === batch.id && p.status !== "cancelled" && !p.archived_at);
+    const relevant = pos.filter((p) => p.batch_calculation_id === batch.id && p.status !== "cancelled" && p.status !== "draft" && !p.archived_at);
     const orderedByMaterialName = new Map<string, { qty: number; unit: string; sources: string[] }>();
     for (const po of relevant) {
       for (const item of po.purchase_order_items) {
@@ -384,7 +451,7 @@ const Purchasing = () => {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="font-typewriter text-sm uppercase tracking-widest">
               {po.supplier} {po.supplier_order_no && `#${po.supplier_order_no}`}
-              <span className={`ml-2 text-[10px] px-1.5 py-0.5 uppercase tracking-widest ${po.status === "received" ? "bg-foreground text-background" : po.status === "cancelled" ? "border border-border text-muted-foreground line-through" : "border border-foreground"}`}>
+              <span className={`ml-2 text-[10px] px-1.5 py-0.5 uppercase tracking-widest ${po.status === "received" ? "bg-foreground text-background" : po.status === "cancelled" ? "border border-border text-muted-foreground line-through" : po.status === "draft" ? "border border-dashed border-foreground" : "border border-foreground"}`}>
                 {po.status}
               </span>
               {po.archived_at && <span className="ml-2 text-muted-foreground text-xs">(archived)</span>}
@@ -436,6 +503,14 @@ const Purchasing = () => {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
+            {po.status === "draft" && (
+              <>
+                <button onClick={() => { setAttachFor(po); setViewing(null); }} className="btn-primary text-xs px-4 py-2">Attach confirmation</button>
+                <button onClick={() => loadPoIntoForm(po, "draft")} className="btn-outline text-xs px-3 py-1.5">Edit draft</button>
+                <button onClick={() => setStatus(po, "ordered")} className="btn-outline text-xs px-3 py-1.5">Mark ordered (no confirmation)</button>
+                <button onClick={() => deleteDraft(po)} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-destructive px-2">Delete draft</button>
+              </>
+            )}
             {po.status === "ordered" && (
               <button onClick={() => receive(po)} disabled={busy === po.id} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === po.id ? "…" : "Receive (create QC lots)"}</button>
             )}
@@ -532,8 +607,14 @@ const Purchasing = () => {
 
       {/* Capture */}
       {!draft && (
-        <section className="border border-border p-4 space-y-3">
-          <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground">Log an order</p>
+        <section className={`border p-4 space-y-3 ${attachFor ? "border-foreground border-2" : "border-border"}`}>
+          <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground">
+            {attachFor ? (
+              <>Attach confirmation to the <span className="text-foreground">{attachFor.supplier}</span> draft
+                <button onClick={() => setAttachFor(null)} className="ml-3 text-muted-foreground hover:text-foreground normal-case tracking-normal font-body">(cancel)</button>
+              </>
+            ) : "Log an order"}
+          </p>
           <textarea
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}

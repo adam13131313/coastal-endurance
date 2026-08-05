@@ -20,6 +20,7 @@ import StaffBoard from "@/components/StaffBoard";
 import StaffAssistant from "@/components/StaffAssistant";
 import BrandGuide from "@/components/BrandGuide";
 import ProductionAdmin from "@/components/ProductionAdmin";
+import SupplyAdmin from "@/components/SupplyAdmin";
 import ProductIdeas from "@/components/ProductIdeas";
 import StockControl from "@/components/StockControl";
 import CustomersAdmin from "@/components/CustomersAdmin";
@@ -85,14 +86,14 @@ const NAV_GROUPS = [
   { group: "Today", keys: ["today"] },
   { group: "Sell", keys: ["orders", "dispatch", "stock", "customers"] },
   { group: "Grow", keys: ["campaign", "content", "field", "comms", "notes"] },
-  { group: "Make", keys: ["production", "ideas"] },
+  { group: "Make", keys: ["supply", "production", "ideas"] },
   { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "social"] },
 ] as const;
 
 const TAB_LABEL: Record<string, string> = {
   today: "Today", overview: "Charts", campaign: "Campaign", content: "Content",
   social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
-  customers: "Customers", field: "Field team", comms: "Comms", notes: "Field Notes", production: "Production",
+  customers: "Customers", field: "Field team", comms: "Comms", notes: "Field Notes", supply: "Supply", production: "Production",
   ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
   guide: "Staff guide", brand: "Brand", positioning: "Positioning",
 };
@@ -102,7 +103,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "comms" | "notes" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning">("today");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "comms" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -363,6 +364,8 @@ const Admin = () => {
           {tab === "comms" && <CommsLibrary />}
 
           {tab === "notes" && <FieldNotesAdmin />}
+
+          {tab === "supply" && <SupplyAdmin />}
 
           {tab === "production" && <ProductionAdmin />}
 
