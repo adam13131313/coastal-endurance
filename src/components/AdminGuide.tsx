@@ -41,8 +41,8 @@ const AdminGuide = () => (
         <li><strong>Add a staff member:</strong> Supabase → Table Editor → <code>admins</code> → insert their Google login email. That grants this admin area and the notification emails.</li>
         <li><strong>Send a newsletter / restock update:</strong> Resend dashboard → Broadcasts → the <strong>Coastal Endurance updates</strong> audience → compose and send. Unsubscribe is handled automatically. Website signups feed this list.</li>
         <li><strong>Issue a field team free bottle:</strong> see the Field team tab and its own section below.</li>
-        <li><strong>Log a supplier order:</strong> Production → Purchasing → paste the order confirmation → Parse → review → Save. Then open the saved order and paste the payment receipt (and the tax invoice when it comes) under <strong>Records</strong> — kept permanently, that's our tax paper trail. When the goods arrive: open the order → <strong>Receive</strong>, which creates quarantined lots for incoming QC.</li>
-        <li><strong>Size a production batch / order materials:</strong> Production → Batch sizing → enter bottles → Save batch (FO-B reference) → Copy order sheet. The Purchasing tab's Coverage panel shows what's still outstanding per ingredient.</li>
+        <li><strong>Size a batch and order materials:</strong> Supply → Batch sizing → enter bottles → Save batch (FO-B) → <strong>Build purchase orders</strong> (one editable draft per supplier, inventory netted off). Place each order on the supplier's site, then open its draft in Supply → Purchasing → <strong>Attach confirmation</strong> → paste → save.</li>
+        <li><strong>Log an ad-hoc supplier order:</strong> Supply → Purchasing → paste the confirmation → Parse → review → Save. Paste the payment receipt (and tax invoice) under <strong>Records</strong> — kept permanently, that's our tax paper trail. On delivery: open the order → <strong>Receive</strong> → quarantined lots appear in Inventory for incoming QC.</li>
       </ul>
     </section>
 
@@ -70,7 +70,8 @@ const AdminGuide = () => (
           ["Field team", "The recruitment pipeline board: invite → code → trial → advocate, with emails."],
           ["Comms", "The email templates the pipeline sends ({{first_name}} and {{code}} fill automatically)."],
           ["Field Notes", "The public journal at /field-notes: write, preview, publish."],
-          ["Production", "Batch sizing, purchasing (supplier orders + retained records), batch records (BMR), QC, traceability. How-to guide inside."],
+          ["Supply", "Batch sizing, purchasing (draft POs → orders → retained records), and raw-material inventory."],
+          ["Production", "Batch records (BMR), formula reference, QC, traceability. How-to guide inside."],
           ["Product ideas", "The future-product list."],
           ["Charts", "Revenue and upcoming-shipment charts."],
           ["Staff board", "Issues, requests, suggestions, and questions for the team."],
