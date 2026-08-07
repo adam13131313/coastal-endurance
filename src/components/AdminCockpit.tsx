@@ -37,7 +37,7 @@ function dueAction(r: FtRow): { action: string; overdue: boolean } | null {
     case "invited": return d >= 4 ? { action: "No reply — nudge or mark lost", overdue: d >= 7 } : null;
     case "confirmed": return { action: "Issue their code", overdue: d >= 2 };
     case "code_sent": return d >= 5 ? { action: "Not redeemed — send a nudge", overdue: d >= 10 } : null;
-    case "trialling": return d >= 21 ? { action: "Send the day-21 survey", overdue: d >= 28 } : d >= 5 ? { action: "Send the day-5 check-in", overdue: false } : null;
+    case "trialling": return d >= 30 ? { action: "Send the 30-day survey", overdue: d >= 37 } : d >= 7 ? { action: "Week-1 WhatsApp check-in (started ok? troubleshoot)", overdue: d >= 12 } : null;
     case "feedback": return { action: "Send the content ask", overdue: d >= 7 };
     default: return null;
   }
