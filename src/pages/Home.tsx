@@ -139,7 +139,7 @@ const Home = () => {
       <section className="section-padding bg-primary text-primary-foreground">
         <Reveal className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
-            BETTER PERFORMANCE
+            Function-first
           </h2>
           <p className="mt-6 text-[17px] font-body text-primary-foreground/80 leading-relaxed">
             Every ingredient earns its place.
