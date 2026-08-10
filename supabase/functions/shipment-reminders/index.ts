@@ -53,8 +53,15 @@ Deno.serve(async (req) => {
 
   if (!RESEND_API_KEY) return json({ sent: false, reason: "no_resend_key", count: due.length });
 
-  const { data: adminRows } = await admin.from("admins").select("email");
-  const recipients = (adminRows ?? []).map((a) => a.email as string).filter(Boolean);
+  // Dispatch digest goes only to the assigned dispatch contact(s)
+  // (admins.notify_ops), falling back to all admins if nobody is flagged.
+  const { data: flagged } = await admin.from("admins").select("email").eq("notify_ops", true);
+  let adminRows = (flagged ?? []) as Array<{ email: string | null }>;
+  if (adminRows.length === 0) {
+    const { data: all } = await admin.from("admins").select("email");
+    adminRows = (all ?? []) as Array<{ email: string | null }>;
+  }
+  const recipients = adminRows.map((a) => a.email as string).filter(Boolean);
   if (recipients.length === 0) return json({ sent: false, reason: "no_admins", count: due.length });
 
   const name = (r: unknown) => {
