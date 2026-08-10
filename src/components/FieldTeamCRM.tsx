@@ -107,21 +107,35 @@ const FieldTeamCRM = () => {
     load();
   };
 
+  // Generate a code WITHOUT emailing, then open the welcome email pre-filled
+  // with the code for review + send. No email ever leaves without a look.
   const issueCode = async (row: FieldTeamRow) => {
     setBusy(row.id);
     try {
-      const { data, error } = await supabase.functions.invoke("field-team", { body: { action: "issue", email: row.contacts.email } });
+      const { data, error } = await supabase.functions.invoke("field-team", { body: { action: "issue", email: row.contacts.email, silent: true } });
       if (error || (data as { error?: string })?.error) throw new Error((data as { error?: string })?.error || "Issue failed");
       const code = (data as { code?: string })?.code;
-      await sb.from("contact_pipelines").update({ stage: "code_sent", status: "active", stage_entered_at: new Date().toISOString(), meta: { ...row.meta, discount_code: code }, updated_at: new Date().toISOString() }).eq("id", row.id);
-      await logEvent(row.contact_id, "code_issued", `Code ${code} issued + emailed`, { discount_code: code });
-      toast.success(`Code ${code} issued and emailed.`);
-      load();
+      const now = new Date().toISOString();
+      const newMeta = { ...row.meta, discount_code: code };
+      await sb.from("contact_pipelines").update({ stage: "code_sent", status: "active", stage_entered_at: now, meta: newMeta, updated_at: now }).eq("id", row.id);
+      await logEvent(row.contact_id, "code_issued", `Code ${code} generated (not emailed — pending review)`, { discount_code: code });
+      await load();
+      openCodeEmail({ ...row, stage: "code_sent", meta: newMeta }, code ?? null);
+      toast.success(`Code ${code} generated. Review the welcome email, then send.`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Couldn't issue a code.");
     } finally {
       setBusy(null);
     }
+  };
+
+  // Open the welcome/code template in the compose modal (used after issuing,
+  // and by "Email code" to re-send). Falls back to any code-bearing template.
+  const openCodeEmail = (row: FieldTeamRow, code: string | null) => {
+    const tpl = templates.find((t) => t.key === "accept") ?? templates.find((t) => /\{\{\s*code\s*\}\}/.test(t.body));
+    if (!tpl) { toast.error("No welcome/code email template found — add one in Comms."); return; }
+    const extras = { code: code ?? (row.meta?.discount_code as string | undefined) ?? null };
+    setCompose({ row, tpl, subject: interpolate(tpl.subject, row.contacts, extras), body: interpolate(tpl.body, row.contacts, extras) });
   };
 
   const saveNote = async (row: FieldTeamRow) => {
@@ -238,6 +252,7 @@ const FieldTeamCRM = () => {
                     onToggle={() => setExpanded(expanded === row.id ? null : row.id)}
                     onStage={(st) => setStage(row, st)}
                     onIssue={() => issueCode(row)}
+                    onEmailCode={() => openCodeEmail(row, null)}
                     onLost={(reason) => markLost(row, reason)}
                     templates={templates}
                     onCompose={(tpl) => openCompose(row, tpl)}
@@ -302,10 +317,10 @@ const FieldTeamCRM = () => {
 
 // ---- Card ----------------------------------------------------------------
 const Card = ({
-  row, busy, expanded, events, noteDraft, templates, onToggle, onStage, onIssue, onLost, onCompose, onNoteChange, onSaveNote,
+  row, busy, expanded, events, noteDraft, templates, onToggle, onStage, onIssue, onEmailCode, onLost, onCompose, onNoteChange, onSaveNote,
 }: {
   row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string; templates: EmailTemplate[];
-  onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onLost: (reason: string) => void;
+  onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onEmailCode: () => void; onLost: (reason: string) => void;
   onCompose: (tpl: EmailTemplate) => void;
   onNoteChange: (v: string) => void; onSaveNote: () => void;
 }) => {
@@ -340,9 +355,15 @@ const Card = ({
       {/* Quick actions */}
       <div className="mt-2 flex flex-wrap items-center gap-2">
         {(row.stage === "confirmed" || row.stage === "code_sent") && (
-          <button onClick={onIssue} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
-            {code ? "Resend code" : "Issue code"}
-          </button>
+          code ? (
+            <button onClick={onEmailCode} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
+              Email code
+            </button>
+          ) : (
+            <button onClick={onIssue} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
+              Issue code
+            </button>
+          )
         )}
         <select
           value=""
