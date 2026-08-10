@@ -37,6 +37,9 @@ function dueAction(r: FtRow): { action: string; overdue: boolean } | null {
     case "invited": return d >= 4 ? { action: "No reply — nudge or mark lost", overdue: d >= 7 } : null;
     case "confirmed": return { action: "Issue their code", overdue: d >= 2 };
     case "code_sent": return d >= 5 ? { action: "Not redeemed — send a nudge", overdue: d >= 10 } : null;
+    // ordered + trialling share the trial clock (bottle in hand): a remote
+    // tester rests in ordered, a direct-gift tester in trialling.
+    case "ordered":
     case "trialling": return d >= 30 ? { action: "Send the 30-day survey", overdue: d >= 37 } : d >= 7 ? { action: "Week-1 WhatsApp check-in (started ok? troubleshoot)", overdue: d >= 12 } : null;
     case "feedback": return { action: "Send the content ask", overdue: d >= 7 };
     default: return null;
@@ -94,7 +97,7 @@ const AdminCockpit = ({ orders, onGo }: { orders: DashOrder[]; onGo: (tab: strin
       .sort((a, b) => Number(b.due.overdue) - Number(a.due.overdue)),
     [ft],
   );
-  const ftConfirmed = ft.filter((r) => ["confirmed", "code_sent", "trialling", "feedback", "advocate"].includes(r.stage)).length;
+  const ftConfirmed = ft.filter((r) => ["confirmed", "code_sent", "ordered", "trialling", "feedback", "advocate"].includes(r.stage)).length;
   const lowStock = products.filter((p) => p.stock_quantity <= LOW_STOCK_AT);
 
   if (loading) return <p className="font-body text-muted-foreground">Loading…</p>;
