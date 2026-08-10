@@ -41,11 +41,6 @@ const Home = () => {
             <p className="mt-6 text-xl md:text-2xl font-typewriter text-background/90 animate-slide-up" style={{ animationDelay: "0.1s" }}>
               For Sun, Salt, Wind, &amp; Time
             </p>
-            <p
-              className="mt-5 text-lg font-body text-background/75 leading-relaxed animate-slide-up max-w-lg"
-              style={{ animationDelay: "0.15s" }}>
-              Field Oil maintains what the elements wear down.
-            </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.25s" }}>
               <Link to="/product" className="group inline-flex items-center justify-center px-6 py-3 bg-background text-foreground font-typewriter text-sm uppercase tracking-wider hover:bg-background/90 transition-colors">
                 MAINTAIN YOUR BARRIER
@@ -85,7 +80,7 @@ const Home = () => {
       <section className="section-padding bg-secondary">
         <Reveal className="max-w-[700px] mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-typewriter uppercase">
-            FOR LIFE IN THE OUTDOORS
+            Field Oil maintains what the elements wear down
           </h2>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
             Field Oil is a daily face oil built for those who spend their days outside, surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
