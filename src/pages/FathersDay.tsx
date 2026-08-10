@@ -11,11 +11,11 @@ const FathersDay = () => {
         <title>Father's Day Gift: Field Oil | Coastal Endurance</title>
         <meta
           name="description"
-          content="A Father's Day gift for Dad. Field Oil, a 100% naturally derived daily face oil made in Australia. Order now, ships from 10 August, in time for Father's Day, Sunday 6 September."
+          content="A Father's Day gift for Dad. Field Oil, a 100% naturally derived daily face oil made in Australia. Now shipping, in time for Father's Day, Sunday 6 September."
         />
         <link rel="canonical" href="https://coastalendurance.com/fathers-day" />
         <meta property="og:title" content="Father's Day Gift: Field Oil" />
-        <meta property="og:description" content="Daily skin maintenance, for Dad. Order now, ships from 10 August, in time for Father's Day." />
+        <meta property="og:description" content="Daily skin maintenance, for Dad. Now shipping, in time for Father's Day." />
         <meta property="og:url" content="https://coastalendurance.com/fathers-day" />
       </Helmet>
 
@@ -76,8 +76,8 @@ const FathersDay = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-2xl md:text-3xl font-typewriter uppercase mb-6">Order now, sorted for the 6th</h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-4">
-            Order any time. The first bottles ship from <strong className="text-foreground">10 August</strong>,
-            so it's with him in good time for Father's Day, <strong className="text-foreground">Sunday 6 September</strong>.
+            <strong className="text-foreground">Now shipping</strong>, so order any time and it's with him in good
+            time for Father's Day, <strong className="text-foreground">Sunday 6 September</strong>.
           </p>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
             Sending it straight to him? Just enter his address at checkout. Free standard shipping in Australia and the UK.
