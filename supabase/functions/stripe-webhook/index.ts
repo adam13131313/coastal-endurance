@@ -332,6 +332,37 @@ Deno.serve(async (req) => {
         meta: { order_id: order.id, total_cents: session.amount_total ?? order.total_cents, currency: order.currency },
         actor: "system",
       });
+
+      // Field team: if this customer was issued a code and is still mid-pipeline,
+      // this order is the redemption — advance them to "ordered" (code applied /
+      // bottle ordered) and log it. Matches by order email; a guest checkout with
+      // a different email won't match (advance manually in that case).
+      try {
+        const lc = (email || "").trim().toLowerCase();
+        const { data: ftm } = lc
+          ? await admin.from("approved_field_team_members").select("discount_code").eq("email", lc).maybeSingle()
+          : { data: null };
+        if (ftm) {
+          const { data: pipe } = await admin.from("contact_pipelines")
+            .select("id, stage").eq("contact_id", contactId).eq("pipeline", "field_team").maybeSingle();
+          if (pipe && ["invited", "confirmed", "code_sent"].includes(pipe.stage as string)) {
+            const now = new Date().toISOString();
+            await admin.from("contact_pipelines")
+              .update({ stage: "ordered", status: "active", stage_entered_at: now, updated_at: now })
+              .eq("id", pipe.id);
+            const amountDiscount = (session as unknown as { total_details?: { amount_discount?: number } }).total_details?.amount_discount ?? 0;
+            await admin.from("contact_events").insert({
+              contact_id: contactId,
+              type: "redeemed",
+              note: `Code applied / bottle ordered (order ${order.id})`,
+              meta: { order_id: order.id, amount_discount: amountDiscount, discount_code: ftm.discount_code },
+              actor: "system",
+            });
+          }
+        }
+      } catch (e) {
+        console.warn("field-team advance skipped", e instanceof Error ? e.message : e);
+      }
     }
   } catch (e) {
     console.warn("contact sync skipped (apply CRM migration?)", e instanceof Error ? e.message : e);

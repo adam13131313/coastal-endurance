@@ -50,7 +50,8 @@ export const FT_STAGES: { key: string; label: string; hint: string }[] = [
   { key: "invited", label: "Invited", hint: "Invite sent, awaiting reply" },
   { key: "confirmed", label: "Confirmed", hint: "Said yes — issue a code" },
   { key: "code_sent", label: "Code sent", hint: "Free-bottle code issued" },
-  { key: "trialling", label: "Trialling", hint: "Redeemed, using it" },
+  { key: "ordered", label: "Ordered", hint: "Code applied, bottle ordered" },
+  { key: "trialling", label: "Trialling", hint: "Bottle in hand, using it" },
   { key: "feedback", label: "Feedback in", hint: "Survey received" },
   { key: "advocate", label: "Advocate", hint: "Posted + referred" },
 ];
@@ -58,7 +59,7 @@ export const FT_STAGES: { key: string; label: string; hint: string }[] = [
 export const FT_STAGE_LABEL: Record<string, string> = Object.fromEntries(FT_STAGES.map((s) => [s.key, s.label]));
 
 // Stages that count as "confirmed / said yes" (toward the 15 target).
-export const CONFIRMED_STAGES = new Set(["confirmed", "code_sent", "trialling", "feedback", "advocate"]);
+export const CONFIRMED_STAGES = new Set(["confirmed", "code_sent", "ordered", "trialling", "feedback", "advocate"]);
 
 export const LOST_REASONS = ["Declined", "No reply", "Didn't redeem", "Not engaged", "Other"];
 
