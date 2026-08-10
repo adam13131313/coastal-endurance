@@ -1,6 +1,19 @@
 import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
+// Operational notifications go only to the assigned dispatch contact(s)
+// (admins.notify_ops). Falls back to every admin if nobody is flagged, so
+// alerts can never silently stop.
+async function opsRecipients(client: ReturnType<typeof createClient>): Promise<string[]> {
+  const { data: flagged } = await client.from("admins").select("email").eq("notify_ops", true);
+  let rows = (flagged ?? []) as Array<{ email: string | null }>;
+  if (rows.length === 0) {
+    const { data: all } = await client.from("admins").select("email");
+    rows = (all ?? []) as Array<{ email: string | null }>;
+  }
+  return rows.map((a) => a.email as string).filter(Boolean);
+}
+
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY")!;
@@ -100,8 +113,7 @@ async function sendAdminNotification(
   deliveries: Array<{ scheduled_for: string; sequence: number }>,
 ) {
   if (!RESEND_API_KEY) return;
-  const { data: adminRows } = await supa.from("admins").select("email");
-  const recipients = (adminRows ?? []).map((a) => a.email as string).filter(Boolean);
+  const recipients = await opsRecipients(supa);
   if (recipients.length === 0) return;
 
   const itemRows = items
@@ -148,8 +160,7 @@ async function sendLowStockAlert(
 ) {
   if (!RESEND_API_KEY) return;
   const { data: product } = await supa.from("products").select("name").eq("id", productId).maybeSingle();
-  const { data: adminRows } = await supa.from("admins").select("email");
-  const recipients = (adminRows ?? []).map((a) => a.email as string).filter(Boolean);
+  const recipients = await opsRecipients(supa);
   if (recipients.length === 0) return;
   const name = (product as { name?: string } | null)?.name ?? "a product";
   const html = `
@@ -206,8 +217,7 @@ async function handleRefund(charge: Stripe.Charge) {
   await sendRefundConfirmation(order.email, { total_cents: order.total_cents, currency: order.currency });
 
   if (RESEND_API_KEY) {
-    const { data: adminRows } = await admin.from("admins").select("email");
-    const recipients = (adminRows ?? []).map((a) => a.email as string).filter(Boolean);
+    const recipients = await opsRecipients(admin);
     if (recipients.length) {
       const html = `
         <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px">

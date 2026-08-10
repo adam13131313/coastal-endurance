@@ -38,7 +38,7 @@ const AdminGuide = () => (
         <li><strong>Change a delivery date:</strong> a customer (usually 12-month supply) asks to move a shipment → To ship tab → change the date in that shipment's date box → <strong>Save date</strong>. Works only before it is shipped. Customers are told to contact us for this, so you action it here.</li>
         <li><strong>Refund a customer:</strong> do it in <strong>Stripe</strong> (Payments → open the order → Refund). The store updates itself: the order is set to refunded, remaining shipments are cancelled, bottles are restocked, you get a confirmation email, and the customer is emailed a refund confirmation. Do not change anything here by hand.</li>
         <li><strong>Restock / change price / hide the product:</strong> Supabase dashboard → Table Editor → <code>products</code> (edit <code>stock_quantity</code>) or <code>product_variants</code> (edit <code>price_cents</code>, where 7800 = $78.00).</li>
-        <li><strong>Add a staff member:</strong> Supabase → Table Editor → <code>admins</code> → insert their Google login email. That grants this admin area and the notification emails.</li>
+        <li><strong>Add a staff member:</strong> Supabase → Table Editor → <code>admins</code> → insert their login email (no stray spaces). That grants this admin area only. Operational emails (orders, stock, dispatch digest) go to whoever has <code>notify_ops</code> ticked — the assigned dispatch contact, currently Adam. To reassign, tick/untick <code>notify_ops</code> in the same table.</li>
         <li><strong>Send a newsletter / restock update:</strong> Resend dashboard → Broadcasts → the <strong>Coastal Endurance updates</strong> audience → compose and send. Unsubscribe is handled automatically. Website signups feed this list.</li>
         <li><strong>Issue a field team free bottle:</strong> see the Field team tab and its own section below.</li>
         <li><strong>Size a batch and order materials:</strong> Supply → Batch sizing → enter bottles → Save batch (FO-B) → <strong>Build purchase orders</strong> (one editable draft per supplier, inventory netted off). Place each order on the supplier's site, then open its draft in Supply → Purchasing → <strong>Attach confirmation</strong> → paste → save.</li>
@@ -47,7 +47,8 @@ const AdminGuide = () => (
     </section>
 
     <section>
-      <H>Emails the store sends you</H>
+      <H>Emails the store sends the dispatch contact</H>
+      <p className="mb-2 text-sm">These go only to whoever has <code>notify_ops</code> ticked in the admins table (the assigned dispatch person), not to every admin:</p>
       <ul className="list-disc pl-5 space-y-1">
         <li>New order, on every paid order</li>
         <li>Low stock, when bottles drop to 10 or fewer</li>
