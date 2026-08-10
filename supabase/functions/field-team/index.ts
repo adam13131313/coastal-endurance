@@ -168,8 +168,11 @@ Deno.serve(async (req) => {
         await admin.from(TABLE).insert({ email, discount_code: code });
       }
 
-      await sendCodeEmail(email, code).catch((e) => console.error("email error", e));
-      return json({ code, email, emailed: !!RESEND_API_KEY });
+      // silent = generate the code only; the admin sends the email themselves
+      // through the CRM compose modal (review + edit before anything goes out).
+      const silent = body?.silent === true;
+      if (!silent) await sendCodeEmail(email, code).catch((e) => console.error("email error", e));
+      return json({ code, email, emailed: !silent && !!RESEND_API_KEY });
     }
 
     // ---- RESEND -----------------------------------------------------------
