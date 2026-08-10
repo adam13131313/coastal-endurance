@@ -36,7 +36,7 @@ const Home = () => {
               100% NATURALLY DERIVED
             </p>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-typewriter uppercase leading-[1.05] animate-slide-up" style={{ animationDelay: "0.05s" }}>
-              FIELD OIL 001: DAILY SKIN MAINTENANCE
+              FIELD OIL 001: DAILY SKIN BARRIER MAINTENANCE
             </h1>
             <p className="mt-6 text-xl md:text-2xl font-typewriter text-background/90 animate-slide-up" style={{ animationDelay: "0.1s" }}>
               For Sun, Salt, Wind, &amp; Time

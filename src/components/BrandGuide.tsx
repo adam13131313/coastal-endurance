@@ -51,7 +51,7 @@ const BrandGuide = () => (
     <section>
       <H>Key messages</H>
       <ul className="space-y-2">
-        <li><strong>Field Oil: Daily Skin Maintenance</strong> (the headline)</li>
+        <li><strong>Field Oil: Daily Skin Barrier Maintenance</strong> (the headline). Always "skin barrier", never bare "barrier".</li>
         <li><strong>For Sun, Salt, Wind, &amp; Time</strong> (the supporting line)</li>
         <li>Field Oil maintains what the elements wear down.</li>
         <li>Naturally derived oils, each with a job: <strong>active oils</strong> (Rosehip, Hemp), <strong>Australian-grown carriers</strong> (Jojoba, Macadamia), and a <strong>natural antioxidant system</strong> (Meadowfoam, Vitamin E, Sunflower, Rosemary).</li>
@@ -88,7 +88,7 @@ const BrandGuide = () => (
     <section>
       <H>Typography</H>
       <p className="mb-3">Headings: <strong>IBM Plex Mono</strong>, uppercase, wide letter-spacing (the "typewriter" look). Body: <strong>Inter</strong>.</p>
-      <p className="font-typewriter uppercase tracking-widest text-foreground text-lg">FIELD OIL: DAILY SKIN MAINTENANCE</p>
+      <p className="font-typewriter uppercase tracking-widest text-foreground text-lg">FIELD OIL: DAILY SKIN BARRIER MAINTENANCE</p>
       <p className="mt-1">Body copy is set in Inter, like this paragraph.</p>
     </section>
 
