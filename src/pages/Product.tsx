@@ -170,11 +170,11 @@ const Product = () => {
               <p className="mt-2 text-2xl font-body">
                 {sym}{price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
               </p>
-              {FIRST_SHIP_DATE > today && (
-                <p className="mt-2 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
-                  Available now · First bottles ship from 10 August 2026
-                </p>
-              )}
+              <p className="mt-2 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
+                {FIRST_SHIP_DATE > today
+                  ? "Available now · First bottles ship from 10 August 2026"
+                  : "Now shipping · Free standard shipping to Australia & the UK"}
+              </p>
 
               <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
                 A medium-weight daily oil that supports and maintains your skin barrier.

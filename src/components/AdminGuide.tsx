@@ -15,9 +15,9 @@ const AdminGuide = () => (
         important daily job.
       </p>
       <p className="mt-3">
-        <strong>Launch window:</strong> orders are open now, but the first bottles ship from
-        <strong> 10 August 2026</strong>. Until then nothing is scheduled before that date, so the
-        To ship queue stays empty and the site reads "available now, ships from 10 August."
+        <strong>Shipping is live</strong> (from 10 August 2026). Paid orders appear in the To ship queue
+        on their scheduled date; the site reads "now shipping." Single bottles dispatch straight away;
+        12-month bundles ship on the customer's chosen schedule.
       </p>
     </section>
 
