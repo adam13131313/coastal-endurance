@@ -6,7 +6,9 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
-const FROM_ADDRESS = "Coastal Endurance <noreply@coastalendurance.com>";
+// Personal outreach: send from the founder's real, replyable address so a
+// plain "Reply" lands with Adam — noreply@ read as spam to first-touch inboxes.
+const FROM_ADDRESS = "Adam from Coastal Endurance <hello@coastalendurance.com>";
 // One reusable coupon: A$78 off, once. One free single bottle; a bundle just
 // gets $78 off. Created on first use so there's no manual Stripe setup.
 // 100%-off (not a fixed A$ amount) so a single free bottle zeroes out in ANY

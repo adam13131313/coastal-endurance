@@ -6,7 +6,9 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const FROM_ADDRESS = "Coastal Endurance <noreply@coastalendurance.com>";
+// Personal outreach: send from the founder's real, replyable address so a
+// plain "Reply" lands with Adam — noreply@ read as spam to first-touch inboxes.
+const FROM_ADDRESS = "Adam from Coastal Endurance <hello@coastalendurance.com>";
 const REPLY_TO = "hello@coastalendurance.com";
 
 const ALLOWED_ORIGINS = ["https://coastalendurance.com", "https://www.coastalendurance.com"];
