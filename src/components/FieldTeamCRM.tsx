@@ -58,6 +58,21 @@ const FieldTeamCRM = () => {
   const confirmedCount = active.filter((r) => CONFIRMED_STAGES.has(r.stage)).length;
   const byStage = useCallback((stage: string) => active.filter((r) => r.stage === stage), [active]);
 
+  // Copy every active member's email as a comma-separated list for a Gmail BCC.
+  // Skips placeholder (@update-me.invalid) and blank addresses so nothing bounces.
+  const copyEmails = async () => {
+    const real = (e?: string | null) => !!e && e.trim() !== "" && !e.trim().endsWith("@update-me.invalid");
+    const emails = [...new Set(active.map((r) => r.contacts.email?.trim()).filter(real) as string[])];
+    const skipped = active.filter((r) => !real(r.contacts.email)).length;
+    if (emails.length === 0) { toast.error("No real emails to copy yet."); return; }
+    try {
+      await navigator.clipboard.writeText(emails.join(", "));
+      toast.success(`Copied ${emails.length} email${emails.length === 1 ? "" : "s"}${skipped ? ` (${skipped} skipped — no real address)` : ""}. Paste into your BCC.`);
+    } catch {
+      toast.error("Couldn't copy to clipboard.");
+    }
+  };
+
   const addProspect = async () => {
     const email = form.email.trim().toLowerCase();
     if (!email.includes("@")) { toast.error("Enter a valid email."); return; }
@@ -212,6 +227,7 @@ const FieldTeamCRM = () => {
         <div>
           <div className="flex items-center gap-3">
             <h2 className="text-2xl font-typewriter uppercase">Field Team</h2>
+            <button onClick={copyEmails} className="text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground hover:text-foreground border border-border px-2 py-0.5">Copy emails</button>
             <button onClick={() => setShowLibrary(true)} className="text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground hover:text-foreground border border-border px-2 py-0.5">Comms library</button>
           </div>
           <p className="mt-1 text-sm font-body text-muted-foreground">
