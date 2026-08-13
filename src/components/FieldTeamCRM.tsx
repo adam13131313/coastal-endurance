@@ -231,7 +231,9 @@ const FieldTeamCRM = () => {
             <button onClick={() => setShowLibrary(true)} className="text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground hover:text-foreground border border-border px-2 py-0.5">Comms library</button>
           </div>
           <p className="mt-1 text-sm font-body text-muted-foreground">
-            {confirmedCount} of {TARGET} confirmed · {active.length} in pipeline{lost.length ? ` · ${lost.length} lost` : ""}
+            {confirmedCount >= TARGET
+              ? `${confirmedCount} confirmed · target of ${TARGET} reached`
+              : `${confirmedCount} of ${TARGET} confirmed`} · {active.length} in pipeline{lost.length ? ` · ${lost.length} lost` : ""}
           </p>
           <div className="h-2 bg-muted w-64 mt-2">
             <div className="h-2 bg-foreground" style={{ width: `${Math.min(100, (confirmedCount / TARGET) * 100)}%` }} />
