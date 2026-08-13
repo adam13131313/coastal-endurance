@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { sb, fmtDate, fmtDateTime, type Contact, type ContactEvent } from "@/lib/crm";
 import { formatPrice } from "@/lib/catalog";
 
-// Customers: the contacts list (auto-populated from orders + field team + signups),
-// searchable, with per-contact order history / LTV and the activity timeline.
+// Customers: contacts (auto-populated from orders, field team, signups). Each is
+// a page you can open, edit, and keep notes on. "Account" = they've created a
+// login (contacts.user_id linked to an auth user); "Guest" = ordered/added
+// without an account.
 interface OrderLite { id: string; email: string; status: string; total_cents: number; currency: string; created_at: string }
+
+const inputCls = "w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground";
 
 const CustomersAdmin = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -12,14 +18,19 @@ const CustomersAdmin = () => {
   const [events, setEvents] = useState<ContactEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [viewingId, setViewingId] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [noteDraft, setNoteDraft] = useState("");
+
+  // Edit draft for the open customer (strings for caret-safe editing).
+  const [draft, setDraft] = useState<Partial<Contact> & { tagsText?: string } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     const [c, o, e] = await Promise.all([
       sb.from("contacts").select("*").order("created_at", { ascending: false }),
       sb.from("orders").select("id, email, status, total_cents, currency, created_at").in("status", ["paid", "fulfilled", "refunded"]).order("created_at", { ascending: false }),
-      sb.from("contact_events").select("*").order("created_at", { ascending: false }).limit(500),
+      sb.from("contact_events").select("*").order("created_at", { ascending: false }).limit(1000),
     ]);
     setContacts((c.data as Contact[]) ?? []);
     setOrders((o.data as OrderLite[]) ?? []);
@@ -49,31 +60,164 @@ const CustomersAdmin = () => {
   }, [events]);
 
   const ltv = (c: Contact) =>
-    (ordersByEmail.get(c.email) ?? []).filter((o) => o.status !== "refunded").reduce((s, o) => s + o.total_cents, 0);
+    (ordersByEmail.get(c.email.toLowerCase()) ?? []).filter((o) => o.status !== "refunded").reduce((s, o) => s + o.total_cents, 0);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     if (!needle) return contacts;
-    return contacts.filter((c) => c.email.includes(needle) || (c.name ?? "").toLowerCase().includes(needle) || (c.source ?? "").includes(needle));
+    return contacts.filter((c) => c.email.toLowerCase().includes(needle) || (c.name ?? "").toLowerCase().includes(needle) || (c.source ?? "").toLowerCase().includes(needle));
   }, [contacts, q]);
+
+  const openCustomer = (c: Contact) => {
+    setViewingId(c.id);
+    setDraft({ ...c, tagsText: (c.tags ?? []).join(", ") });
+    setNoteDraft("");
+  };
+
+  const saveDetails = async () => {
+    if (!draft || !viewingId) return;
+    if (!draft.email?.trim() || !draft.email.includes("@")) { toast.error("A valid email is required."); return; }
+    setBusy(true);
+    const { error } = await sb.from("contacts").update({
+      name: draft.name?.trim() || null,
+      email: draft.email.trim(),
+      phone: draft.phone?.trim() || null,
+      source: draft.source?.trim() || null,
+      country: draft.country?.trim() || null,
+      preferred_currency: draft.preferred_currency || "AUD",
+      marketing_consent: !!draft.marketing_consent,
+      tags: (draft.tagsText ?? "").split(",").map((t) => t.trim()).filter(Boolean),
+      notes: draft.notes?.trim() || null,
+      updated_at: new Date().toISOString(),
+    }).eq("id", viewingId);
+    setBusy(false);
+    if (error) { toast.error(String(error.message).includes("duplicate") ? "That email belongs to another contact." : "Couldn't save."); return; }
+    toast.success("Saved.");
+    await load();
+  };
+
+  const addNote = async () => {
+    if (!viewingId || !noteDraft.trim()) return;
+    setBusy(true);
+    const { data: userData } = await supabase.auth.getUser();
+    const { error } = await sb.from("contact_events").insert({
+      contact_id: viewingId, type: "note", note: noteDraft.trim(), meta: {}, actor: userData?.user?.email ?? "admin",
+    });
+    setBusy(false);
+    if (error) { toast.error("Couldn't add the note."); return; }
+    setNoteDraft("");
+    toast.success("Note added.");
+    await load();
+  };
 
   if (loading) return <p className="font-body text-muted-foreground">Loading customers…</p>;
 
-  const buyers = contacts.filter((c) => (ordersByEmail.get(c.email) ?? []).some((o) => o.status !== "refunded")).length;
+  const buyers = contacts.filter((c) => (ordersByEmail.get(c.email.toLowerCase()) ?? []).some((o) => o.status !== "refunded")).length;
+  const members = contacts.filter((c) => c.user_id).length;
 
+  // -------------------------------------------------------------- detail page
+  if (viewingId && draft) {
+    const c = contacts.find((x) => x.id === viewingId);
+    const co = c ? ordersByEmail.get(c.email.toLowerCase()) ?? [] : [];
+    const ev = eventsByContact.get(viewingId) ?? [];
+    const hasAccount = !!c?.user_id;
+    return (
+      <div className="max-w-[760px] space-y-6">
+        <div className="flex items-center justify-between">
+          <button onClick={() => { setViewingId(null); setDraft(null); }} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">← All customers</button>
+          <span className={`text-[10px] font-typewriter uppercase tracking-widest px-2 py-0.5 ${hasAccount ? "bg-foreground text-background" : "border border-border text-muted-foreground"}`}>
+            {hasAccount ? "Account" : "Guest"}
+          </span>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-typewriter uppercase">{draft.name || draft.email}</h2>
+          <p className="mt-1 text-sm font-body text-muted-foreground">
+            Added {c ? fmtDate(c.created_at) : "—"}
+            {co.length > 0 ? ` · ${co.length} order${co.length === 1 ? "" : "s"} · ${formatPrice(ltv(c as Contact))} lifetime` : " · no orders"}
+          </p>
+        </div>
+
+        {/* Editable details */}
+        <div className="border border-border p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <L label="Name"><input value={draft.name ?? ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} className={inputCls} /></L>
+          <L label="Email"><input value={draft.email ?? ""} onChange={(e) => setDraft({ ...draft, email: e.target.value })} className={inputCls} /></L>
+          <L label="Phone"><input value={draft.phone ?? ""} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} className={inputCls} /></L>
+          <L label="Source / how you know them"><input value={draft.source ?? ""} onChange={(e) => setDraft({ ...draft, source: e.target.value })} className={inputCls} /></L>
+          <L label="Country"><input value={draft.country ?? ""} onChange={(e) => setDraft({ ...draft, country: e.target.value })} className={inputCls} /></L>
+          <L label="Preferred currency">
+            <select value={draft.preferred_currency ?? "AUD"} onChange={(e) => setDraft({ ...draft, preferred_currency: e.target.value })} className={inputCls}>
+              <option value="AUD">AUD</option><option value="GBP">GBP</option><option value="USD">USD</option>
+            </select>
+          </L>
+          <L label="Tags (comma-separated)"><input value={draft.tagsText ?? ""} onChange={(e) => setDraft({ ...draft, tagsText: e.target.value })} className={inputCls} placeholder="advisor, vip…" /></L>
+          <label className="flex items-center gap-2 text-sm font-body md:pt-6">
+            <input type="checkbox" checked={!!draft.marketing_consent} onChange={(e) => setDraft({ ...draft, marketing_consent: e.target.checked })} />
+            Marketing consent
+          </label>
+          <div className="md:col-span-2">
+            <L label="Standing notes (about this customer)">
+              <textarea value={draft.notes ?? ""} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} rows={3} className={inputCls} />
+            </L>
+          </div>
+          <div className="md:col-span-2">
+            <button onClick={saveDetails} disabled={busy} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy ? "…" : "Save details"}</button>
+          </div>
+        </div>
+
+        {/* Add a dated note */}
+        <div className="border border-border p-4">
+          <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-2">Add a note to the timeline</p>
+          <div className="flex flex-wrap gap-2">
+            <input value={noteDraft} onChange={(e) => setNoteDraft(e.target.value)} placeholder="Called about a reorder, wants gift wrap…" className={`${inputCls} flex-1 min-w-[220px]`} />
+            <button onClick={addNote} disabled={busy || !noteDraft.trim()} className="btn-outline text-xs px-3 py-1.5 disabled:opacity-50">Add note</button>
+          </div>
+        </div>
+
+        {/* Orders */}
+        {co.length > 0 && (
+          <div>
+            <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Orders</p>
+            <div className="border border-border divide-y divide-border">
+              {co.map((o) => (
+                <p key={o.id} className="px-3 py-2 text-sm font-body flex justify-between">
+                  <span>{fmtDate(o.created_at)}</span>
+                  <span className="tabular-nums">{formatPrice(o.total_cents)} {o.currency} · {o.status}</span>
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Timeline */}
+        <div>
+          <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Activity</p>
+          {ev.length === 0 ? (
+            <p className="text-sm font-body text-muted-foreground">Nothing yet.</p>
+          ) : (
+            <ul className="border border-border divide-y divide-border">
+              {ev.map((e) => (
+                <li key={e.id} className="px-3 py-2 text-xs font-body">
+                  <span className="text-foreground">{e.note || e.type.replace(/_/g, " ")}</span>
+                  <span className="text-muted-foreground"> · {fmtDateTime(e.created_at)}{e.actor ? ` · ${e.actor}` : ""}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------- list
   return (
     <div className="max-w-[880px] space-y-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-2xl font-typewriter uppercase">Customers</h2>
-        <p className="text-sm font-body text-muted-foreground">{contacts.length} contact{contacts.length === 1 ? "" : "s"} · {buyers} with orders</p>
+        <p className="text-sm font-body text-muted-foreground">{contacts.length} contacts · {buyers} with orders · {members} with accounts</p>
       </div>
 
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search name, email, source…"
-        className="w-full max-w-md px-3 py-2 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
-      />
+      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, email, source…" className="w-full max-w-md px-3 py-2 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
 
       {filtered.length === 0 ? (
         <p className="font-body text-muted-foreground">
@@ -82,51 +226,18 @@ const CustomersAdmin = () => {
       ) : (
         <div className="border border-border divide-y divide-border">
           {filtered.map((c) => {
-            const co = ordersByEmail.get(c.email) ?? [];
+            const co = ordersByEmail.get(c.email.toLowerCase()) ?? [];
             const value = ltv(c);
-            const open = expanded === c.id;
-            const ev = eventsByContact.get(c.id) ?? [];
             return (
-              <div key={c.id}>
-                <button onClick={() => setExpanded(open ? null : c.id)} className="w-full text-left p-3 flex flex-wrap items-center gap-x-4 gap-y-1 hover:bg-secondary/40 transition-colors">
-                  <span className="font-body text-sm font-medium w-56 shrink-0 truncate">{c.name || c.email}</span>
-                  <span className="text-xs font-body text-muted-foreground w-56 shrink-0 truncate">{c.name ? c.email : ""}</span>
-                  <span className="text-[10px] font-typewriter uppercase tracking-widest text-muted-foreground border border-border px-1.5 py-0.5">{c.source ?? "—"}</span>
-                  {c.country && <span className="text-[10px] font-typewriter uppercase tracking-widest text-muted-foreground border border-border px-1.5 py-0.5">{c.country}</span>}
-                  <span className="ml-auto text-sm font-body tabular-nums">{co.length > 0 ? `${co.length} order${co.length === 1 ? "" : "s"} · ${formatPrice(value)}` : "—"}</span>
-                </button>
-                {open && (
-                  <div className="px-3 pb-4 pt-1 space-y-3 bg-secondary/20">
-                    <p className="text-xs font-body text-muted-foreground">
-                      Added {fmtDate(c.created_at)} · currency {c.preferred_currency} · marketing consent: {c.marketing_consent ? "yes" : "no"}
-                      {c.phone ? ` · ${c.phone}` : ""}
-                    </p>
-                    {co.length > 0 && (
-                      <div>
-                        <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Orders</p>
-                        {co.map((o) => (
-                          <p key={o.id} className="text-sm font-body">
-                            {fmtDate(o.created_at)} · {formatPrice(o.total_cents)} {o.currency} · {o.status}
-                          </p>
-                        ))}
-                      </div>
-                    )}
-                    {ev.length > 0 && (
-                      <div>
-                        <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Activity</p>
-                        <ul className="space-y-0.5">
-                          {ev.slice(0, 10).map((e) => (
-                            <li key={e.id} className="text-xs font-body text-muted-foreground">
-                              <span className="text-foreground">{e.note || e.type.replace(/_/g, " ")}</span> · {fmtDateTime(e.created_at)}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {c.notes && <p className="text-xs font-body text-muted-foreground">Notes: {c.notes}</p>}
-                  </div>
-                )}
-              </div>
+              <button key={c.id} onClick={() => openCustomer(c)} className="w-full text-left p-3 flex flex-wrap items-center gap-x-3 gap-y-1 hover:bg-secondary/40 transition-colors">
+                <span className="font-body text-sm font-medium w-52 shrink-0 truncate">{c.name || c.email}</span>
+                <span className="text-xs font-body text-muted-foreground w-52 shrink-0 truncate">{c.name ? c.email : ""}</span>
+                <span className={`text-[10px] font-typewriter uppercase tracking-widest px-1.5 py-0.5 ${c.user_id ? "bg-foreground text-background" : "border border-border text-muted-foreground"}`}>
+                  {c.user_id ? "Account" : "Guest"}
+                </span>
+                {c.source && <span className="text-[10px] font-typewriter uppercase tracking-widest text-muted-foreground border border-border px-1.5 py-0.5">{c.source}</span>}
+                <span className="ml-auto text-sm font-body tabular-nums">{co.length > 0 ? `${co.length} order${co.length === 1 ? "" : "s"} · ${formatPrice(value)}` : "—"}</span>
+              </button>
             );
           })}
         </div>
@@ -134,5 +245,12 @@ const CustomersAdmin = () => {
     </div>
   );
 };
+
+const L = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <label className="block text-sm">
+    <span className="block font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground mb-1">{label}</span>
+    {children}
+  </label>
+);
 
 export default CustomersAdmin;

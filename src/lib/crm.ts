@@ -18,6 +18,7 @@ export interface Contact {
   marketing_consent: boolean;
   tags: string[];
   notes: string | null;
+  user_id: string | null;   // set when the contact has created an account (membership)
   created_at: string;
 }
 
