@@ -77,16 +77,28 @@ Deno.serve(async (req) => {
     // Notify the customer their shipment is on the way.
     const { data: order } = await admin.from("orders").select("email").eq("id", delivery.order_id).maybeSingle();
     if (RESEND_API_KEY && order?.email) {
-      const trackingLine = tracking
-        ? `<p style="font-size:15px;color:#333">Tracking number: <strong>${tracking}</strong></p>`
+      const esc = (s: string) =>
+        s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
+      // Australia Post tracking deep-link (their carrier). The article ID also
+      // works for international AusPost lodgements.
+      const trackUrl = tracking
+        ? `https://auspost.com.au/mypost/track/#/details/${encodeURIComponent(tracking)}`
         : "";
+      const trackingBlock = tracking
+        ? `
+          <p style="font-size:15px;color:#333;line-height:1.6;margin:0 0 14px">Tracking number: <strong>${esc(tracking)}</strong></p>
+          <p style="margin:0 0 20px">
+            <a href="${trackUrl}" style="display:inline-block;background:#000;color:#fff;text-decoration:none;font-size:14px;letter-spacing:1px;padding:12px 24px">TRACK YOUR PARCEL</a>
+          </p>
+          <p style="font-size:13px;color:#666;line-height:1.6;margin:0">Sent with Australia Post. Tracking can take up to 24 hours to show its first scan. Standard delivery is usually a few business days within Australia; international orders take longer and may pass through customs on arrival.</p>`
+        : `<p style="font-size:15px;color:#333;line-height:1.6">We'll follow up with tracking details shortly.</p>`;
       const html = `
         <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 28px">
           <p style="font-size:13px;font-weight:600;letter-spacing:3px;margin:0">COASTAL ENDURANCE</p>
           <hr style="border:none;border-top:1px solid #d6cfc4;margin:16px 0 24px"/>
           <h1 style="font-size:22px;margin:0 0 16px">Your Field Oil 001 is on its way</h1>
-          <p style="font-size:15px;color:#333;line-height:1.6">Shipment ${delivery.sequence} of your order has been dispatched.</p>
-          ${trackingLine}
+          <p style="font-size:15px;color:#333;line-height:1.6;margin:0 0 20px">Shipment ${delivery.sequence} of your order has been dispatched.</p>
+          ${trackingBlock}
           <p style="font-size:13px;color:#999;margin-top:24px">Coastal Endurance · Made in Australia</p>
         </div>`;
       try {

@@ -98,6 +98,48 @@ const TAB_LABEL: Record<string, string> = {
   guide: "Staff guide", brand: "Brand", positioning: "Positioning",
 };
 
+// Dispatch row controls. Defined at MODULE scope (not inside Admin) so their
+// component identity is stable across renders. When they were declared inside
+// Admin, every keystroke re-created the component type, remounting the input —
+// which dropped focus after each character and swallowed the first click on the
+// button (you had to click "Mark shipped" twice).
+const TrackShip = ({ value, onChange, onShip, busy }: {
+  value: string; onChange: (v: string) => void; onShip: () => void; busy: boolean;
+}) => (
+  <span className="flex items-center gap-2">
+    <input
+      placeholder="tracking #"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground w-36"
+    />
+    <button onClick={onShip} disabled={busy} className="btn-outline text-xs px-3 py-1 disabled:opacity-50">
+      {busy ? "…" : "Mark shipped"}
+    </button>
+  </span>
+);
+
+// Move a not-yet-shipped delivery to a new date (customer asked; staff actions it).
+const Reschedule = ({ value, onChange, onSave, disabled }: {
+  value: string; onChange: (v: string) => void; onSave: () => void; disabled: boolean;
+}) => (
+  <span className="flex items-center gap-2">
+    <input
+      type="date"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+    />
+    <button
+      onClick={onSave}
+      disabled={disabled}
+      className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-40"
+    >
+      Save date
+    </button>
+  </span>
+);
+
 const Admin = () => {
   const navigate = useNavigate();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
@@ -222,39 +264,6 @@ const Admin = () => {
   const dispatch = orders
     .flatMap((o) => o.order_deliveries.filter((d) => d.status === "scheduled").map((d) => ({ d, o })))
     .sort((a, b) => a.d.scheduled_for.localeCompare(b.d.scheduled_for));
-
-  const TrackShip = ({ id }: { id: string }) => (
-    <span className="flex items-center gap-2">
-      <input
-        placeholder="tracking #"
-        value={tracking[id] ?? ""}
-        onChange={(e) => setTracking((t) => ({ ...t, [id]: e.target.value }))}
-        className="px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground w-36"
-      />
-      <button onClick={() => shipDelivery(id)} disabled={busy === id} className="btn-outline text-xs px-3 py-1 disabled:opacity-50">
-        {busy === id ? "…" : "Mark shipped"}
-      </button>
-    </span>
-  );
-
-  // Move a not-yet-shipped delivery to a new date (customer asked; staff actions it).
-  const Reschedule = ({ id, current }: { id: string; current: string }) => (
-    <span className="flex items-center gap-2">
-      <input
-        type="date"
-        value={dates[id] ?? current}
-        onChange={(e) => setDates((d) => ({ ...d, [id]: e.target.value }))}
-        className="px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
-      />
-      <button
-        onClick={() => rescheduleDelivery(id, current)}
-        disabled={busy === id || (dates[id] ?? current) === current}
-        className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-40"
-      >
-        Save date
-      </button>
-    </span>
-  );
 
   return (
     <main className="pt-24">
@@ -400,8 +409,18 @@ const Admin = () => {
                         </div>
                       </div>
                       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                        <Reschedule id={d.id} current={d.scheduled_for} />
-                        <TrackShip id={d.id} />
+                        <Reschedule
+                          value={dates[d.id] ?? d.scheduled_for}
+                          onChange={(v) => setDates((dd) => ({ ...dd, [d.id]: v }))}
+                          onSave={() => rescheduleDelivery(d.id, d.scheduled_for)}
+                          disabled={busy === d.id || (dates[d.id] ?? d.scheduled_for) === d.scheduled_for}
+                        />
+                        <TrackShip
+                          value={tracking[d.id] ?? ""}
+                          onChange={(v) => setTracking((t) => ({ ...t, [d.id]: v }))}
+                          onShip={() => shipDelivery(d.id)}
+                          busy={busy === d.id}
+                        />
                       </div>
                     </div>
                   );
@@ -478,7 +497,14 @@ const Admin = () => {
                               <span className={`text-xs uppercase tracking-widest px-2 py-0.5 ${d.status === "shipped" || d.status === "delivered" ? "bg-foreground text-background" : "bg-muted text-muted-foreground"}`}>
                                 {d.status}
                               </span>
-                              {d.status === "scheduled" ? <TrackShip id={d.id} /> : d.tracking_number && <span className="text-muted-foreground">#{d.tracking_number}</span>}
+                              {d.status === "scheduled" ? (
+                                <TrackShip
+                                  value={tracking[d.id] ?? ""}
+                                  onChange={(v) => setTracking((t) => ({ ...t, [d.id]: v }))}
+                                  onShip={() => shipDelivery(d.id)}
+                                  busy={busy === d.id}
+                                />
+                              ) : d.tracking_number && <span className="text-muted-foreground">#{d.tracking_number}</span>}
                             </div>
                           ))}
                         </div>
