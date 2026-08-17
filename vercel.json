@@ -12,6 +12,18 @@
       "has": [{ "type": "host", "value": "www.fieldoil.co" }],
       "destination": "https://coastalendurance.com/:path",
       "permanent": true
+    },
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "field.skin" }],
+      "destination": "https://coastalendurance.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "www.field.skin" }],
+      "destination": "https://coastalendurance.com/:path",
+      "permanent": true
     }
   ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
