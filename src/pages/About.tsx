@@ -88,7 +88,7 @@ const About = () => {
               And honestly, it just feels better to rub a little oil into your skin than any of the other stuff.
             </p>
             <p className="pt-2 font-typewriter text-sm uppercase tracking-widest text-foreground">
-              Adam Hyde, Founder
+              Adam Stuart, Founder
             </p>
           </div>
         </div>

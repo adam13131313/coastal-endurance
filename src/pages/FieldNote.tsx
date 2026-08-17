@@ -82,7 +82,7 @@ const FieldNote = () => {
           headline: note.title,
           description: note.standfirst ?? undefined,
           datePublished: note.published_at ?? undefined,
-          author: { "@type": "Person", name: "Adam Hyde" },
+          author: { "@type": "Person", name: "Adam Stuart" },
           publisher: { "@type": "Organization", name: "Coastal Endurance" },
         })}</script>
       </Helmet>
@@ -106,7 +106,7 @@ const FieldNote = () => {
             <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{note.body}</ReactMarkdown>
           </div>
           <p className="mt-10 pt-2 font-typewriter text-sm uppercase tracking-widest text-foreground">
-            Adam Hyde, Founder
+            Adam Stuart, Founder
           </p>
 
           <div className="mt-14 pt-8 border-t border-border">

@@ -9,7 +9,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 // Personal 1:1 comms (field team, contacts): send from a human, replied-to
 // address, not noreply@. Reads better and lands better (noreply correlates
 // with bulk mail; a real from/reply-to is a deliverability + trust signal).
-const FROM_ADDRESS = "Adam Hyde <hello@coastalendurance.com>";
+const FROM_ADDRESS = "Adam Stuart <hello@coastalendurance.com>";
 const REPLY_TO = "hello@coastalendurance.com";
 
 const ALLOWED_ORIGINS = ["https://coastalendurance.com", "https://www.coastalendurance.com"];
