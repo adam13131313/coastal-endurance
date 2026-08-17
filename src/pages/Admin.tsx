@@ -25,6 +25,7 @@ import ProductIdeas from "@/components/ProductIdeas";
 import StockControl from "@/components/StockControl";
 import CustomersAdmin from "@/components/CustomersAdmin";
 import CompetitorsAdmin from "@/components/CompetitorsAdmin";
+import BrandStudy from "@/components/BrandStudy";
 
 interface OrderItem {
   id: string;
@@ -87,7 +88,7 @@ const NAV_GROUPS = [
   { group: "Sell", keys: ["orders", "dispatch", "stock", "customers"] },
   { group: "Grow", keys: ["campaign", "content", "field", "comms", "notes"] },
   { group: "Make", keys: ["supply", "production", "ideas"] },
-  { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "social"] },
+  { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "brandstudy", "social"] },
 ] as const;
 
 const TAB_LABEL: Record<string, string> = {
@@ -95,7 +96,7 @@ const TAB_LABEL: Record<string, string> = {
   social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
   customers: "Customers", field: "Field team", comms: "Comms", notes: "Field Notes", supply: "Supply", production: "Production",
   ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
-  guide: "Staff guide", brand: "Brand", positioning: "Positioning",
+  guide: "Staff guide", brand: "Brand", positioning: "Positioning", brandstudy: "field: study",
 };
 
 const Admin = () => {
@@ -103,7 +104,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "comms" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning">("today");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "field" | "comms" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning" | "brandstudy">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -507,6 +508,8 @@ const Admin = () => {
           {tab === "brand" && <BrandGuide />}
 
           {tab === "positioning" && <CompetitorsAdmin />}
+
+          {tab === "brandstudy" && <BrandStudy />}
 
           {tab === "social" && <SocialGuide />}
             </div>
