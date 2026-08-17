@@ -364,7 +364,7 @@ const FieldTeam = () => {
             your honest feedback is what proves it out and helps us make it better.
           </p>
           <div className="text-[17px] font-body text-foreground leading-relaxed">
-            <p>Adam Hyde</p>
+            <p>Adam Stuart</p>
             <p className="text-muted-foreground">
               Founder, Coastal Endurance
             </p>

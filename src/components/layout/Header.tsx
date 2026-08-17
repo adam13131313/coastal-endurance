@@ -36,6 +36,7 @@ const CurrencySwitcher = () => {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<{ avatar_url?: string } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
 
   // Defer auth check so it doesn't block first paint
@@ -44,13 +45,19 @@ const Header = () => {
     const init = async () => {
       const { supabase } = await import("@/integrations/supabase/client");
       if (cancelled) return;
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!cancelled) {
-        setUser(session?.user ? { avatar_url: session.user.user_metadata?.avatar_url } : null);
-      }
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const apply = async (s: any) => {
+        if (cancelled) return;
         setUser(s?.user ? { avatar_url: s.user.user_metadata?.avatar_url } : null);
-      });
+        if (!s?.user) { setIsAdmin(false); return; }
+        try {
+          const { data } = await (supabase as unknown as { rpc: (fn: string) => Promise<{ data: boolean | null }> }).rpc("is_admin");
+          if (!cancelled) setIsAdmin(!!data);
+        } catch { if (!cancelled) setIsAdmin(false); }
+      };
+      const { data: { session } } = await supabase.auth.getSession();
+      await apply(session);
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => { apply(s); });
       if (cancelled) subscription.unsubscribe();
       else {
         // Store cleanup ref
@@ -115,6 +122,12 @@ const Header = () => {
               <CartDrawer />
             </Suspense>
 
+            {isAdmin && (
+              <Link to="/admin" className="hidden sm:inline-block text-xs font-typewriter uppercase tracking-wider border border-border px-2.5 py-1 mr-1 transition-colors hover:bg-foreground hover:text-background">
+                Admin
+              </Link>
+            )}
+
             {user ? (
               <Link to="/account" className="p-2 transition-colors hover:text-muted-foreground" aria-label="My Account">
                 {user.avatar_url ? (
@@ -156,6 +169,11 @@ const Header = () => {
                   {link.name}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="text-base font-typewriter py-2 uppercase tracking-wider text-foreground">
+                  Admin →
+                </Link>
+              )}
             </div>
           </nav>
         )}
