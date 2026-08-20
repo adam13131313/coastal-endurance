@@ -92,7 +92,7 @@ const ProductIdeas = () => {
     <div className="max-w-[820px] space-y-8">
       <div>
         <h2 className="text-2xl font-typewriter uppercase">Product ideas</h2>
-        <p className="mt-1 text-sm font-body text-muted-foreground">The pipeline of future products. Every one: 100% natural, performance-optimised, equipment-maintenance not cosmetics. Attach an exploration brief to give an idea depth.</p>
+        <p className="mt-1 text-sm font-body text-muted-foreground">The pipeline of future products. Every one: 100% natural, performance-optimised, equipment-maintenance, function-first. Attach an exploration brief to give an idea depth.</p>
       </div>
 
       {/* Add */}

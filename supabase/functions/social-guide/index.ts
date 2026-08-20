@@ -44,7 +44,7 @@ const SECTIONS = [
     ["Product", "Field Oil 001"],
     ["Size", "30ml"],
     ["Price", "A$78 (single bottle)"],
-    ["Positioning line", "“We don't make skincare. We make equipment maintenance.”"],
+    ["Positioning line", "“Skin is equipment. We make the maintenance.”"],
     ["Category framing", "Barrier / skin maintenance for outdoor-exposed men. Equipment maintenance, not anti-aging, not self-care."],
     ["Target", "Men ~35–55 with years of outdoor exposure (surfers, cyclists, runners, tradies, outdoor workers)"],
     ["Fragrance", "Zero added fragrance, zero essential oils"],
@@ -60,7 +60,7 @@ const SECTIONS = [
   ] } },
 
   { h: "2 · Voice" },
-  { p: "Direct, functional, spec-led, anti-ritual. Reads like equipment documentation, not skincare marketing." },
+  { p: "Direct, functional, spec-led, anti-ritual. Reads like equipment documentation, not beauty marketing." },
   { cols: [
     { title: "Do", items: ["Lead with function and fact. Short sentences, plain words.", "Talk about skin as gear that takes a beating outdoors.", "Let the specs and positioning persuade. Understated confidence."] },
     { title: "Don't", items: ["Gift-shop softness (“no fuss,” “treat him,” “pamper”).", "Ritual language (“routine,” “serum,” “glow,” “self-care”).", "Masculine clichés (“built tough,” “for real men”).", "Discount framing (“great value,” “deal”) — fights the A$78 position."] },
@@ -106,7 +106,7 @@ const SECTIONS = [
   { p: "Design **TikTok-first at 9:16**, then crop down to 4:5 for Instagram. Never go 4:5 → 9:16 (forces letterboxing). Never stretch." },
 
   { h: "6 · Imagery & video direction" },
-  { p: "Honest, functional, undesigned. Patagonia gear tags and technical equipment, not skincare campaigns. Natural light, muted/matte, real texture." },
+  { p: "Honest, functional, undesigned. Patagonia gear tags and technical equipment, not beauty campaigns. Natural light, muted/matte, real texture." },
   { cols: [
     { title: "Shoot ✅", items: ["Weathered real skin on men in the target band — jaw, hands, forearms, sun-worn neck.", "Genuine, understated outdoor context (wetsuit at the waist, a bike against a wall) as backdrop, not hero.", "Product handled like a tool — workbench, kit bag, dropper mid-use.", "Plain application: 3–4 drops, pressed in, done."] },
     { title: "Don't shoot ❌", items: ["Postcard clichés (crashing waves, sunsets, drone beach shots as subject).", "Masculine clichés (axes, beards-as-props, leather, “rugged man” posing).", "Spa/luxury signals (marble, soft focus, candlelight, droplets on glass).", "Botanical flat-lays and influencer gloss."] },
