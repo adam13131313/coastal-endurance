@@ -96,7 +96,7 @@ const FieldNotesAdmin = () => {
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <h2 className="text-2xl font-typewriter uppercase">Field Notes</h2>
-          <p className="mt-1 text-sm font-body text-muted-foreground">The public journal at /field-notes. Drafts stay private until you publish. Signed "Adam Stuart, Founder" — keep it in your voice.</p>
+          <p className="mt-1 text-sm font-body text-muted-foreground">The public journal at /field-notes. Drafts stay private until you publish. Signed "Adam, Founder" — keep it in your voice.</p>
         </div>
         {!adding && <button onClick={() => { setAdding(true); setEditing(null); setDraft(BLANK); }} className="btn-outline text-xs px-3 py-1.5">+ New note</button>}
       </div>
