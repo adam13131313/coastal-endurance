@@ -21,7 +21,7 @@ const Terms = () => {
             </p>
             <h2 className="text-2xl font-display text-foreground">Orders & Shipping</h2>
             <p>
-              Orders are processed within 1-3 business days. Free standard shipping in Australia and the UK; express is 9.95 in your selected currency ($9.95 AUD, £9.95 GBP, or $9.95 USD). Other countries coming soon. We reserve the right to limit quantities.
+              Orders are processed within 1-3 business days. Standard shipping is free to Australia and the UK, where an express upgrade is available (9.95 in your selected currency). We also ship to the United States and the European Union, with a flat shipping rate charged at checkout (from US$20 / €20). International orders may be subject to import duties or taxes on delivery, which are the customer's responsibility. We reserve the right to limit quantities.
             </p>
             <h2 className="text-2xl font-display text-foreground">Returns</h2>
             <p>

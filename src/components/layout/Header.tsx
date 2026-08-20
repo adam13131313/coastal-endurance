@@ -15,7 +15,7 @@ const navLinks = [
   { name: "CONTACT", path: "/contact" },
 ];
 
-// Currency switcher (AUD / GBP / USD). Defaults by locale; overrides persist. Switching
+// Currency switcher (AUD / GBP / USD / EUR). Defaults by locale; overrides persist. Switching
 // clears the cart so a single order is never mixed-currency.
 const CurrencySwitcher = () => {
   const { currency, setCurrency } = useCurrency();
