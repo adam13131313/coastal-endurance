@@ -97,7 +97,7 @@ const TAB_LABEL: Record<string, string> = {
   social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
   customers: "Customers", field: "Field team", comms: "Comms", notes: "Field Notes", supply: "Supply", production: "Production",
   ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
-  guide: "Staff guide", brand: "Brand", positioning: "Positioning", brandstudy: "field: study", ip: "IP & TM",
+  guide: "Staff guide", brand: "Brand", positioning: "Positioning", brandstudy: "Brand system", ip: "IP & TM",
 };
 
 const Admin = () => {
