@@ -17,11 +17,11 @@ const PALETTE = [
 
 const DOC = `## Positioning — field maintenance
 
-**The idea.** You maintain your gear in the field; your skin is the gear that takes the most weather and gets the least care. The products are honestly skincare, framed and used like maintenance. One product, daily, no ritual.
+**The idea.** You maintain your gear in the field; your skin is the gear that takes the most weather and gets the least care. It's skincare, framed and used like maintenance. One product, daily, no ritual.
 
-**Say it's skincare; differentiate on approach.** Own the category and remove the reasons men avoid it (no ritual, no ten-step routine, sixty seconds). **Retire category denial** — "we don't make skincare" / "not skincare" is literally false and reads as spin. Keep it only as an internal north-star.
+**Keep the "equipment / field maintenance" framing — it's the heart of the brand.** One hard rule: **don't use the literal phrase "not skincare"** (or "we don't make skincare"). It's category-denial, literally false, and reads as spin. Lead on the maintenance approach instead.
 
-- ✅ "Skincare for men who don't do skincare." · "It's skincare. We just treat it like maintenance." · "The maintenance approach to skin."
+- ✅ "Equipment maintenance for life in a sunburnt country." · "It's skincare. We just treat it like maintenance." · "Skin is equipment. This is the maintenance."
 - ❌ "We don't make skincare." · "Not skincare."
 
 ## Architecture — Coastal Endurance makes Field
