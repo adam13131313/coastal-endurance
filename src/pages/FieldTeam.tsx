@@ -316,10 +316,10 @@ const FieldTeam = () => {
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed mb-4">
             Email me directly:{" "}
             <a
-              href="mailto:adam@coastalendurance.com"
+              href="mailto:adam.s.hyde@coastalendurance.com"
               className="text-foreground underline underline-offset-4 hover:text-accent transition-colors"
             >
-              adam@coastalendurance.com
+              adam.s.hyde@coastalendurance.com
             </a>
           </p>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
