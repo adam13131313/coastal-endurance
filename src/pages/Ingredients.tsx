@@ -118,7 +118,7 @@ const Ingredients = () => {
     { label: "Appearance", value: "Clear to pale amber oil with a golden hue" },
     { label: "Texture", value: "Medium-weight, absorbs in approximately 2 minutes" },
     { label: "Scent", value: "Natural plant-oil aroma (grassy, nutty, earthy), dissipates quickly" },
-    { label: "Suitable for", value: "Normal, dry, mature, outdoor-exposed skin" },
+    { label: "Suitable for", value: "All skin types — patch test first if you're unsure" },
   ];
 
   return (

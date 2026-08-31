@@ -363,7 +363,7 @@ const Product = () => {
                   SUITABLE FOR
                 </h3>
                 <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
-                  Normal, dry, mature, and outdoor-exposed skin.
+                  All skin types. Patch test first if you're unsure.
                 </p>
               </div>
             </div>
@@ -444,7 +444,7 @@ const Product = () => {
               <h2 className="text-2xl font-typewriter uppercase mb-8">SHELF LIFE & STORAGE</h2>
               <div className="space-y-4">
                 {[
-                  { label: "Shelf Life", value: "12–18 months from manufacture date" },
+                  { label: "Shelf Life", value: "12–18 months from manufacture date. Bottles carry an earlier expiry until formal shelf-life testing is complete." },
                   { label: "Storage", value: "Below 25°C, away from direct sunlight" },
                   { label: "Packaging", value: "Amber glass bottle with dropper. The glass blocks UV; the dropper gives precise, mess-free application and the same dose every time." },
                 ].map((item, index) => (
