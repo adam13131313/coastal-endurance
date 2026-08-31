@@ -268,7 +268,10 @@ Deno.serve(async (req) => {
           product_name: r.variant.products?.name ?? "Field Oil 001",
           variant_label: r.variant.label,
           quantity: r.incoming.quantity,
-          unit_price_cents: r.variant.price_cents,
+          // The price actually charged, in the order's currency — not the AUD
+          // base on product_variants, which would leave a GBP order carrying AUD
+          // line items.
+          unit_price_cents: priceFor(r.variant),
           bottles_each: r.variant.bottles,
         })),
       )
