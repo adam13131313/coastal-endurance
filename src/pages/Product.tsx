@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Check, Minus, Plus, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { fetchProduct, defaultDeliveryDates, firstShipBase, FIRST_SHIP_DATE, type Product as CatalogProduct } from "@/lib/catalog";
-import { useCurrency } from "@/context/CurrencyContext";
+import { useCurrency, CURRENCIES, type Currency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import ruggedCoast from "@/assets/rugged-coast.jpg";
@@ -17,8 +17,7 @@ const Product = () => {
   const [deliveryDates, setDeliveryDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const addItem = useCartStore((s) => s.addItem);
-  const { currency, config } = useCurrency();
-  const sym = config.symbol;
+  const { currency } = useCurrency();
 
   useEffect(() => {
     setLoading(true);
@@ -33,6 +32,10 @@ const Product = () => {
 
   const price = singleVariant ? singleVariant.price_cents / 100 : 78;
   const currencyCode = product?.currency || "AUD";
+  // Take the symbol from the currency we are actually showing, never from the
+  // selected one. Until the product resolves (and for any currency without price
+  // points) those differ, which rendered AUD amounts as "£78.00 AUD".
+  const sym = CURRENCIES[currencyCode as Currency]?.symbol ?? "$";
   // Prefer a DB-set image_url (drop-in, no deploy); fall back to the Field Oil
   // bottle shot so the product image always shows the actual product.
   const productImage = product?.image_url || fieldOilImage;
@@ -115,7 +118,7 @@ const Product = () => {
           "@type": "Product",
           name: "Field Oil 001",
           description: "A daily face oil for healthy skin. Naturally derived: Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, plus a natural antioxidant system. No added fragrance, zero essential oils. 30ml. Made in Australia.",
-          image: "https://coastalendurance.com/og-image.png",
+          image: "https://coastalendurance.com/opengraph-image.png",
           brand: { "@type": "Brand", name: "Coastal Endurance" },
           offers: {
             "@type": "Offer",

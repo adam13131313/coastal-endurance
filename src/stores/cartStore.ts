@@ -124,7 +124,12 @@ export const useCartStore = create<CartStore>()(
               body: {
                 email,
                 fulfillment: get().fulfillment,
-                currency: (typeof localStorage !== "undefined" && localStorage.getItem("ce-currency")) || "AUD",
+                // The store's currency is kept in sync with the storefront by
+                // reconcileCurrency. Reading localStorage here instead used to send
+                // AUD for anyone who never touched the switcher — the locale default
+                // is never written to storage — so the cart showed one currency and
+                // Stripe charged another.
+                currency: get().currency,
                 attribution: getAttribution(),
                 items: items.map((i) => ({
                   variantId: i.variantId,
