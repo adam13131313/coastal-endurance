@@ -354,11 +354,13 @@ const Card = ({
         {busy && <span className="text-xs text-muted-foreground">…</span>}
       </div>
 
-      <div className="mt-1.5 flex flex-wrap gap-1">
-        {code && <Chip>Code ✓</Chip>}
-        {c.source && c.source !== "field_team" && <Chip>{c.source}</Chip>}
-        {c.country && <Chip>{c.country}</Chip>}
-      </div>
+      {(code || (c.source && c.source !== "field_team") || c.country) && (
+        <div className="mt-1.5 flex flex-wrap gap-1">
+          {code && <Chip>Code ✓</Chip>}
+          {c.source && c.source !== "field_team" && <Chip>{c.source}</Chip>}
+          {c.country && <Chip>{c.country}</Chip>}
+        </div>
+      )}
 
       {/* Move stage */}
       <select
@@ -370,29 +372,32 @@ const Card = ({
         {FT_STAGES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
       </select>
 
-      {/* Quick actions */}
-      <div className="mt-2 flex flex-wrap items-center gap-2">
+      {/* Quick actions. min-w-0 on the selects stops their longest <option> (e.g.
+          "Day-5 check-in") setting the width and pushing them past the card. */}
+      <div className="mt-2 space-y-2">
         {(row.stage === "confirmed" || row.stage === "code_sent") && (
           code ? (
-            <button onClick={onEmailCode} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
+            <button onClick={onEmailCode} disabled={busy} className="w-full text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
               Email code
             </button>
           ) : (
-            <button onClick={onIssue} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
+            <button onClick={onIssue} disabled={busy} className="w-full text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
               Issue code
             </button>
           )
         )}
-        <select
-          value=""
-          onChange={(e) => { const t = templates.find((x) => x.key === e.target.value); if (t) onCompose(t); e.target.value = ""; }}
-          disabled={busy || templates.length === 0}
-          className="text-[11px] font-typewriter uppercase tracking-wider px-2 py-1 border border-border bg-background rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
-        >
-          <option value="">Email ▾</option>
-          {templates.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
-        </select>
-        <LostButton onLost={onLost} disabled={busy} />
+        <div className="flex items-center gap-2">
+          <select
+            value=""
+            onChange={(e) => { const t = templates.find((x) => x.key === e.target.value); if (t) onCompose(t); e.target.value = ""; }}
+            disabled={busy || templates.length === 0}
+            className="min-w-0 flex-1 text-[11px] font-typewriter uppercase tracking-wider px-2 py-1 border border-border bg-background rounded-none focus:outline-none focus:ring-1 focus:ring-foreground disabled:opacity-50"
+          >
+            <option value="">Email ▾</option>
+            {templates.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
+          </select>
+          <LostButton onLost={onLost} disabled={busy} />
+        </div>
       </div>
 
       {expanded && (
@@ -427,14 +432,14 @@ const Chip = ({ children }: { children: React.ReactNode }) => (
 
 const LostButton = ({ onLost, disabled }: { onLost: (r: string) => void; disabled: boolean }) => {
   const [open, setOpen] = useState(false);
-  if (!open) return <button onClick={() => setOpen(true)} disabled={disabled} className="text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-destructive disabled:opacity-50">Lost</button>;
+  if (!open) return <button onClick={() => setOpen(true)} disabled={disabled} className="shrink-0 text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-destructive disabled:opacity-50">Lost</button>;
   return (
     <select
       autoFocus
       defaultValue=""
       onChange={(e) => { if (e.target.value) onLost(e.target.value); setOpen(false); }}
       onBlur={() => setOpen(false)}
-      className="text-[11px] px-1 py-1 border border-border bg-background rounded-none focus:outline-none"
+      className="min-w-0 flex-1 text-[11px] px-1 py-1 border border-border bg-background rounded-none focus:outline-none"
     >
       <option value="" disabled>Reason…</option>
       {LOST_REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
