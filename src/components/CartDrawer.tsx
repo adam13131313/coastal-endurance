@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingBag, Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { useCurrency } from "@/context/CurrencyContext";
+import { useCurrency, SHIPPING_NOTE, SHIPPING_ELSEWHERE } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import snowyMountains from "@/assets/snowy-mountains.jpg";
 
@@ -94,7 +94,7 @@ export const CartDrawer = () => {
                   <span className="font-display text-xl">{format(totalCents)} {config.code}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Free standard shipping in Australia and the UK. Express available at checkout.
+                  {SHIPPING_NOTE[config.code]} {SHIPPING_ELSEWHERE}
                 </p>
                 <button
                   onClick={handleCheckout}

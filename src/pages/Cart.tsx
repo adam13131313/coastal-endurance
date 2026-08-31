@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { useCurrency } from "@/context/CurrencyContext";
+import { useCurrency, SHIPPING_NOTE, SHIPPING_ELSEWHERE } from "@/context/CurrencyContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -147,7 +147,7 @@ const Cart = () => {
               <span className="font-typewriter text-2xl">{format(totalCents)} {config.code}</span>
             </div>
             <p className="mt-2 text-sm font-body text-muted-foreground">
-              Free standard shipping in Australia and the UK. Express available at checkout.
+              {SHIPPING_NOTE[config.code]} {SHIPPING_ELSEWHERE}
             </p>
 
             {authChecked && !user && (

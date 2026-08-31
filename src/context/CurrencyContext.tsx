@@ -16,6 +16,20 @@ export const CURRENCIES: Record<Currency, CurrencyConfig> = {
   EUR: { code: "EUR", symbol: "€", label: "EUR €" },
 };
 
+// Checkout collects an address only in the region tied to the order currency:
+// Stripe fixes shipping rates per session, so an AUD session can't also offer a
+// sane UK rate. Say where the active currency ships while the customer is still
+// on our side of the handoff — reaching Stripe and finding your country missing
+// from the address list is a dead end with nothing on screen to explain it.
+export const SHIPPING_NOTE: Record<Currency, string> = {
+  AUD: "Free standard shipping in Australia, express available at checkout.",
+  GBP: "Free standard shipping in the UK, express available at checkout.",
+  USD: "Flat $20 tracked shipping to the United States.",
+  EUR: "Flat €20 tracked shipping within the EU.",
+};
+
+export const SHIPPING_ELSEWHERE = "Shipping somewhere else? Change the currency at the top of the page.";
+
 const STORAGE_KEY = "ce-currency";
 
 // The 27 EU member states (ISO 3166-1 alpha-2) — used to default EU visitors to EUR.
