@@ -9,6 +9,16 @@ import CommsLibrary from "@/components/CommsLibrary";
 
 const TARGET = 15;
 
+// A card is "stale" once it has sat in one stage this long. Seven days sits just
+// past the Day-5 check-in template, so anything flagged has already missed it.
+const STALE_DAYS = 7;
+
+const daysInStage = (iso: string | null) => {
+  if (!iso) return null;
+  const ms = Date.now() - new Date(iso).getTime();
+  return Number.isFinite(ms) ? Math.max(0, Math.floor(ms / 86_400_000)) : null;
+};
+
 const FieldTeamCRM = () => {
   const [rows, setRows] = useState<FieldTeamRow[]>([]);
   const [events, setEvents] = useState<Record<string, ContactEvent[]>>({});
@@ -21,6 +31,15 @@ const FieldTeamCRM = () => {
   const [sending, setSending] = useState(false);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [showLibrary, setShowLibrary] = useState(false);
+  // Empty stages collapse to a narrow rail so the occupied columns fit on screen.
+  // Opening one is remembered until it is closed again.
+  const [openEmpty, setOpenEmpty] = useState<Set<string>>(new Set());
+  const toggleEmpty = (key: string) =>
+    setOpenEmpty((prev) => {
+      const next = new Set(prev);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -56,7 +75,15 @@ const FieldTeamCRM = () => {
   const active = useMemo(() => rows.filter((r) => r.status === "active"), [rows]);
   const lost = useMemo(() => rows.filter((r) => r.status === "lost"), [rows]);
   const confirmedCount = active.filter((r) => CONFIRMED_STAGES.has(r.stage)).length;
-  const byStage = useCallback((stage: string) => active.filter((r) => r.stage === stage), [active]);
+  // Longest wait first: the person who has been sitting in a stage the longest is
+  // the one who needs chasing, so they belong at the top of the column.
+  const byStage = useCallback(
+    (stage: string) =>
+      active
+        .filter((r) => r.stage === stage)
+        .sort((a, b) => (a.stage_entered_at ?? a.created_at).localeCompare(b.stage_entered_at ?? b.created_at)),
+    [active],
+  );
 
   // Copy every active member's email as a comma-separated list for a Gmail BCC.
   // Skips placeholder (@update-me.invalid) and blank addresses so nothing bounces.
@@ -255,14 +282,39 @@ const FieldTeamCRM = () => {
       {/* Board */}
       <div className="overflow-x-auto pb-3">
         <div className="flex gap-3 min-w-max">
-          {FT_STAGES.map((s) => (
+          {FT_STAGES.map((s) => {
+            const cards = byStage(s.key);
+            // Only collapse once there is something on the board — an empty
+            // pipeline reading as eight thin rails helps nobody.
+            const collapsed = cards.length === 0 && active.length > 0 && !openEmpty.has(s.key);
+            if (collapsed) return (
+              <button
+                key={s.key}
+                onClick={() => toggleEmpty(s.key)}
+                title={`${s.label} — empty. Click to expand.`}
+                className="w-9 shrink-0 self-start border border-dashed border-border py-3 text-muted-foreground/70 hover:text-foreground hover:border-muted-foreground"
+              >
+                <span className="[writing-mode:vertical-rl] rotate-180 font-typewriter text-[11px] uppercase tracking-widest whitespace-nowrap">
+                  {s.label} (0)
+                </span>
+              </button>
+            );
+            return (
             <div key={s.key} className="w-64 shrink-0">
               <div className="mb-2">
-                <p className="font-typewriter text-xs uppercase tracking-widest">{s.label} <span className="text-muted-foreground">({byStage(s.key).length})</span></p>
+                <p className="font-typewriter text-xs uppercase tracking-widest">
+                  {cards.length === 0 && active.length > 0 ? (
+                    <button onClick={() => toggleEmpty(s.key)} title="Collapse" className="hover:text-muted-foreground">
+                      {s.label} <span className="text-muted-foreground">({cards.length})</span>
+                    </button>
+                  ) : (
+                    <>{s.label} <span className="text-muted-foreground">({cards.length})</span></>
+                  )}
+                </p>
                 <p className="text-[11px] font-body text-muted-foreground">{s.hint}</p>
               </div>
               <div className="space-y-2">
-                {byStage(s.key).map((row) => (
+                {cards.map((row) => (
                   <Card
                     key={row.id} row={row} busy={busy === row.id} expanded={expanded === row.id}
                     events={events[row.contact_id] ?? []}
@@ -278,10 +330,11 @@ const FieldTeamCRM = () => {
                     onSaveNote={() => saveNote(row)}
                   />
                 ))}
-                {byStage(s.key).length === 0 && <p className="text-xs font-body text-muted-foreground/60 border border-dashed border-border p-3">—</p>}
+                {cards.length === 0 && <p className="text-xs font-body text-muted-foreground/60 border border-dashed border-border p-3">—</p>}
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {/* Lost column */}
           {lost.length > 0 && (
@@ -351,7 +404,10 @@ const Card = ({
           <p className="font-body text-sm font-medium truncate">{c.name || c.email}</p>
           <p className="text-[11px] font-body text-muted-foreground truncate">{c.email}</p>
         </button>
-        {busy && <span className="text-xs text-muted-foreground">…</span>}
+        <div className="shrink-0 flex items-center gap-1.5">
+          {busy && <span className="text-xs text-muted-foreground">…</span>}
+          <StageAge enteredAt={row.stage_entered_at} />
+        </div>
       </div>
 
       {(code || (c.source && c.source !== "field_team") || c.country) && (
@@ -423,6 +479,22 @@ const Card = ({
         </div>
       )}
     </div>
+  );
+};
+
+// How long this contact has sat in their current stage. Muted while fresh, full
+// contrast once stale, so a column of cards reads as a column of ages.
+const StageAge = ({ enteredAt }: { enteredAt: string | null }) => {
+  const d = daysInStage(enteredAt);
+  if (d === null) return null;
+  const stale = d >= STALE_DAYS;
+  return (
+    <span
+      title={`In this stage since ${fmtDate(enteredAt as string)}`}
+      className={`font-typewriter text-[10px] uppercase tracking-widest ${stale ? "text-foreground" : "text-muted-foreground/60"}`}
+    >
+      {d === 0 ? "today" : `${d}d`}
+    </span>
   );
 };
 
