@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Check, Minus, Plus, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { fetchProduct, defaultDeliveryDates, firstShipBase, FIRST_SHIP_DATE, type Product as CatalogProduct } from "@/lib/catalog";
-import { useCurrency, CURRENCIES, type Currency } from "@/context/CurrencyContext";
+import { useCurrency, CURRENCIES, SHIPPING_NOTE, type Currency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import ruggedCoast from "@/assets/rugged-coast.jpg";
@@ -174,9 +174,7 @@ const Product = () => {
                 {sym}{price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
               </p>
               <p className="mt-2 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
-                {FIRST_SHIP_DATE > today
-                  ? "Available now · First bottles ship from 10 August 2026"
-                  : "Now shipping · Free standard shipping to Australia & the UK"}
+                Now shipping · Australia, New Zealand, the UK, the US & Europe
               </p>
 
               <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
@@ -189,8 +187,9 @@ const Product = () => {
                   "30ml, approximately 3 months of daily use",
                   "Fast-absorbing, non-greasy finish",
                   "No fragrance or essential oils",
-                  "Free standard shipping in Australia and the UK",
-                  "Express shipping available at checkout",
+                  // What shipping costs depends on the currency the order will be
+                  // placed in, so it can't be a fixed line.
+                  SHIPPING_NOTE[currency],
                   "Made in Australia",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-sm font-body">
@@ -292,7 +291,7 @@ const Product = () => {
 
                   <ul className="mt-5 space-y-2.5">
                      {[
-                      "Free standard shipping in Australia and the UK",
+                      SHIPPING_NOTE[currency],
                       "Pay once, no recurring charges",
                       "Choose when each bottle ships",
                     ].map((benefit, index) => (

@@ -147,7 +147,7 @@ const Cart = () => {
               <span className="font-typewriter text-2xl">{format(totalCents)} {config.code}</span>
             </div>
             <p className="mt-2 text-sm font-body text-muted-foreground">
-              {SHIPPING_NOTE[config.code]} {SHIPPING_ELSEWHERE}
+              {SHIPPING_NOTE[config.code]}. {SHIPPING_ELSEWHERE}
             </p>
 
             {authChecked && !user && (

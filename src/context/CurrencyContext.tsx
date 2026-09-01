@@ -22,12 +22,14 @@ export const CURRENCIES: Record<Currency, CurrencyConfig> = {
 // sane UK rate. Say where the active currency ships while the customer is still
 // on our side of the handoff — reaching Stripe and finding your country missing
 // from the address list is a dead end with nothing on screen to explain it.
+// No trailing full stop — the caller punctuates (the cart follows it with a
+// second sentence; the product page renders it as a bullet).
 export const SHIPPING_NOTE: Record<Currency, string> = {
-  AUD: "Free standard shipping in Australia, express available at checkout.",
-  GBP: "Free standard shipping in the UK, express available at checkout.",
-  USD: "Flat $20 tracked shipping to the United States.",
-  EUR: "Flat €20 tracked shipping within the EU.",
-  NZD: "Free standard shipping in New Zealand, express available at checkout.",
+  AUD: "Free standard shipping in Australia, express available at checkout",
+  GBP: "Free standard shipping in the UK, express available at checkout",
+  USD: "Flat $20 tracked shipping to the United States",
+  EUR: "Flat €20 tracked shipping within the EU",
+  NZD: "Free standard shipping in New Zealand, express available at checkout",
 };
 
 export const SHIPPING_ELSEWHERE = "Shipping somewhere else? Change the currency at the top of the page.";
