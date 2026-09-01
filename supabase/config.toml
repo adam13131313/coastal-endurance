@@ -12,3 +12,13 @@ project_id = "eutbtqkhzizndynilcpl"
   # (verified against STRIPE_WEBHOOK_SECRET), not a Supabase JWT.
   [functions.stripe-webhook]
     verify_jwt = false
+
+  # inbound-email is called by Resend when mail arrives at the CRM address, with
+  # a Svix signature instead of a Supabase JWT — so verify_jwt has to be off. The
+  # function verifies that signature against INBOUND_WEBHOOK_SECRET and refuses
+  # every request if the secret is unset, so it is never an open write endpoint.
+  # import-whatsapp deliberately does NOT appear here: it trusts the caller's
+  # email claim to check the admins table, so it needs the gateway to have
+  # verified the token's signature first.
+  [functions.inbound-email]
+    verify_jwt = false
