@@ -94,3 +94,50 @@ export const fmtDate = (s: string | null) =>
 
 export const fmtDateTime = (s: string | null) =>
   s ? new Date(s).toLocaleString("en-AU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
+
+// --------------------------------------------------------------------- comms
+// One row per message on a customer's timeline. Manual entries come from the
+// "Log a message" form; the rest arrive on their own — a mail forwarded or cc'd
+// to the CRM address, or a WhatsApp export. A message with status 'unfiled'
+// couldn't be matched to anyone and waits in Admin -> Inbox.
+export interface CommsMessage {
+  id: string;
+  channel: string;                    // email | whatsapp | call | sms | other
+  direction: "in" | "out";
+  from_addr: string | null;
+  to_addr: string | null;
+  subject: string | null;
+  body: string;
+  occurred_at: string;
+  created_by: string | null;
+  source: string;                     // manual | inbound_email | whatsapp_export
+  external_id: string | null;
+  status: "filed" | "unfiled" | "ignored";
+  raw: Record<string, unknown>;
+  attachments: { filename?: string; content_type?: string; size?: number }[];
+}
+
+export const CHANNEL_LABEL: Record<string, string> = {
+  email: "Email", whatsapp: "WhatsApp", call: "Call", sms: "SMS", other: "Msg",
+};
+
+// Shown as a small badge so it's always obvious whether a message was typed in
+// by hand or filed automatically.
+export const SOURCE_LABEL: Record<string, string> = {
+  manual: "Logged by hand", inbound_email: "Forwarded in", whatsapp_export: "WhatsApp import",
+};
+
+/** A one-line "who was this with" for an unfiled message in the review queue. */
+export function messageWho(m: CommsMessage): string {
+  const raw = m.raw ?? {};
+  const counterparty = typeof raw.counterparty === "string" ? raw.counterparty : null;
+  const name = typeof raw.correspondent_name === "string" ? raw.correspondent_name : null;
+  const addr = m.direction === "in" ? m.from_addr : m.to_addr;
+  return counterparty || [name, addr].filter(Boolean).join(" · ") || addr || "Unknown sender";
+}
+
+/** Unfiled WhatsApp messages arrive as a batch; group them so one click files the chat. */
+export function threadKey(m: CommsMessage): string {
+  const t = (m.raw ?? {}).thread;
+  return typeof t === "string" && t ? `${m.channel}:${t}` : `msg:${m.id}`;
+}
