@@ -333,10 +333,13 @@ Deno.serve(async (req) => {
         actor: "system",
       });
 
-      // Field team: if this customer was issued a code and is still mid-pipeline,
-      // this order is the redemption — advance them to "ordered" (code applied /
-      // bottle ordered) and log it. Matches by order email; a guest checkout with
-      // a different email won't match (advance manually in that case).
+      // Field team: an order from someone we issued a code to advances them to
+      // "ordered" — the bottle is on its way either way. Whether they actually
+      // spent the code is a separate question: Stripe reports the discount it
+      // applied, and a tester who insists on paying gets a full-price order. Log
+      // which of the two actually happened instead of assuming a redemption.
+      // Matches by order email; a guest checkout with a different email won't
+      // match (advance manually in that case).
       try {
         const lc = (email || "").trim().toLowerCase();
         const { data: ftm } = lc
@@ -351,11 +354,21 @@ Deno.serve(async (req) => {
               .update({ stage: "ordered", status: "active", stage_entered_at: now, updated_at: now })
               .eq("id", pipe.id);
             const amountDiscount = (session as unknown as { total_details?: { amount_discount?: number } }).total_details?.amount_discount ?? 0;
+            const codeApplied = amountDiscount > 0;
             await admin.from("contact_events").insert({
               contact_id: contactId,
-              type: "redeemed",
-              note: `Code applied / bottle ordered (order ${order.id})`,
-              meta: { order_id: order.id, amount_discount: amountDiscount, discount_code: ftm.discount_code },
+              type: codeApplied ? "redeemed" : "purchased",
+              note: codeApplied
+                ? `Code ${ftm.discount_code} applied / bottle ordered (order ${order.id})`
+                : `Bottle ordered at full price — code ${ftm.discount_code} not applied (order ${order.id})`,
+              meta: {
+                order_id: order.id,
+                amount_discount: amountDiscount,
+                discount_code: ftm.discount_code,
+                code_applied: codeApplied,
+                total_cents: session.amount_total ?? order.total_cents,
+                currency: order.currency,
+              },
               actor: "system",
             });
           }

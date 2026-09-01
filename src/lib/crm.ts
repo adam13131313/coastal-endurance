@@ -51,7 +51,7 @@ export const FT_STAGES: { key: string; label: string; hint: string }[] = [
   { key: "invited", label: "Invited", hint: "Invite sent, awaiting reply" },
   { key: "confirmed", label: "Confirmed", hint: "Said yes — issue a code" },
   { key: "code_sent", label: "Code sent", hint: "Free-bottle code issued" },
-  { key: "ordered", label: "Ordered", hint: "Code applied, bottle ordered" },
+  { key: "ordered", label: "Ordered", hint: "Bottle ordered — code applied, or paid for" },
   { key: "trialling", label: "Trialling", hint: "Bottle in hand, using it" },
   { key: "feedback", label: "Feedback in", hint: "Survey received" },
   { key: "advocate", label: "Advocate", hint: "Posted + referred" },
