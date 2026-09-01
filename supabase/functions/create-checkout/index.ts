@@ -79,10 +79,11 @@ const EU_COUNTRIES = [
 ] as const;
 
 // Shipping is tied to the order currency (customers choose currency on-site and
-// each maps to a region). AUD/GBP ship domestically with FREE standard shipping
-// plus an express upgrade. USD/EUR ship internationally with a single flat,
-// cost-recovery rate — AU Post is ~AU$25–33 to the US/EU for a ~200 g parcel, so
-// 20.00 in the order currency roughly covers postage. Amounts are minor units.
+// each maps to a region). AUD/GBP/NZD ship with FREE standard shipping plus an
+// express upgrade — NZ is treated as near-home and we absorb the ~A$16–20 of AU
+// Post. USD/EUR ship internationally with a single flat, cost-recovery rate —
+// AU Post is ~AU$25–33 to the US/EU for a ~200 g parcel, so 20.00 in the order
+// currency roughly covers postage. Amounts are minor units.
 function shippingParamsFor(orderCurrency: string): {
   shipping_address_collection: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection;
   shipping_options: Stripe.Checkout.SessionCreateParams.ShippingOption[];
@@ -105,6 +106,12 @@ function shippingParamsFor(orderCurrency: string): {
   switch (orderCurrency) {
     case "GBP":
       return { shipping_address_collection: { allowed_countries: ["GB"] }, shipping_options: domestic };
+    case "NZD":
+      // Express costs more to NZ than domestically, so it doesn't reuse `domestic`.
+      return {
+        shipping_address_collection: { allowed_countries: ["NZ"] },
+        shipping_options: [rate(0, "Standard (free)", 3, 7), rate(1295, "Express", 1, 3)],
+      };
     case "USD":
       return {
         shipping_address_collection: { allowed_countries: ["US"] },
@@ -172,7 +179,7 @@ Deno.serve(async (req) => {
     // Resolve pricing currency (authoritative, server-side). AUD is the base on
     // product_variants; other currencies come from variant_prices. Only switch
     // currency if EVERY variant has a price in it, else fall back to AUD.
-    const reqCurrency = ["GBP", "USD", "EUR"].includes(body?.currency) ? body.currency : "AUD";
+    const reqCurrency = ["GBP", "USD", "EUR", "NZD"].includes(body?.currency) ? body.currency : "AUD";
     let priceByVariant = new Map<string, number>();
     let orderCurrency = "AUD";
     if (reqCurrency !== "AUD") {
@@ -331,8 +338,8 @@ Deno.serve(async (req) => {
       customer_email: email,
       success_url: `${siteBase}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteBase}/checkout/cancel`,
-      // Shipping by currency/region: AUD→AU and GBP→UK ship free (standard) with
-      // an express upgrade; USD→US and EUR→EU-27 pay a flat international rate.
+      // Shipping by currency/region: AUD→AU, GBP→UK and NZD→NZ ship free (standard)
+      // with an express upgrade; USD→US and EUR→EU-27 pay a flat international rate.
       // (Pickup path is retained but no longer offered in the UI.)
       ...(pickup ? {} : shippingParamsFor(orderCurrency)),
       phone_number_collection: { enabled: true },
