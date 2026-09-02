@@ -110,6 +110,62 @@ function orderSheet(results: BatchResults, flags: ValidationFlag[], ref: string 
   return lines.join("\n");
 }
 
+// Printable make sheet: the recipe at batch scale — what to weigh out, in
+// order, with room to record lot numbers and sign-offs at the bench. This is
+// the manufacture document; the order sheet above is the purchasing one.
+function makeSheetHtml(b: SavedBatch): string {
+  const esc = (v: unknown) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const r = b.results_snapshot;
+  let cum = 0;
+  const ingRows = r.ingredients.map((i) => {
+    cum += i.massG;
+    return `<tr>
+      <td>${esc(i.name)}${i.inciName ? `<br><span class="inci">${esc(i.inciName)}</span>` : ""}</td>
+      <td class="n">${i.pctWw.toFixed(2)}%</td>
+      <td class="n"><strong>${i.massG.toFixed(1)} g</strong></td>
+      <td class="n">${i.volumeMl != null ? i.volumeMl.toFixed(1) + " ml" : "—"}</td>
+      <td class="n">${cum.toFixed(1)} g</td>
+      <td class="blank"></td><td class="tick"></td>
+    </tr>`;
+  }).join("");
+  const compRows = r.components.map((c) => `<tr>
+      <td>${esc(c.name)}</td><td class="n">${c.requiredUnits}</td><td class="blank"></td><td class="tick"></td>
+    </tr>`).join("");
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(b.batch_ref)} make sheet</title>
+  <style>
+    body{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#111;margin:32px;max-width:720px}
+    h1{font-size:15px;letter-spacing:.12em;text-transform:uppercase;margin:0}
+    h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:22px 0 6px}
+    .meta{margin:6px 0 0;color:#444}
+    table{border-collapse:collapse;width:100%;margin-top:6px}
+    th,td{border:1px solid #999;padding:5px 7px;text-align:left;vertical-align:top}
+    th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:#f2f2f2}
+    td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+    td.blank{min-width:90px}td.tick{width:28px}
+    .inci{color:#666;font-size:10px}
+    .sign{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+    .sign div{border-bottom:1px solid #999;padding:14px 2px 3px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#555}
+    .next{margin-top:22px;padding:9px 11px;border:1px solid #999;color:#333;line-height:1.5}
+    @media print{.noprint{display:none}}
+  </style></head><body>
+  <h1>Coastal Endurance — Batch Make Sheet</h1>
+  <p class="meta">${esc(b.batch_ref)} · ${esc(b.label)}${b.formula_version_label ? " · " + esc(b.formula_version_label) : ""} · sized ${esc(fmtDate(b.created_at))}</p>
+  <p class="meta">Plan: <strong>${b.bottles} bottles</strong> × ${Number(b.target_fill_ml)} ml · make <strong>${(r.batchVolumeMl / 1000).toFixed(2)} L / ${(r.batchMassG / 1000).toFixed(2)} kg</strong> · blend density ${r.blendDensityGMl.toFixed(4)} g/ml · assumed process loss ${Number(b.process_loss_pct)}%</p>
+  <h2>Weigh out — in listed order, into the sanitised vessel</h2>
+  <table><thead><tr><th>Ingredient</th><th>% w/w</th><th>Weigh</th><th>≈ Volume</th><th>Running total</th><th>Lot no.</th><th>✓</th></tr></thead>
+  <tbody>${ingRows}
+  <tr><td><strong>Total</strong></td><td></td><td class="n"><strong>${(r.batchMassG / 1000).toFixed(3)} kg</strong></td><td class="n">${(r.batchVolumeMl / 1000).toFixed(3)} L</td><td></td><td></td><td></td></tr></tbody></table>
+  <h2>Packaging to hand</h2>
+  <table><thead><tr><th>Component</th><th>Units needed</th><th>Lot / notes</th><th>✓</th></tr></thead><tbody>${compRows}</tbody></table>
+  <div class="sign">
+    <div>Date made</div><div>Made by</div>
+    <div>Actual bottles filled</div><div>Actual batch volume (ml)</div>
+  </div>
+  <p class="next"><strong>When the batch is made:</strong> in Admin → Make → Supply → Batch sizing, open ${esc(b.batch_ref)} and hit <strong>Record actuals</strong> (bottles filled + volume). Then log it in Make → Production → Batches for QC and release — releasing it is what lets you apply the yield to sellable stock in Sell → Stock. Stock does not move on its own.</p>
+  <p class="noprint" style="margin-top:18px"><button onclick="window.print()">Print</button></p>
+  </body></html>`;
+}
+
 function orderCsv(results: BatchResults, flags: ValidationFlag[]): string {
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const rows: string[] = [];
@@ -315,7 +371,7 @@ const BatchSizing = () => {
     }).select("*").single();
     setBusy(null);
     if (error || !data) { toast.error("Couldn't save the batch."); return; }
-    toast.success(`Saved as ${(data as SavedBatch).batch_ref}.`);
+    toast.success(`Saved as ${(data as SavedBatch).batch_ref}. Open it under Saved batches below for the make sheet and purchase orders.`);
     setSaveOpen(false); setSaveLabel(""); setSaveNotes("");
     setSaved((s) => [data as SavedBatch, ...s]);
   };
@@ -448,6 +504,13 @@ const BatchSizing = () => {
     toast.success(`${bySupplier.size} draft PO(s) created — see Supply → Purchasing.`);
   };
 
+  const printMakeSheet = (b: SavedBatch) => {
+    const w = window.open("", "_blank", "width=820,height=900");
+    if (!w) { toast.error("Pop-up blocked — allow pop-ups for this site to print."); return; }
+    w.document.write(makeSheetHtml(b));
+    w.document.close();
+  };
+
   const copySheet = (r: BatchResults, f: ValidationFlag[], ref: string | null, label: string | null, fl: string | null) => {
     navigator.clipboard.writeText(orderSheet(r, f, ref, label, fl))
       .then(() => toast.success("Order sheet copied."))
@@ -487,6 +550,9 @@ const BatchSizing = () => {
           <p className="mt-2 text-xs font-body text-muted-foreground">
             Immutable snapshot saved {fmtDate(viewing.created_at)}{viewing.formula_version_label ? ` from ${viewing.formula_version_label}` : ""}. Later formula edits do not touch this record.
           </p>
+          <p className="mt-2 text-xs font-typewriter uppercase tracking-wider text-muted-foreground">
+            1 Order ingredients (build POs) → 2 Print make sheet &amp; make it → 3 Record actuals here → 4 Log the batch in Production (QC, release) → 5 Apply released yield in Sell → Stock
+          </p>
           {viewing.notes && <p className="mt-1 text-sm font-body text-muted-foreground">{viewing.notes}</p>}
 
           <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
@@ -507,7 +573,8 @@ const BatchSizing = () => {
           )}
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <button onClick={() => buildDraftPos(viewing)} disabled={busy === "drafts"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "drafts" ? "…" : "Build purchase orders"}</button>
+            <button onClick={() => printMakeSheet(viewing)} className="btn-primary text-xs px-4 py-2">Print make sheet</button>
+            <button onClick={() => buildDraftPos(viewing)} disabled={busy === "drafts"} className="btn-outline text-xs px-3 py-1.5 disabled:opacity-50">{busy === "drafts" ? "…" : "Build purchase orders"}</button>
             <button onClick={() => duplicateIntoCalculator(viewing)} className="btn-outline text-xs px-3 py-1.5">Duplicate into calculator</button>
             <button onClick={() => { setActualsFor(viewing); setABottles(viewing.actual_bottles_filled != null ? String(viewing.actual_bottles_filled) : ""); setAVolume(viewing.actual_batch_volume_ml != null ? String(Number(viewing.actual_batch_volume_ml)) : ""); setANotes(viewing.actual_notes ?? ""); }} className="btn-outline text-xs px-3 py-1.5">Record actuals</button>
             <button onClick={() => copySheet(r, vFlags, viewing.batch_ref, viewing.label, viewing.formula_version_label)} className="btn-outline text-xs px-3 py-1.5">Copy order sheet</button>
