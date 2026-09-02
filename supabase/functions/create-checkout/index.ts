@@ -189,7 +189,8 @@ Deno.serve(async (req) => {
     }
     const priceFor = (v: { id: string; price_cents: number }) => priceByVariant.get(v.id) ?? v.price_cents;
 
-    // Build line items + tally bottles per product for the stock check.
+    // Build line items + tally bottles per product (the webhook decrements stock;
+    // low or zero stock never blocks a sale — we can always make more).
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     const bottlesPerProduct = new Map<string, number>();
     type ResolvedItem = { incoming: IncomingItem; variant: NonNullable<ReturnType<typeof byId.get>> };
@@ -218,14 +219,6 @@ Deno.serve(async (req) => {
           product_data: { name: `${product.name} — ${variant.label}` },
         },
       });
-    }
-
-    // Stock pre-check (final decrement happens atomically in the webhook).
-    for (const [productId, needed] of bottlesPerProduct) {
-      const product = (variants ?? []).find((v) => v.product_id === productId)?.products;
-      if (!product || product.stock_quantity < needed) {
-        return json({ error: "Sorry — there isn't enough stock for that order." }, 409);
-      }
     }
 
     const currency = orderCurrency;

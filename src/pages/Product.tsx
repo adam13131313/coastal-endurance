@@ -43,7 +43,6 @@ const Product = () => {
   const subscriptionPrice = bundleVariant ? bundleVariant.price_cents / 100 : price * 3;
   const savingsAmount = price * bundleBottles - subscriptionPrice;
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
-  const inStock = (product?.stock_quantity ?? 0) > 0;
   const today = new Date().toISOString().slice(0, 10);
   // Orders open now; first shipments go from FIRST_SHIP_DATE (until that passes).
   const firstShip = FIRST_SHIP_DATE > today ? FIRST_SHIP_DATE : today;
@@ -125,7 +124,8 @@ const Product = () => {
             price: price.toFixed(2),
             priceCurrency: currencyCode,
             priceValidUntil: "2026-12-31",
-            availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            // Always orderable: stock never gates a sale, we just make more.
+            availability: "https://schema.org/InStock",
             url: "https://coastalendurance.com/product",
           },
           countryOfOrigin: { "@type": "Country", name: "Australia" },
@@ -332,13 +332,11 @@ const Product = () => {
 
                 <button
                   onClick={handleAddToCart}
-                  disabled={loading || !inStock}
+                  disabled={loading}
                   className="btn-primary w-full flex items-center justify-center"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : !inStock ? (
-                    "SOLD OUT"
                   ) : (
                     `ADD TO CART ${sym}${currentPrice.toFixed(2)} ${currencyCode}`
                   )}
