@@ -25,8 +25,6 @@ import ProductIdeas from "@/components/ProductIdeas";
 import StockControl from "@/components/StockControl";
 import CustomersAdmin from "@/components/CustomersAdmin";
 import CommsInbox from "@/components/CommsInbox";
-import SubscribersAdmin from "@/components/SubscribersAdmin";
-import WaitlistAdmin from "@/components/WaitlistAdmin";
 import CompetitorsAdmin from "@/components/CompetitorsAdmin";
 import BrandStudy from "@/components/BrandStudy";
 import IPAdmin from "@/components/IPAdmin";
@@ -90,7 +88,7 @@ function formatAddress(a: Record<string, unknown> | null): string {
 const NAV_GROUPS = [
   { group: "Today", keys: ["today"] },
   { group: "Sell", keys: ["orders", "dispatch", "stock", "customers", "inbox"] },
-  { group: "Grow", keys: ["campaign", "content", "field", "comms", "subscribers", "waitlist", "notes"] },
+  { group: "Grow", keys: ["campaign", "content", "field", "comms", "notes"] },
   { group: "Make", keys: ["supply", "production"] },
   { group: "Business", keys: ["ideas"] },
   { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "brandstudy", "ip", "social"] },
@@ -99,7 +97,7 @@ const NAV_GROUPS = [
 const TAB_LABEL: Record<string, string> = {
   today: "Today", overview: "Charts", campaign: "Campaign", content: "Content",
   social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
-  customers: "Customers", inbox: "Inbox", field: "Field team", comms: "Comms", subscribers: "Subscribers", waitlist: "Waitlist", notes: "Field Notes", supply: "Supply", production: "Production",
+  customers: "Customers", inbox: "Inbox", field: "Field team", comms: "Comms", notes: "Field Notes", supply: "Supply", production: "Production",
   ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
   guide: "Staff guide", brand: "Brand", positioning: "Positioning", brandstudy: "Brand system", ip: "IP & TM",
 };
@@ -151,7 +149,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "inbox" | "field" | "comms" | "subscribers" | "waitlist" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning" | "brandstudy" | "ip">("today");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "inbox" | "field" | "comms" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning" | "brandstudy" | "ip">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
@@ -372,8 +370,6 @@ const Admin = () => {
 
           {tab === "customers" && <CustomersAdmin />}
           {tab === "inbox" && <CommsInbox onGo={(t) => setTab(t as typeof tab)} />}
-          {tab === "subscribers" && <SubscribersAdmin />}
-          {tab === "waitlist" && <WaitlistAdmin />}
 
           {tab === "content" && <ContentGenerator />}
 
