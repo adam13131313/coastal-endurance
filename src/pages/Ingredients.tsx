@@ -59,20 +59,20 @@ const Ingredients = () => {
         "A naturally derived antioxidant that helps protect the oils from going off and helps defend skin against environmental stress. We use the natural form for better skin compatibility; it works alongside meadowfoam and rosemary as the blend's antioxidant system.",
     },
     {
-      name: "Sunflower",
-      inci: "Helianthus Annuus Seed Oil",
-      note: "carrier",
-      role: "Natural carrier",
-      description:
-        "A light, naturally derived carrier oil. Its job is to disperse the vitamin E and rosemary extract evenly through the formula, so the antioxidant system works throughout the whole bottle rather than in patches.",
-    },
-    {
       name: "Rosemary Antioxidant Extract",
       inci: "Rosmarinus Officinalis Leaf Extract",
       note: "",
       role: "Natural preservation",
       description:
         "A rosemary CO2 extract, not an essential oil, so it adds no scent. It's a natural antioxidant that helps keep the blend fresh and stable, which lets us skip synthetic preservatives. Used at a tiny amount, it's functional but undetectable.",
+    },
+    {
+      name: "Sunflower",
+      inci: "Helianthus Annuus Seed Oil",
+      note: "carrier",
+      role: "Natural carrier",
+      description:
+        "A light, naturally derived oil that arrives as the carrier inside the rosemary extract, dispersing it evenly through the formula so the antioxidant system works throughout the whole bottle rather than in patches. A trace of the finished blend.",
     },
   ];
 
@@ -106,7 +106,7 @@ const Ingredients = () => {
     },
     {
       q: "Why so few ingredients?",
-      a: "Every ingredient has a job. Rosehip and hemp are the active barrier-support oils; Australian jojoba and macadamia are the carriers; meadowfoam, vitamin E, sunflower and rosemary keep the blend stable. No fillers.",
+      a: "Every ingredient has a job. Rosehip and hemp are the active barrier-support oils; Australian jojoba and macadamia are the carriers; meadowfoam, vitamin E, rosemary and sunflower keep the blend stable. No fillers.",
     },
     {
       q: "Can I use this if I have oily skin?",
@@ -127,11 +127,11 @@ const Ingredients = () => {
         <title>Field Oil Ingredients: Naturally Derived Barrier-Support Oils</title>
         <meta
           name="description"
-          content="Field Oil's naturally derived ingredients: Australian jojoba, Tasmanian hemp, rosehip, Australian macadamia, meadowfoam, vitamin E, sunflower, rosemary. Majority Australian-grown, made in Australia."
+          content="Field Oil's naturally derived ingredients: Australian jojoba, Tasmanian hemp, rosehip, Australian macadamia, meadowfoam, vitamin E, rosemary, sunflower. Majority Australian-grown, made in Australia."
         />
         <link rel="canonical" href="https://coastalendurance.com/ingredients" />
         <meta property="og:title" content="Field Oil Ingredients: Naturally Derived Barrier-Support Oils" />
-        <meta property="og:description" content="Full ingredient breakdown: Australian jojoba, Tasmanian hemp, rosehip, Australian macadamia, meadowfoam, vitamin E, sunflower, rosemary." />
+        <meta property="og:description" content="Full ingredient breakdown: Australian jojoba, Tasmanian hemp, rosehip, Australian macadamia, meadowfoam, vitamin E, rosemary, sunflower." />
         <meta property="og:url" content="https://coastalendurance.com/ingredients" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -296,7 +296,7 @@ const Ingredients = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-typewriter uppercase mb-4">FULL INCI LIST</h2>
           <p className="text-[17px] font-body text-muted-foreground leading-relaxed">
-            Simmondsia Chinensis Seed Oil, Cannabis Sativa Seed Oil, Rosa Canina Fruit Oil, Macadamia Integrifolia Seed Oil, Limnanthes Alba Seed Oil, Tocopherol, Helianthus Annuus Seed Oil, Rosmarinus Officinalis Leaf Extract.
+            Simmondsia Chinensis Seed Oil, Cannabis Sativa Seed Oil, Rosa Canina Fruit Oil, Macadamia Integrifolia Seed Oil, Limnanthes Alba Seed Oil, Tocopherol, Rosmarinus Officinalis Leaf Extract, Helianthus Annuus Seed Oil.
           </p>
           <p className="mt-4 text-[17px] font-body font-medium text-foreground">
             Contains tree nut derivatives (Macadamia).

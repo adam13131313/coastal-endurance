@@ -156,8 +156,8 @@ const FieldTeam = () => {
             Simmondsia Chinensis Seed Oil (Jojoba), Cannabis Sativa Seed Oil
             (Hemp Seed), Rosa Canina Fruit Oil (Rosehip), Macadamia Integrifolia
             Seed Oil (Macadamia), Limnanthes Alba Seed Oil (Meadowfoam),
-            Tocopherol (Vitamin E), Helianthus Annuus Seed Oil (Sunflower),
-            Rosmarinus Officinalis Leaf Extract (Rosemary)
+            Tocopherol (Vitamin E), Rosmarinus Officinalis Leaf Extract
+            (Rosemary), Helianthus Annuus Seed Oil (Sunflower)
           </p>
           <div className="mt-8 border border-destructive/30 bg-destructive/5 p-5 space-y-3">
             <p className="text-[17px] font-body text-foreground leading-relaxed">
