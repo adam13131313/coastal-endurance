@@ -121,15 +121,17 @@ const Batches = () => {
   };
 
   const saveBlend = async () => {
+    // Actual grams are the record; a lot is optional traceability. Record any
+    // ingredient with a weight, whether or not a lot is picked.
     const updates = components
-      .filter((c) => blend[c.id]?.lotId && blend[c.id]?.actualG !== "")
-      .map((c) => ({ batchComponentId: c.id, actualG: Number(blend[c.id].actualG), rawMaterialLotId: blend[c.id].lotId }));
-    if (!updates.length) { toast.error("Enter actual grams and pick a lot for at least one ingredient."); return; }
+      .filter((c) => blend[c.id]?.actualG !== undefined && blend[c.id]?.actualG !== "")
+      .map((c) => ({ batchComponentId: c.id, actualG: Number(blend[c.id].actualG), rawMaterialLotId: blend[c.id]?.lotId || null }));
+    if (!updates.length) { toast.error("Enter actual grams for at least one ingredient."); return; }
     setBusy("blend");
     const { data, error } = await supabase.functions.invoke("record-batch", { body: { action: "blend", batchId: selected, components: updates } });
     setBusy(null);
     if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not save the blend."); return; }
-    toast.success("Blend recorded; lot quantities decremented.");
+    toast.success(updates.some((u) => u.rawMaterialLotId) ? "Blend recorded; lot quantities decremented." : "Blend recorded.");
     refreshDetail();
   };
 
@@ -342,7 +344,7 @@ const Batches = () => {
                   onChange={(e) => setBlend((b) => ({ ...b, [c.id]: { ...b[c.id], lotId: e.target.value, actualG: b[c.id]?.actualG ?? "" } }))}
                   className="w-56 px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground disabled:opacity-50"
                 >
-                  <option value="">Select released lot…</option>
+                  <option value="">Lot (optional)…</option>
                   {releasedLots.filter((l) => l.raw_material_id === c.raw_material_id).map((l) => (
                     <option key={l.id} value={l.id}>lot {l.supplier_lot_number || "?"} · {l.qty_remaining}{l.unit} left</option>
                   ))}
@@ -356,6 +358,9 @@ const Batches = () => {
             </p>
             {!locked && <button onClick={saveBlend} disabled={busy === "blend"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "blend" ? "…" : "Save blend"}</button>}
           </div>
+          {!locked && (
+            <p className="mt-2 text-xs font-body text-muted-foreground">Lots are optional — pick one to draw down inventory and build the trace, or leave it blank and just record the grams.</p>
+          )}
         </Section>
 
         {/* Fill */}

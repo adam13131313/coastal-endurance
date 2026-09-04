@@ -142,26 +142,30 @@ Deno.serve(async (req) => {
       const { data: existing } = await admin.from("batch_components").select("*").eq("batch_id", batchId);
       const byId = new Map((existing ?? []).map((c: Record<string, unknown>) => [c.id as string, c]));
 
-      // Validate all selected lots up front (must be released; material must match).
+      // Validate up front. A lot is optional traceability; validate it only when
+      // one is supplied (must be released and match the ingredient). Grams are
+      // always required and are the record itself.
       for (const u of updates) {
         const comp = byId.get(u.batchComponentId);
         if (!comp) return json({ error: "Unknown batch component" }, 400);
+        if (!Number.isFinite(Number(u.actualG)) || Number(u.actualG) < 0) return json({ error: "actualG must be a non-negative number" }, 400);
+        if (!u.rawMaterialLotId) continue; // no lot chosen — grams only
         const { data: lot } = await admin.from("raw_material_lots").select("id, status, raw_material_id, qty_remaining").eq("id", u.rawMaterialLotId).maybeSingle();
         if (!lot) return json({ error: "Unknown lot selected" }, 400);
         if (lot.status !== "released") return json({ error: `A selected lot is ${lot.status}; only released lots can be used.` }, 400);
         if (lot.raw_material_id !== comp.raw_material_id) return json({ error: "A selected lot doesn't match its ingredient." }, 400);
-        if (!Number.isFinite(Number(u.actualG)) || Number(u.actualG) < 0) return json({ error: "actualG must be a non-negative number" }, 400);
       }
 
-      // Apply, reversing any prior decrement so re-recording is safe.
+      // Apply, reversing any prior decrement so re-recording is safe. A null lot
+      // means grams-only: record the weight, clear any prior lot, touch no stock.
       const lotDelta = new Map<string, number>(); // lotId → grams to subtract (net)
       for (const u of updates) {
         const comp = byId.get(u.batchComponentId)!;
         const prevLot = comp.raw_material_lot_id as string | null;
         const prevActual = Number(comp.actual_g) || 0;
         if (prevLot) lotDelta.set(prevLot, (lotDelta.get(prevLot) ?? 0) - prevActual); // add back
-        lotDelta.set(u.rawMaterialLotId, (lotDelta.get(u.rawMaterialLotId) ?? 0) + Number(u.actualG)); // take out
-        await admin.from("batch_components").update({ actual_g: Number(u.actualG), raw_material_lot_id: u.rawMaterialLotId }).eq("id", u.batchComponentId);
+        if (u.rawMaterialLotId) lotDelta.set(u.rawMaterialLotId, (lotDelta.get(u.rawMaterialLotId) ?? 0) + Number(u.actualG)); // take out
+        await admin.from("batch_components").update({ actual_g: Number(u.actualG), raw_material_lot_id: u.rawMaterialLotId ?? null }).eq("id", u.batchComponentId);
       }
       for (const [lotId, delta] of lotDelta) {
         if (delta === 0) continue;
