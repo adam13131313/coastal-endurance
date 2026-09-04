@@ -66,6 +66,25 @@ export const LOST_REASONS = ["Declined", "No reply", "Didn't redeem", "Not engag
 
 export const firstName = (c: Contact) => (c.name?.trim().split(/\s+/)[0]) || "mate";
 
+// WhatsApp deep link. wa.me wants digits only, no +, spaces or punctuation. We
+// can't reliably guess a country code for a bare local number, so a number with
+// no leading + is passed through as its digits and left to the operator to have
+// stored in full international form. Returns null when there's nothing usable.
+export const waLink = (phone: string | null | undefined, text?: string): string | null => {
+  if (!phone) return null;
+  const digits = phone.replace(/[^\d]/g, "");
+  if (digits.length < 6) return null;
+  const base = `https://wa.me/${digits}`;
+  return text ? `${base}?text=${encodeURIComponent(text)}` : base;
+};
+
+// tel: link for a plain phone tap-to-call. Keeps a leading +.
+export const telLink = (phone: string | null | undefined): string | null => {
+  if (!phone) return null;
+  const cleaned = phone.replace(/[^\d+]/g, "");
+  return cleaned.length >= 6 ? `tel:${cleaned}` : null;
+};
+
 // Email templates live in the DB (public.email_templates), editable in the Comms
 // library. {{first_name}} is filled per contact at compose time.
 export interface EmailTemplate {

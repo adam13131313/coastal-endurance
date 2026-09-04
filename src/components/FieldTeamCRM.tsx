@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, interpolate, fmtDate, fmtDateTime,
+  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, interpolate, fmtDate, fmtDateTime, waLink, telLink,
   type FieldTeamRow, type ContactEvent, type EmailTemplate,
 } from "@/lib/crm";
 import CommsLibrary from "@/components/CommsLibrary";
@@ -26,7 +26,8 @@ const FieldTeamCRM = () => {
   const [busy, setBusy] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
-  const [form, setForm] = useState({ name: "", email: "", source: "" });
+  const [phoneDraft, setPhoneDraft] = useState<Record<string, string>>({});
+  const [form, setForm] = useState({ name: "", email: "", phone: "", source: "" });
   const [compose, setCompose] = useState<{ row: FieldTeamRow; tpl: EmailTemplate; subject: string; body: string } | null>(null);
   const [sending, setSending] = useState(false);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
@@ -107,7 +108,7 @@ const FieldTeamCRM = () => {
     try {
       const { data: contact, error: cErr } = await sb
         .from("contacts")
-        .upsert({ email, name: form.name.trim() || null, source: "field_team" }, { onConflict: "email" })
+        .upsert({ email, name: form.name.trim() || null, phone: form.phone.trim() || null, source: "field_team" }, { onConflict: "email" })
         .select("id")
         .maybeSingle();
       if (cErr || !contact) throw cErr || new Error("no contact");
@@ -115,7 +116,7 @@ const FieldTeamCRM = () => {
       if (pErr && !String(pErr.message).includes("duplicate")) throw pErr;
       await logEvent(contact.id, "note", `Added as prospect${form.source ? ` (${form.source.trim()})` : ""}`, {});
       toast.success("Prospect added.");
-      setForm({ name: "", email: "", source: "" });
+      setForm({ name: "", email: "", phone: "", source: "" });
       load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Couldn't add that.");
@@ -180,6 +181,17 @@ const FieldTeamCRM = () => {
     setCompose({ row, tpl, subject: interpolate(tpl.subject, row.contacts, extras), body: interpolate(tpl.body, row.contacts, extras) });
   };
 
+  const savePhone = async (row: FieldTeamRow) => {
+    const phone = (phoneDraft[row.id] ?? "").trim();
+    setBusy(row.id);
+    const { error } = await sb.from("contacts").update({ phone: phone || null }).eq("id", row.contact_id);
+    setBusy(null);
+    if (error) { toast.error("Couldn't save the number."); return; }
+    toast.success(phone ? "Number saved." : "Number cleared.");
+    setPhoneDraft((d) => { const n = { ...d }; delete n[row.id]; return n; });
+    load();
+  };
+
   const saveNote = async (row: FieldTeamRow) => {
     const text = (noteDraft[row.id] ?? "").trim();
     if (!text) return;
@@ -232,6 +244,21 @@ const FieldTeamCRM = () => {
     }
   };
 
+  const sendViaWhatsApp = async () => {
+    if (!compose) return;
+    const link = waLink(compose.row.contacts.phone, compose.body);
+    if (!link) { toast.error("No usable phone number on this contact. Add one on the card first."); return; }
+    // Open WhatsApp before any await so it counts as a user-gesture pop-up.
+    window.open(link, "_blank", "noopener,noreferrer");
+    setSending(true);
+    await logEvent(compose.row.contact_id, compose.tpl.event_type, `Sent via WhatsApp: ${compose.subject}`, { subject: compose.subject, via: "whatsapp" });
+    await advanceAfterSend(compose.row, compose.tpl);
+    toast.success("Opened WhatsApp and logged as sent.");
+    setCompose(null);
+    setSending(false);
+    load();
+  };
+
   const markSentManually = async () => {
     if (!compose) return;
     setSending(true);
@@ -275,6 +302,7 @@ const FieldTeamCRM = () => {
       <div className="border border-border p-4 flex flex-wrap items-end gap-3">
         <Field label="Name" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} w="w-40" />
         <Field label="Email" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} w="w-56" />
+        <Field label="Phone (for WhatsApp)" value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} w="w-44" />
         <Field label="How you know them" value={form.source} onChange={(v) => setForm((f) => ({ ...f, source: v }))} w="w-52" />
         <button onClick={addProspect} disabled={busy === "add"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "add" ? "…" : "Add prospect"}</button>
       </div>
@@ -319,6 +347,7 @@ const FieldTeamCRM = () => {
                     key={row.id} row={row} busy={busy === row.id} expanded={expanded === row.id}
                     events={events[row.contact_id] ?? []}
                     noteDraft={noteDraft[row.id] ?? ""}
+                    phoneDraft={phoneDraft[row.id] ?? (expanded === row.id ? (row.contacts.phone ?? "") : "")}
                     onToggle={() => setExpanded(expanded === row.id ? null : row.id)}
                     onStage={(st) => setStage(row, st)}
                     onIssue={() => issueCode(row)}
@@ -328,6 +357,8 @@ const FieldTeamCRM = () => {
                     onCompose={(tpl) => openCompose(row, tpl)}
                     onNoteChange={(v) => setNoteDraft((d) => ({ ...d, [row.id]: v }))}
                     onSaveNote={() => saveNote(row)}
+                    onPhoneChange={(v) => setPhoneDraft((d) => ({ ...d, [row.id]: v }))}
+                    onSavePhone={() => savePhone(row)}
                   />
                 ))}
                 {cards.length === 0 && <p className="text-xs font-body text-muted-foreground/60 border border-dashed border-border p-3">—</p>}
@@ -360,7 +391,7 @@ const FieldTeamCRM = () => {
           <div className="bg-background border border-border w-full max-w-lg p-5" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-baseline justify-between mb-3">
               <h3 className="font-typewriter text-sm uppercase tracking-widest">{compose.tpl.label}</h3>
-              <span className="text-xs font-body text-muted-foreground">to {compose.row.contacts.email}</span>
+              <span className="text-xs font-body text-muted-foreground">to {compose.row.contacts.email}{compose.row.contacts.phone ? ` · ${compose.row.contacts.phone}` : ""}</span>
             </div>
             <label className="block text-sm mb-3">
               <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Subject</span>
@@ -375,10 +406,13 @@ const FieldTeamCRM = () => {
             <div className="flex flex-wrap items-center gap-2">
               <button onClick={sendViaApp} disabled={sending} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{sending ? "…" : "Send via app"}</button>
               <button onClick={copyCompose} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Copy</button>
+              {waLink(compose.row.contacts.phone) && (
+                <button onClick={sendViaWhatsApp} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Send via WhatsApp</button>
+              )}
               <button onClick={markSentManually} disabled={sending} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-50">Mark as sent</button>
               <button onClick={() => setCompose(null)} disabled={sending} className="ml-auto text-xs font-body text-muted-foreground hover:text-foreground">Cancel</button>
             </div>
-            <p className="mt-3 text-[11px] font-body text-muted-foreground">Send via app = we email it (reply-to hello@) and log it. Copy = paste into your own email, then Mark as sent to log it.</p>
+            <p className="mt-3 text-[11px] font-body text-muted-foreground">Send via app = we email it (reply-to hello@) and log it. Send via WhatsApp = opens WhatsApp to their number with this message ready, and logs it. Copy = paste into your own email, then Mark as sent to log it.</p>
           </div>
         </div>
       )}
@@ -388,22 +422,31 @@ const FieldTeamCRM = () => {
 
 // ---- Card ----------------------------------------------------------------
 const Card = ({
-  row, busy, expanded, events, noteDraft, templates, onToggle, onStage, onIssue, onEmailCode, onLost, onCompose, onNoteChange, onSaveNote,
+  row, busy, expanded, events, noteDraft, phoneDraft, templates, onToggle, onStage, onIssue, onEmailCode, onLost, onCompose, onNoteChange, onSaveNote, onPhoneChange, onSavePhone,
 }: {
-  row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string; templates: EmailTemplate[];
+  row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string; phoneDraft: string; templates: EmailTemplate[];
   onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onEmailCode: () => void; onLost: (reason: string) => void;
   onCompose: (tpl: EmailTemplate) => void;
   onNoteChange: (v: string) => void; onSaveNote: () => void;
+  onPhoneChange: (v: string) => void; onSavePhone: () => void;
 }) => {
   const c = row.contacts;
   const code = row.meta?.discount_code;
   return (
     <div className="border border-border bg-background p-3">
       <div className="flex items-start justify-between gap-2">
-        <button onClick={onToggle} className="text-left min-w-0">
-          <p className="font-body text-sm font-medium truncate">{c.name || c.email}</p>
-          <p className="text-[11px] font-body text-muted-foreground truncate">{c.email}</p>
-        </button>
+        <div className="min-w-0">
+          <button onClick={onToggle} className="text-left min-w-0 block">
+            <p className="font-body text-sm font-medium truncate">{c.name || c.email}</p>
+            <p className="text-[11px] font-body text-muted-foreground truncate">{c.email}</p>
+          </button>
+          {waLink(c.phone) && (
+            <a href={waLink(c.phone)!} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+               className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">
+              WhatsApp <span className="font-body normal-case tracking-normal">{c.phone}</span>
+            </a>
+          )}
+        </div>
         <div className="shrink-0 flex items-center gap-1.5">
           {busy && <span className="text-xs text-muted-foreground">…</span>}
           <StageAge enteredAt={row.stage_entered_at} />
@@ -458,6 +501,21 @@ const Card = ({
 
       {expanded && (
         <div className="mt-3 pt-3 border-t border-border space-y-2">
+          <div className="flex gap-2 items-center">
+            <input
+              value={phoneDraft}
+              onChange={(e) => onPhoneChange(e.target.value)}
+              placeholder="Phone (incl. country code)"
+              className="flex-1 text-xs px-2 py-1 border border-border bg-background rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+            />
+            <button onClick={onSavePhone} disabled={busy} className="text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-50">Save</button>
+          </div>
+          {(waLink(c.phone) || telLink(c.phone)) && (
+            <div className="flex gap-3">
+              {waLink(c.phone) && <a href={waLink(c.phone)!} target="_blank" rel="noopener noreferrer" className="text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">Open WhatsApp</a>}
+              {telLink(c.phone) && <a href={telLink(c.phone)!} className="text-[11px] font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground">Call</a>}
+            </div>
+          )}
           <div className="flex gap-2">
             <input
               value={noteDraft}
