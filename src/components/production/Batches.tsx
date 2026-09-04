@@ -6,6 +6,7 @@ import {
   type ProductionBatch, type BatchComponent, type QcCheck, type RawMaterialLot, type QcTemplate, type QcTemplateItem, type QcState,
 } from "@/lib/production";
 import QcChecklist from "@/components/production/QcChecklist";
+import { PRINCIPLES, STEPS } from "@/components/production/BatchGuide";
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const sortItems = (t?: QcTemplate) => [...(t?.qc_template_items ?? [])].sort((a, b) => a.sort_order - b.sort_order);
@@ -162,6 +163,84 @@ const Batches = () => {
     refreshDetail();
   };
 
+  // A clean, self-contained Batch Manufacturing Record for printing: the record
+  // (header, targets, weigh-out with blanks to fill at the bench, QC, sign-off)
+  // followed by the full method, so the operator has one sheet at the bench.
+  const printBmr = () => {
+    if (!batch) return;
+    const esc = (v: unknown) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const g = (v: number | null | undefined) => (v == null ? "—" : `${Number(v).toFixed(1)} g`);
+    const targetTotal = components.reduce((t, c) => t + (Number(c.target_g) || 0), 0);
+    const actualTotal = components.reduce((t, c) => t + (Number(c.actual_g) || 0), 0);
+    const compRows = components.map((c) => `<tr>
+        <td>${esc(c.raw_materials?.name ?? "")}</td>
+        <td class="n">${g(c.target_g)}</td>
+        <td class="n">${c.actual_g != null ? g(c.actual_g) : '<span class="blank"></span>'}</td>
+        <td>${c.raw_material_lots?.supplier_lot_number ? esc(c.raw_material_lots.supplier_lot_number) : '<span class="blank"></span>'}</td>
+        <td class="tick"></td>
+      </tr>`).join("");
+    const methodHtml = STEPS.map((st) => `<div class="step">
+        <p class="sh"><span class="sn">${st.n}</span>${esc(st.h)}${st.tab && st.tab !== "—" ? ` <span class="tab">${esc(st.tab)}</span>` : ""}</p>
+        <ul>${st.items.map((it) => `<li>${esc(it)}</li>`).join("")}</ul>
+      </div>`).join("");
+    const principlesHtml = PRINCIPLES.map((pr) => `<div class="pr"><strong>${esc(pr.h)}.</strong> ${esc(pr.p)}</div>`).join("");
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(batch.batch_number)} BMR</title>
+    <style>
+      body{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#111;margin:26px;max-width:760px;line-height:1.42}
+      h1{font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin:0}
+      h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:20px 0 6px;border-bottom:1px solid #111;padding-bottom:3px}
+      .meta{margin:5px 0 0;color:#444}
+      .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+      .tile{border:1px solid #999;padding:6px 8px}
+      .tile span{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#666}
+      .tile strong{font-size:13px}
+      table{border-collapse:collapse;width:100%;margin-top:4px}
+      th,td{border:1px solid #999;padding:5px 7px;text-align:left;vertical-align:top}
+      th{font-size:9px;letter-spacing:.08em;text-transform:uppercase;background:#f2f2f2}
+      td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+      td.tick{width:26px}
+      .blank{display:inline-block;min-width:70px;border-bottom:1px solid #999;height:11px}
+      .princ{margin-top:8px}.pr{margin:5px 0;color:#222}
+      .step{margin:9px 0;break-inside:avoid}
+      .sh{margin:0 0 3px;font-weight:bold}
+      .sn{display:inline-block;background:#111;color:#fff;width:16px;height:16px;text-align:center;line-height:16px;margin-right:6px;font-size:10px}
+      .tab{background:#eee;color:#555;font-weight:normal;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:1px 5px;margin-left:4px}
+      .step ul{margin:2px 0 0 22px;padding:0}.step li{margin:2px 0}
+      .sign{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+      .sign div{border-bottom:1px solid #999;padding:14px 2px 3px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#555}
+      .pagebreak{page-break-before:always}
+      @media print{.noprint{display:none}}
+    </style></head><body>
+    <h1>Batch Manufacturing Record — ${esc(batch.batch_number)}</h1>
+    <p class="meta">Coastal Endurance · Field Oil · ${esc(BATCH_STATUS_LABEL[batch.status])} · operator ${esc(batch.operator ?? "—")} · opened ${esc(fmtDate(batch.created_at))}</p>
+    <div class="tiles">
+      <div class="tile"><span>Planned mass</span><strong>${g(batch.planned_mass_g)}</strong></div>
+      <div class="tile"><span>Theoretical</span><strong>${batch.theoretical_units ?? "—"} units</strong></div>
+      <div class="tile"><span>Yield</span><strong>${batch.yield_units != null ? batch.yield_units + " units" : "—"}</strong></div>
+      <div class="tile"><span>Best before</span><strong>${esc(fmtDate(batch.best_before))}</strong></div>
+    </div>
+    <h2>Blend — weigh out in the order below</h2>
+    <table><thead><tr><th>Ingredient</th><th>Target</th><th>Actual</th><th>Lot no.</th><th>✓</th></tr></thead>
+    <tbody>${compRows}
+      <tr><td><strong>Total</strong></td><td class="n"><strong>${g(targetTotal)}</strong></td><td class="n">${actualTotal > 0 ? "<strong>" + g(actualTotal) + "</strong>" : ""}</td><td></td><td></td></tr>
+    </tbody></table>
+    <div class="sign">
+      <div>Date made</div><div>Made by</div>
+      <div>In-process QC pass (init.)</div><div>Units filled (yield)</div>
+      <div>Finished QC pass (init.)</div><div>Best before set</div>
+    </div>
+    <div class="pagebreak"></div>
+    <h1>Method — Field Oil batch</h1>
+    <div class="princ">${principlesHtml}</div>
+    <h2>Steps</h2>
+    ${methodHtml}
+    <p class="noprint" style="margin-top:16px"><button onclick="window.print()">Print</button></p>
+    </body></html>`;
+    const w = window.open("", "_blank", "width=820,height=980");
+    if (!w) { toast.error("Pop-up blocked — allow pop-ups for this site to print."); return; }
+    w.document.write(html); w.document.close();
+  };
+
   const exportBmr = () => {
     if (!batch) return;
     const lines: string[] = [];
@@ -203,7 +282,7 @@ const Batches = () => {
           </div>
           <div className="flex items-center gap-2">
             <StatusPill status={batch.status} />
-            <button onClick={() => window.print()} className="btn-outline text-xs px-3 py-1">Print</button>
+            <button onClick={printBmr} className="btn-outline text-xs px-3 py-1">Print</button>
             <button onClick={exportBmr} className="btn-outline text-xs px-3 py-1">Export</button>
           </div>
         </div>
