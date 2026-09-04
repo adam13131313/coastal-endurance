@@ -234,11 +234,15 @@ const Batches = () => {
     <div class="princ">${principlesHtml}</div>
     <h2>Steps</h2>
     ${methodHtml}
-    <p class="noprint" style="margin-top:16px"><button onclick="window.print()">Print</button></p>
+    <p class="noprint" style="margin-top:16px"><button id="__printBtn">Print</button></p>
     </body></html>`;
     const w = window.open("", "_blank", "width=820,height=980");
     if (!w) { toast.error("Pop-up blocked — allow pop-ups for this site to print."); return; }
     w.document.write(html); w.document.close();
+    // Wire the in-page Print button and offer the dialog on load. Inline onclick
+    // handlers are stripped in some document.write windows, so attach from here.
+    const arm = () => { const b = w.document.getElementById("__printBtn"); if (b) b.addEventListener("click", () => w.print()); };
+    if (w.document.readyState === "complete") arm(); else w.addEventListener("load", arm);
   };
 
   const exportBmr = () => {

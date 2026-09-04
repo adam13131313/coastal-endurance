@@ -162,7 +162,7 @@ function makeSheetHtml(b: SavedBatch): string {
     <div>Actual bottles filled</div><div>Actual batch volume (ml)</div>
   </div>
   <p class="next"><strong>When the batch is made:</strong> in Admin → Make → Supply → Batch sizing, open ${esc(b.batch_ref)} and hit <strong>Record actuals</strong> (bottles filled + volume). Then log it in Make → Production → Batches for QC and release — releasing it is what lets you apply the yield to sellable stock in Sell → Stock. Stock does not move on its own.</p>
-  <p class="noprint" style="margin-top:18px"><button onclick="window.print()">Print</button></p>
+  <p class="noprint" style="margin-top:18px"><button id="__printBtn">Print</button></p>
   </body></html>`;
 }
 
@@ -552,6 +552,8 @@ const BatchSizing = () => {
     if (!w) { toast.error("Pop-up blocked — allow pop-ups for this site to print."); return; }
     w.document.write(makeSheetHtml(b));
     w.document.close();
+    const arm = () => { const btn = w.document.getElementById("__printBtn"); if (btn) btn.addEventListener("click", () => w.print()); };
+    if (w.document.readyState === "complete") arm(); else w.addEventListener("load", arm);
   };
 
   const copySheet = (r: BatchResults, f: ValidationFlag[], ref: string | null, label: string | null, fl: string | null) => {
