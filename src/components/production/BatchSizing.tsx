@@ -730,18 +730,21 @@ const BatchSizing = () => {
       {/* Saved batches */}
       <section>
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
-          <h4 className="font-typewriter text-sm uppercase tracking-widest text-muted-foreground">Saved batches</h4>
+          <div>
+            <h4 className="font-typewriter text-sm uppercase tracking-widest text-muted-foreground">Saved batches</h4>
+            <p className="text-[11px] font-body text-muted-foreground mt-0.5">Click a batch to open it — make sheet, purchase orders, and edit (until actuals are recorded).</p>
+          </div>
           <label className="text-xs font-body text-muted-foreground flex items-center gap-1.5">
             <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
             Show archived
           </label>
         </div>
         <div className="border border-border divide-y divide-border">
-          <div className="hidden md:grid grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem] gap-3 px-3 py-2 bg-secondary text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground">
-            <span>Ref</span><span>Label</span><span className="text-right">Bottles</span><span className="text-right">Volume</span><span className="text-right">AU %</span><span>Date</span><span>Actuals</span>
+          <div className="hidden md:grid grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem_1.5rem] gap-3 px-3 py-2 bg-secondary text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground">
+            <span>Ref</span><span>Label</span><span className="text-right">Bottles</span><span className="text-right">Volume</span><span className="text-right">AU %</span><span>Date</span><span>Actuals</span><span></span>
           </div>
           {saved.filter((b) => showArchived || !b.archived_at).map((b) => (
-            <button key={b.id} onClick={() => setViewing(b)} className="w-full text-left grid md:grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem] grid-cols-2 gap-x-3 gap-y-1 px-3 py-2.5 text-sm hover:bg-secondary/60 transition-colors">
+            <button key={b.id} onClick={() => setViewing(b)} className="w-full text-left grid md:grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem_1.5rem] grid-cols-2 gap-x-3 gap-y-1 px-3 py-2.5 text-sm hover:bg-secondary/60 transition-colors group">
               <span className="font-typewriter text-xs pt-0.5">{b.batch_ref}{b.archived_at ? " ⌀" : ""}</span>
               <span className="font-body truncate">{b.label}</span>
               <span className="font-body tabular-nums md:text-right">{b.bottles}</span>
@@ -749,6 +752,7 @@ const BatchSizing = () => {
               <span className="font-body tabular-nums md:text-right">{b.au_grown_pct != null ? `${Number(b.au_grown_pct).toFixed(1)}` : "—"}</span>
               <span className="font-body text-muted-foreground text-xs pt-0.5">{fmtDate(b.created_at)}</span>
               <span className="font-body text-xs pt-0.5">{b.actual_bottles_filled != null ? "recorded" : "—"}</span>
+              <span className="hidden md:block text-muted-foreground group-hover:text-foreground text-right pt-0.5">›</span>
             </button>
           ))}
           {saved.filter((b) => showArchived || !b.archived_at).length === 0 && (
