@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  sb, fmtDate, fmtDateTime, fmtGrams, massForBottles, BATCH_STATUS_LABEL, qcPayload, allGatingPassed,
+  sb, fmtDate, fmtDateTime, fmtGrams, massForBottles, BATCH_STATUS_LABEL, qcPayload, allGatingPassed, computeYieldStats,
   type ProductionBatch, type BatchComponent, type QcCheck, type RawMaterialLot, type QcTemplate, type QcTemplateItem, type QcState,
 } from "@/lib/production";
 import QcChecklist from "@/components/production/QcChecklist";
@@ -32,6 +32,8 @@ const Batches = () => {
   const [inProcess, setInProcess] = useState<QcState>({});
   const [finished, setFinished] = useState<QcState>({});
   const [bestBefore, setBestBefore] = useState("");
+
+  const yieldStats = useMemo(() => computeYieldStats(batches), [batches]);
 
   const inProcessItems = useMemo<QcTemplateItem[]>(() => sortItems(templates.find((t) => t.type === "in_process")), [templates]);
   const finishedItems = useMemo<QcTemplateItem[]>(() => sortItems(templates.find((t) => t.type === "finished")), [templates]);
@@ -460,6 +462,37 @@ const Batches = () => {
       </section>
 
       <section>
+        {yieldStats.count > 0 && (
+          <div className="mb-8 border border-border p-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+              <h3 className="font-typewriter text-sm uppercase tracking-widest text-muted-foreground">Yield tracking</h3>
+              <p className="text-sm font-body">
+                Average fill loss <span className="font-medium">{yieldStats.avgLossPct!.toFixed(1)}%</span>
+                <span className="text-muted-foreground"> across {yieldStats.count} batch{yieldStats.count === 1 ? "" : "es"}</span>
+              </p>
+            </div>
+            <div className="border border-border divide-y divide-border">
+              <div className="hidden sm:grid grid-cols-[1fr_6rem_6rem_5rem] gap-3 px-3 py-1.5 bg-secondary text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground">
+                <span>Batch</span><span className="text-right">Theoretical</span><span className="text-right">Filled</span><span className="text-right">Loss</span>
+              </div>
+              {yieldStats.rows.map((r) => (
+                <div key={r.ref} className="grid grid-cols-2 sm:grid-cols-[1fr_6rem_6rem_5rem] gap-x-3 gap-y-0.5 px-3 py-2 text-sm">
+                  <span className="font-body truncate">{r.ref}</span>
+                  <span className="font-body tabular-nums sm:text-right text-muted-foreground">{r.theoretical} units</span>
+                  <span className="font-body tabular-nums sm:text-right">{r.yield_units} units</span>
+                  <span className={`font-body tabular-nums sm:text-right ${r.lossPct > 15 ? "text-destructive" : ""}`}>{r.lossPct.toFixed(1)}%</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-[11px] font-body text-muted-foreground">
+              Theoretical is mass ÷ (0.9 g/ml × 30 ml) with zero loss. Real fill loss is holdup, fill variance and retains held back.
+              {yieldStats.count < 3
+                ? " A few more batches will show whether this is consistent enough to plan on."
+                : ` Batch sizing now forecasts ${(100 - yieldStats.avgLossPct!).toFixed(0)}% of theoretical as sellable, from this average.`}
+            </p>
+          </div>
+        )}
+
         <h3 className="font-typewriter text-lg uppercase tracking-wider mb-4">Batches</h3>
         {batches.length === 0 ? <p className="font-body text-muted-foreground">No batches yet.</p> : (
           <div className="border border-border divide-y divide-border">

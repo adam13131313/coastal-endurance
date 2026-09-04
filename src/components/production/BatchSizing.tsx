@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { sb } from "@/lib/production";
 import { fetchLots, rollUp, onHandInUnit, type OnHand } from "@/lib/inventory";
+import { computeYieldStats } from "@/lib/production";
 import {
   computeBatch, validateBatch, buildSnapshots,
   type IngredientInput, type ComponentInput, type BatchResults, type ValidationFlag,
@@ -189,6 +190,8 @@ const BatchSizing = () => {
   const [ingRows, setIngRows] = useState<IngRow[]>([]);
   const [compRows, setCompRows] = useState<CompRow[]>([]);
   const [saved, setSaved] = useState<SavedBatch[]>([]);
+  const [avgLossPct, setAvgLossPct] = useState<number | null>(null);
+  const [yieldBatchCount, setYieldBatchCount] = useState(0);
   const [showArchived, setShowArchived] = useState(false);
   const [viewing, setViewing] = useState<SavedBatch | null>(null);
   // A saved batch stays editable until actuals are recorded — that is the
@@ -242,11 +245,17 @@ const BatchSizing = () => {
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [{ data: fs }, { data: pcs }, { data: bs }] = await Promise.all([
+    const [{ data: fs }, { data: pcs }, { data: bs }, { data: pbs }] = await Promise.all([
       sb.from("formulas").select("id, name, version, status, notes").neq("status", "archived").order("created_at", { ascending: false }),
       sb.from("packaging_components").select("*").eq("active", true).order("sort_order"),
       sb.from("batch_calculations").select("*").order("created_at", { ascending: false }),
+      sb.from("production_batches").select("*"),
     ]);
+    // Observed fill loss from real production batches feeds the sellable forecast.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ys = computeYieldStats((pbs as any[]) ?? []);
+    setAvgLossPct(ys.avgLossPct);
+    setYieldBatchCount(ys.count);
     const formulaList = (fs as FormulaRow[]) ?? [];
     setFormulas(formulaList);
     setCompRows(((pcs as PackagingRow[]) ?? []).map((p) => ({
@@ -697,7 +706,17 @@ const BatchSizing = () => {
         <Stat label="Batch mass" value={`${(results.batchMassG / 1000).toFixed(2)} kg`} />
         <Stat label="Blend density" value={`${results.blendDensityGMl.toFixed(4)} g/ml`} />
         <Stat label="AU-grown by wt" value={`${results.auGrownPct.toFixed(1)}%`} />
+        {avgLossPct != null && (
+          <Stat label={`Sellable est. (−${avgLossPct.toFixed(0)}% loss)`} value={`${Math.floor(results.inputs.bottles * (1 - avgLossPct / 100))} bottles`} />
+        )}
       </div>
+      {avgLossPct != null && (
+        <p className="text-xs font-body text-muted-foreground">
+          {results.inputs.bottles} planned → about <span className="text-foreground font-medium">{Math.floor(results.inputs.bottles * (1 - avgLossPct / 100))} sellable</span> at the observed {avgLossPct.toFixed(1)}% fill loss ({yieldBatchCount} batch{yieldBatchCount === 1 ? "" : "es"} so far).
+          {yieldBatchCount < 3 ? " Still early — treat this as indicative." : ""}
+          {" "}To land N sellable, plan ≈ {"{"}N ÷ {(1 - avgLossPct / 100).toFixed(2)}{"}"}.
+        </p>
+      )}
 
       <ResultTables
         results={results}

@@ -196,6 +196,28 @@ export const fmtDateTime = (s: string | null) =>
   s ? new Date(s).toLocaleString("en-AU", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
 
 // Round grams for display without pretending to a precision the scale can't hit.
+// Observed fill yield across real batches: theoretical (mass-based, zero-loss)
+// vs what was actually filled. Loss is holdup + fill variance + retains held
+// back. Used to turn the optimistic theoretical into a realistic forecast, and
+// to watch whether the loss is consistent enough to plan on.
+export interface YieldRow { ref: string; theoretical: number; yield_units: number; lossPct: number; filledAt: string | null; }
+export interface YieldStats { rows: YieldRow[]; count: number; avgLossPct: number | null; }
+
+export function computeYieldStats(batches: ProductionBatch[]): YieldStats {
+  const rows: YieldRow[] = batches
+    .filter((b) => b.status !== "rejected" && b.yield_units != null && (b.theoretical_units ?? 0) > 0)
+    .map((b) => ({
+      ref: b.batch_number,
+      theoretical: b.theoretical_units as number,
+      yield_units: b.yield_units as number,
+      lossPct: (1 - (b.yield_units as number) / (b.theoretical_units as number)) * 100,
+      filledAt: b.filled_at,
+    }))
+    .sort((a, b) => (b.filledAt ?? "").localeCompare(a.filledAt ?? ""));
+  const avgLossPct = rows.length ? rows.reduce((s, r) => s + r.lossPct, 0) / rows.length : null;
+  return { rows, count: rows.length, avgLossPct };
+}
+
 export const fmtGrams = (g: number | null | undefined) =>
   g == null ? "—" : `${g.toLocaleString("en-AU", { maximumFractionDigits: 1 })} g`;
 
