@@ -25,6 +25,7 @@ const Batches = () => {
   // New-batch + editing state.
   const [newBottles, setNewBottles] = useState("220");
   const [newNumber, setNewNumber] = useState("");
+  const [resizeBottles, setResizeBottles] = useState("");
   const [blend, setBlend] = useState<Record<string, { actualG: string; lotId: string }>>({});
   const [yieldUnits, setYieldUnits] = useState("");
   const [inProcess, setInProcess] = useState<QcState>({});
@@ -89,6 +90,33 @@ const Batches = () => {
     await loadBatches();
     const created = (data as { batch?: ProductionBatch })?.batch;
     if (created) openDetail(created.id);
+  };
+
+  const resizeBatch = async () => {
+    const n = Number(resizeBottles);
+    if (!Number.isFinite(n) || n <= 0) { toast.error("Enter the new bottle count."); return; }
+    setBusy("resize");
+    const { data, error } = await supabase.functions.invoke("record-batch", {
+      body: { action: "resize", batchId: selected, plannedMassG: massForBottles(n) },
+    });
+    setBusy(null);
+    if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not resize."); return; }
+    toast.success(`Resized to ${n} bottles. Reprint the make sheet — targets have changed.`);
+    setResizeBottles("");
+    await loadBatches();
+    refreshDetail();
+  };
+
+  const deleteBatch = async () => {
+    if (!batch) return;
+    if (!confirm(`Delete ${batch.batch_number}? It has not been blended, so nothing is lost. This can't be undone.`)) return;
+    setBusy("delete");
+    const { data, error } = await supabase.functions.invoke("record-batch", { body: { action: "delete", batchId: selected } });
+    setBusy(null);
+    if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not delete."); return; }
+    toast.success("Batch deleted.");
+    setSelected(null); setBatch(null);
+    await loadBatches();
   };
 
   const saveBlend = async () => {
@@ -193,6 +221,25 @@ const Batches = () => {
           <Stat label="Yield" value={batch.yield_units != null ? `${batch.yield_units} units` : "—"} />
           <Stat label="Best before" value={fmtDate(batch.best_before)} />
         </div>
+
+        {batch.status === "planning" && (
+          <div className="mb-8 border border-border p-4 flex flex-wrap items-end gap-3">
+            <div>
+              <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Resize this batch</p>
+              <p className="text-xs font-body text-muted-foreground mb-2 max-w-md">Nothing is weighed yet, so you can change the size or scrap it. Once you record a blend this locks into a production record.</p>
+              <div className="flex items-end gap-2">
+                <label className="text-sm">
+                  <span className="block font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground mb-1">New bottle count</span>
+                  <input inputMode="numeric" value={resizeBottles} onChange={(e) => setResizeBottles(e.target.value)} placeholder={String(batch.theoretical_units ?? "")} className="w-32 px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground tabular-nums" />
+                </label>
+                <button onClick={resizeBatch} disabled={busy === "resize" || !Number(resizeBottles)} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "resize" ? "…" : "Resize"}</button>
+                {Number(resizeBottles) > 0 && <span className="text-xs font-body text-muted-foreground pb-2">≈ {fmtGrams(massForBottles(Number(resizeBottles)))} of blend</span>}
+              </div>
+            </div>
+            <span className="flex-1" />
+            <button onClick={deleteBatch} disabled={busy === "delete"} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-destructive disabled:opacity-50 pb-2">{busy === "delete" ? "…" : "Delete batch"}</button>
+          </div>
+        )}
 
         {/* Blend */}
         <Section title="Blend — actual weights & lots">
