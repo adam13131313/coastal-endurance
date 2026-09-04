@@ -163,16 +163,22 @@ async function sendLowStockAlert(
   const recipients = await opsRecipients(supa);
   if (recipients.length === 0) return;
   const name = (product as { name?: string } | null)?.name ?? "a product";
+  // Stock can go negative — sales are never gated on it — so below zero the
+  // number is bottles owed, not bottles left.
+  const owed = remaining < 0;
+  const line = owed
+    ? `<strong>${Math.abs(remaining)}</strong> ${Math.abs(remaining) === 1 ? "bottle is" : "bottles are"} owed on orders already paid for. Time to batch.`
+    : `Only <strong>${remaining}</strong> left in stock. Time to restock.`;
   const html = `
     <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px">
-      <h2 style="font-size:18px;margin:0 0 12px">Low stock: ${name}</h2>
-      <p style="font-size:14px;color:#333">Only <strong>${remaining}</strong> left in stock. Time to restock.</p>
+      <h2 style="font-size:18px;margin:0 0 12px">${owed ? "Bottles owed" : "Low stock"}: ${name}</h2>
+      <p style="font-size:14px;color:#333">${line}</p>
     </div>`;
   try {
     await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: FROM_ADDRESS, to: recipients, subject: `Low stock: ${remaining} left`, html }),
+      body: JSON.stringify({ from: FROM_ADDRESS, to: recipients, subject: owed ? `Bottles owed: ${Math.abs(remaining)}` : `Low stock: ${remaining} left`, html }),
     });
   } catch (e) {
     console.error("low stock email error", e);
@@ -404,7 +410,8 @@ Deno.serve(async (req) => {
   for (const [productId, bottles] of bottlesPerProduct) {
     const { data: remaining, error } = await admin.rpc("decrement_stock", { p_product_id: productId, p_bottles: bottles });
     if (error) {
-      // Payment succeeded but stock couldn't be decremented; flag for manual review.
+      // Stock going negative is allowed, so this now only fires on a genuine
+      // fault (unknown product). Payment already succeeded — flag for review.
       console.error("stock decrement failed (needs review)", { orderId: order.id, productId, bottles, error });
     } else if (typeof remaining === "number" && remaining <= LOW_STOCK_THRESHOLD) {
       await sendLowStockAlert(admin, productId, remaining);

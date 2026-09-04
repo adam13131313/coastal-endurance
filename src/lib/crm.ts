@@ -66,6 +66,25 @@ export const LOST_REASONS = ["Declined", "No reply", "Didn't redeem", "Not engag
 
 export const firstName = (c: Contact) => (c.name?.trim().split(/\s+/)[0]) || "mate";
 
+// WhatsApp deep link. wa.me wants digits only, no +, spaces or punctuation. We
+// can't reliably guess a country code for a bare local number, so a number with
+// no leading + is passed through as its digits and left to the operator to have
+// stored in full international form. Returns null when there's nothing usable.
+export const waLink = (phone: string | null | undefined, text?: string): string | null => {
+  if (!phone) return null;
+  const digits = phone.replace(/[^\d]/g, "");
+  if (digits.length < 6) return null;
+  const base = `https://wa.me/${digits}`;
+  return text ? `${base}?text=${encodeURIComponent(text)}` : base;
+};
+
+// tel: link for a plain phone tap-to-call. Keeps a leading +.
+export const telLink = (phone: string | null | undefined): string | null => {
+  if (!phone) return null;
+  const cleaned = phone.replace(/[^\d+]/g, "");
+  return cleaned.length >= 6 ? `tel:${cleaned}` : null;
+};
+
 // Email templates live in the DB (public.email_templates), editable in the Comms
 // library. {{first_name}} is filled per contact at compose time.
 export interface EmailTemplate {
@@ -94,3 +113,50 @@ export const fmtDate = (s: string | null) =>
 
 export const fmtDateTime = (s: string | null) =>
   s ? new Date(s).toLocaleString("en-AU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
+
+// --------------------------------------------------------------------- comms
+// One row per message on a customer's timeline. Manual entries come from the
+// "Log a message" form; the rest arrive on their own — a mail forwarded or cc'd
+// to the CRM address, or a WhatsApp export. A message with status 'unfiled'
+// couldn't be matched to anyone and waits in Admin -> Inbox.
+export interface CommsMessage {
+  id: string;
+  channel: string;                    // email | whatsapp | call | sms | other
+  direction: "in" | "out";
+  from_addr: string | null;
+  to_addr: string | null;
+  subject: string | null;
+  body: string;
+  occurred_at: string;
+  created_by: string | null;
+  source: string;                     // manual | inbound_email | whatsapp_export
+  external_id: string | null;
+  status: "filed" | "unfiled" | "ignored";
+  raw: Record<string, unknown>;
+  attachments: { filename?: string; content_type?: string; size?: number }[];
+}
+
+export const CHANNEL_LABEL: Record<string, string> = {
+  email: "Email", whatsapp: "WhatsApp", call: "Call", sms: "SMS", other: "Msg",
+};
+
+// Shown as a small badge so it's always obvious whether a message was typed in
+// by hand or filed automatically.
+export const SOURCE_LABEL: Record<string, string> = {
+  manual: "Logged by hand", inbound_email: "Forwarded in", whatsapp_export: "WhatsApp import",
+};
+
+/** A one-line "who was this with" for an unfiled message in the review queue. */
+export function messageWho(m: CommsMessage): string {
+  const raw = m.raw ?? {};
+  const counterparty = typeof raw.counterparty === "string" ? raw.counterparty : null;
+  const name = typeof raw.correspondent_name === "string" ? raw.correspondent_name : null;
+  const addr = m.direction === "in" ? m.from_addr : m.to_addr;
+  return counterparty || [name, addr].filter(Boolean).join(" · ") || addr || "Unknown sender";
+}
+
+/** Unfiled WhatsApp messages arrive as a batch; group them so one click files the chat. */
+export function threadKey(m: CommsMessage): string {
+  const t = (m.raw ?? {}).thread;
+  return typeof t === "string" && t ? `${m.channel}:${t}` : `msg:${m.id}`;
+}

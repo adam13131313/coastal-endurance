@@ -94,7 +94,7 @@ export const CartDrawer = () => {
                   <span className="font-display text-xl">{format(totalCents)} {config.code}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {SHIPPING_NOTE[config.code]} {SHIPPING_ELSEWHERE}
+                  {SHIPPING_NOTE[config.code]}. {SHIPPING_ELSEWHERE}
                 </p>
                 <button
                   onClick={handleCheckout}

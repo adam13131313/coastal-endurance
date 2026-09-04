@@ -86,7 +86,7 @@ const Formula = () => {
           </div>
         </div>
         <p className="mt-3 text-xs font-body text-muted-foreground">
-          Quantities and purchasing live under Supply → Batch sizing. Sunflower is labelling-only (it carries the Vitamin E and rosemary) and is never weighed.
+          Quantities and purchasing live under Supply → Batch sizing. Sunflower is labelling-only — it enters as ~35% of the rosemary CO2 extract — and is never weighed.
           Reserve ~1% of the jojoba to pre-disperse the Vitamin E and rosemary before adding the actives.
         </p>
       </section>

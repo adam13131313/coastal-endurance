@@ -110,6 +110,62 @@ function orderSheet(results: BatchResults, flags: ValidationFlag[], ref: string 
   return lines.join("\n");
 }
 
+// Printable make sheet: the recipe at batch scale — what to weigh out, in
+// order, with room to record lot numbers and sign-offs at the bench. This is
+// the manufacture document; the order sheet above is the purchasing one.
+function makeSheetHtml(b: SavedBatch): string {
+  const esc = (v: unknown) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const r = b.results_snapshot;
+  let cum = 0;
+  const ingRows = r.ingredients.map((i) => {
+    cum += i.massG;
+    return `<tr>
+      <td>${esc(i.name)}${i.inciName ? `<br><span class="inci">${esc(i.inciName)}</span>` : ""}</td>
+      <td class="n">${i.pctWw.toFixed(2)}%</td>
+      <td class="n"><strong>${i.massG.toFixed(1)} g</strong></td>
+      <td class="n">${i.volumeMl != null ? i.volumeMl.toFixed(1) + " ml" : "—"}</td>
+      <td class="n">${cum.toFixed(1)} g</td>
+      <td class="blank"></td><td class="tick"></td>
+    </tr>`;
+  }).join("");
+  const compRows = r.components.map((c) => `<tr>
+      <td>${esc(c.name)}</td><td class="n">${c.requiredUnits}</td><td class="blank"></td><td class="tick"></td>
+    </tr>`).join("");
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(b.batch_ref)} make sheet</title>
+  <style>
+    body{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#111;margin:32px;max-width:720px}
+    h1{font-size:15px;letter-spacing:.12em;text-transform:uppercase;margin:0}
+    h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:22px 0 6px}
+    .meta{margin:6px 0 0;color:#444}
+    table{border-collapse:collapse;width:100%;margin-top:6px}
+    th,td{border:1px solid #999;padding:5px 7px;text-align:left;vertical-align:top}
+    th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:#f2f2f2}
+    td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+    td.blank{min-width:90px}td.tick{width:28px}
+    .inci{color:#666;font-size:10px}
+    .sign{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+    .sign div{border-bottom:1px solid #999;padding:14px 2px 3px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#555}
+    .next{margin-top:22px;padding:9px 11px;border:1px solid #999;color:#333;line-height:1.5}
+    @media print{.noprint{display:none}}
+  </style></head><body>
+  <h1>Coastal Endurance — Batch Make Sheet</h1>
+  <p class="meta">${esc(b.batch_ref)} · ${esc(b.label)}${b.formula_version_label ? " · " + esc(b.formula_version_label) : ""} · sized ${esc(fmtDate(b.created_at))}</p>
+  <p class="meta">Plan: <strong>${b.bottles} bottles</strong> × ${Number(b.target_fill_ml)} ml · make <strong>${(r.batchVolumeMl / 1000).toFixed(2)} L / ${(r.batchMassG / 1000).toFixed(2)} kg</strong> · blend density ${r.blendDensityGMl.toFixed(4)} g/ml · assumed process loss ${Number(b.process_loss_pct)}%</p>
+  <h2>Weigh out — in listed order, into the sanitised vessel</h2>
+  <table><thead><tr><th>Ingredient</th><th>% w/w</th><th>Weigh</th><th>≈ Volume</th><th>Running total</th><th>Lot no.</th><th>✓</th></tr></thead>
+  <tbody>${ingRows}
+  <tr><td><strong>Total</strong></td><td></td><td class="n"><strong>${(r.batchMassG / 1000).toFixed(3)} kg</strong></td><td class="n">${(r.batchVolumeMl / 1000).toFixed(3)} L</td><td></td><td></td><td></td></tr></tbody></table>
+  <h2>Packaging to hand</h2>
+  <table><thead><tr><th>Component</th><th>Units needed</th><th>Lot / notes</th><th>✓</th></tr></thead><tbody>${compRows}</tbody></table>
+  <div class="sign">
+    <div>Date made</div><div>Made by</div>
+    <div>Actual bottles filled</div><div>Actual batch volume (ml)</div>
+  </div>
+  <p class="next"><strong>When the batch is made:</strong> in Admin → Make → Supply → Batch sizing, open ${esc(b.batch_ref)} and hit <strong>Record actuals</strong> (bottles filled + volume). Then log it in Make → Production → Batches for QC and release — releasing it is what lets you apply the yield to sellable stock in Sell → Stock. Stock does not move on its own.</p>
+  <p class="noprint" style="margin-top:18px"><button id="__printBtn">Print</button></p>
+  </body></html>`;
+}
+
 function orderCsv(results: BatchResults, flags: ValidationFlag[]): string {
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const rows: string[] = [];
@@ -135,6 +191,9 @@ const BatchSizing = () => {
   const [saved, setSaved] = useState<SavedBatch[]>([]);
   const [showArchived, setShowArchived] = useState(false);
   const [viewing, setViewing] = useState<SavedBatch | null>(null);
+  // A saved batch stays editable until actuals are recorded — that is the
+  // "made it" moment; after that it is a production record and locks.
+  const [editing, setEditing] = useState<SavedBatch | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -296,6 +355,31 @@ const BatchSizing = () => {
     if (!saveLabel.trim()) { toast.error("Give the batch a label."); return; }
     setBusy("save");
     const snaps = buildSnapshots(ingredients, components, results);
+    if (editing) {
+      // The is-null guard means a record that gained actuals since it was opened
+      // (another tab, another day) refuses the write instead of clobbering it.
+      const { data: upd, error } = await sb.from("batch_calculations").update({
+        label: saveLabel.trim(),
+        notes: saveNotes.trim() || null,
+        bottles: results.inputs.bottles,
+        target_fill_ml: results.inputs.targetFillMl,
+        process_loss_pct: results.inputs.processLossPct,
+        ordering_buffer_pct: results.inputs.orderingBufferPct,
+        ...snaps,
+        batch_volume_ml: results.batchVolumeMl,
+        batch_mass_g: results.batchMassG,
+        blend_density_g_ml: results.blendDensityGMl,
+        au_grown_pct: results.auGrownPct,
+      }).eq("id", editing.id).is("actual_bottles_filled", null).select("*").maybeSingle();
+      setBusy(null);
+      if (error || !upd) { toast.error("Couldn't update — has this batch had actuals recorded?"); return; }
+      toast.success(`${editing.batch_ref} updated. Reprint the make sheet; any draft POs built from the old numbers don't update themselves.`);
+      setSaveOpen(false); setSaveLabel(""); setSaveNotes(""); setEditing(null);
+      const { data: list } = await sb.from("batch_calculations").select("*").order("created_at", { ascending: false });
+      setSaved((list as SavedBatch[]) ?? []);
+      await loadAll();
+      return;
+    }
     const { data: userData } = await supabase.auth.getUser();
     const { data, error } = await sb.from("batch_calculations").insert({
       label: saveLabel.trim(),
@@ -315,7 +399,7 @@ const BatchSizing = () => {
     }).select("*").single();
     setBusy(null);
     if (error || !data) { toast.error("Couldn't save the batch."); return; }
-    toast.success(`Saved as ${(data as SavedBatch).batch_ref}.`);
+    toast.success(`Saved as ${(data as SavedBatch).batch_ref}. Open it under Saved batches below for the make sheet and purchase orders.`);
     setSaveOpen(false); setSaveLabel(""); setSaveNotes("");
     setSaved((s) => [data as SavedBatch, ...s]);
   };
@@ -347,7 +431,7 @@ const BatchSizing = () => {
     toast.success(unarchive ? "Unarchived." : "Archived.");
   };
 
-  const duplicateIntoCalculator = (b: SavedBatch) => {
+  const loadSnapshotIntoCalculator = (b: SavedBatch) => {
     setBottles(String(b.bottles)); setFill(String(Number(b.target_fill_ml)));
     setLoss(String(Number(b.process_loss_pct))); setBuffer(String(Number(b.ordering_buffer_pct)));
     setIngRows(b.formula_snapshot.map((i) => ({
@@ -363,6 +447,21 @@ const BatchSizing = () => {
       packSize: c.packSize != null ? String(c.packSize) : "",
       minOrderPacks: c.minOrderPacks != null ? String(c.minOrderPacks) : "",
     })));
+  };
+
+  const editBatch = (b: SavedBatch) => {
+    loadSnapshotIntoCalculator(b);
+    setEditing(b);
+    setSaveLabel(b.label); setSaveNotes(b.notes ?? "");
+    setViewing(null);
+    toast.success(`${b.batch_ref} opened for editing. Save changes writes back to the same record.`);
+  };
+
+  const cancelEdit = async () => { setEditing(null); setSaveLabel(""); setSaveNotes(""); await loadAll(); };
+
+  const duplicateIntoCalculator = (b: SavedBatch) => {
+    loadSnapshotIntoCalculator(b);
+    setEditing(null);
     setViewing(null);
     toast.success(`${b.batch_ref} loaded into the calculator as a new draft. Note: master-data commits are disabled for duplicated rows.`);
   };
@@ -448,6 +547,15 @@ const BatchSizing = () => {
     toast.success(`${bySupplier.size} draft PO(s) created — see Supply → Purchasing.`);
   };
 
+  const printMakeSheet = (b: SavedBatch) => {
+    const w = window.open("", "_blank", "width=820,height=900");
+    if (!w) { toast.error("Pop-up blocked — allow pop-ups for this site to print."); return; }
+    w.document.write(makeSheetHtml(b));
+    w.document.close();
+    const arm = () => { const btn = w.document.getElementById("__printBtn"); if (btn) btn.addEventListener("click", () => w.print()); };
+    if (w.document.readyState === "complete") arm(); else w.addEventListener("load", arm);
+  };
+
   const copySheet = (r: BatchResults, f: ValidationFlag[], ref: string | null, label: string | null, fl: string | null) => {
     navigator.clipboard.writeText(orderSheet(r, f, ref, label, fl))
       .then(() => toast.success("Order sheet copied."))
@@ -487,6 +595,9 @@ const BatchSizing = () => {
           <p className="mt-2 text-xs font-body text-muted-foreground">
             Immutable snapshot saved {fmtDate(viewing.created_at)}{viewing.formula_version_label ? ` from ${viewing.formula_version_label}` : ""}. Later formula edits do not touch this record.
           </p>
+          <p className="mt-2 text-xs font-typewriter uppercase tracking-wider text-muted-foreground">
+            1 Order ingredients (build POs) → 2 Print make sheet &amp; make it → 3 Record actuals here → 4 Log the batch in Production (QC, release) → 5 Apply released yield in Sell → Stock
+          </p>
           {viewing.notes && <p className="mt-1 text-sm font-body text-muted-foreground">{viewing.notes}</p>}
 
           <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
@@ -507,7 +618,11 @@ const BatchSizing = () => {
           )}
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <button onClick={() => buildDraftPos(viewing)} disabled={busy === "drafts"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "drafts" ? "…" : "Build purchase orders"}</button>
+            <button onClick={() => printMakeSheet(viewing)} className="btn-primary text-xs px-4 py-2">Print make sheet</button>
+            {viewing.actual_bottles_filled == null && !viewing.archived_at && (
+              <button onClick={() => editBatch(viewing)} className="btn-outline text-xs px-3 py-1.5">Edit batch</button>
+            )}
+            <button onClick={() => buildDraftPos(viewing)} disabled={busy === "drafts"} className="btn-outline text-xs px-3 py-1.5 disabled:opacity-50">{busy === "drafts" ? "…" : "Build purchase orders"}</button>
             <button onClick={() => duplicateIntoCalculator(viewing)} className="btn-outline text-xs px-3 py-1.5">Duplicate into calculator</button>
             <button onClick={() => { setActualsFor(viewing); setABottles(viewing.actual_bottles_filled != null ? String(viewing.actual_bottles_filled) : ""); setAVolume(viewing.actual_batch_volume_ml != null ? String(Number(viewing.actual_batch_volume_ml)) : ""); setANotes(viewing.actual_notes ?? ""); }} className="btn-outline text-xs px-3 py-1.5">Record actuals</button>
             <button onClick={() => copySheet(r, vFlags, viewing.batch_ref, viewing.label, viewing.formula_version_label)} className="btn-outline text-xs px-3 py-1.5">Copy order sheet</button>
@@ -540,6 +655,11 @@ const BatchSizing = () => {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h3 className="font-typewriter text-lg uppercase tracking-wider">Batch sizing</h3>
+            {editing && (
+              <p className="mt-1 inline-block bg-foreground text-background px-2 py-0.5 font-typewriter text-[11px] uppercase tracking-widest">
+                Editing {editing.batch_ref} · {editing.label}
+              </p>
+            )}
             <p className="mt-1 text-sm font-body text-muted-foreground">
               Bottles in, purchasable quantities out. Edits here are scratch: nothing writes back to the formula or materials unless you explicitly save it.
             </p>
@@ -593,7 +713,8 @@ const BatchSizing = () => {
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
         <button onClick={normalise} className="btn-outline text-xs px-3 py-1.5">Normalise to 100%</button>
-        <button onClick={() => setSaveOpen(true)} className="btn-primary text-xs px-4 py-2">Save batch</button>
+        <button onClick={() => setSaveOpen(true)} className="btn-primary text-xs px-4 py-2">{editing ? `Save changes to ${editing.batch_ref}` : "Save batch"}</button>
+        {editing && <button onClick={cancelEdit} className="btn-outline text-xs px-3 py-1.5">Cancel edit</button>}
         <button onClick={() => copySheet(results, flags, null, null, formulaLabel)} className="btn-outline text-xs px-3 py-1.5">Copy order sheet</button>
         <button onClick={() => downloadCsv(results, flags, "batch-order-sheet")} className="btn-outline text-xs px-3 py-1.5">CSV</button>
         <button onClick={loadAll} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground px-2">Reset</button>
@@ -611,18 +732,21 @@ const BatchSizing = () => {
       {/* Saved batches */}
       <section>
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
-          <h4 className="font-typewriter text-sm uppercase tracking-widest text-muted-foreground">Saved batches</h4>
+          <div>
+            <h4 className="font-typewriter text-sm uppercase tracking-widest text-muted-foreground">Saved batches</h4>
+            <p className="text-[11px] font-body text-muted-foreground mt-0.5">Click a batch to open it — make sheet, purchase orders, and edit (until actuals are recorded).</p>
+          </div>
           <label className="text-xs font-body text-muted-foreground flex items-center gap-1.5">
             <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
             Show archived
           </label>
         </div>
         <div className="border border-border divide-y divide-border">
-          <div className="hidden md:grid grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem] gap-3 px-3 py-2 bg-secondary text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground">
-            <span>Ref</span><span>Label</span><span className="text-right">Bottles</span><span className="text-right">Volume</span><span className="text-right">AU %</span><span>Date</span><span>Actuals</span>
+          <div className="hidden md:grid grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem_1.5rem] gap-3 px-3 py-2 bg-secondary text-[11px] font-typewriter uppercase tracking-widest text-muted-foreground">
+            <span>Ref</span><span>Label</span><span className="text-right">Bottles</span><span className="text-right">Volume</span><span className="text-right">AU %</span><span>Date</span><span>Actuals</span><span></span>
           </div>
           {saved.filter((b) => showArchived || !b.archived_at).map((b) => (
-            <button key={b.id} onClick={() => setViewing(b)} className="w-full text-left grid md:grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem] grid-cols-2 gap-x-3 gap-y-1 px-3 py-2.5 text-sm hover:bg-secondary/60 transition-colors">
+            <button key={b.id} onClick={() => setViewing(b)} className="w-full text-left grid md:grid-cols-[7rem_1fr_5rem_6rem_5rem_6rem_5rem_1.5rem] grid-cols-2 gap-x-3 gap-y-1 px-3 py-2.5 text-sm hover:bg-secondary/60 transition-colors group">
               <span className="font-typewriter text-xs pt-0.5">{b.batch_ref}{b.archived_at ? " ⌀" : ""}</span>
               <span className="font-body truncate">{b.label}</span>
               <span className="font-body tabular-nums md:text-right">{b.bottles}</span>
@@ -630,6 +754,7 @@ const BatchSizing = () => {
               <span className="font-body tabular-nums md:text-right">{b.au_grown_pct != null ? `${Number(b.au_grown_pct).toFixed(1)}` : "—"}</span>
               <span className="font-body text-muted-foreground text-xs pt-0.5">{fmtDate(b.created_at)}</span>
               <span className="font-body text-xs pt-0.5">{b.actual_bottles_filled != null ? "recorded" : "—"}</span>
+              <span className="hidden md:block text-muted-foreground group-hover:text-foreground text-right pt-0.5">›</span>
             </button>
           ))}
           {saved.filter((b) => showArchived || !b.archived_at).length === 0 && (
@@ -642,9 +767,11 @@ const BatchSizing = () => {
       {saveOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setSaveOpen(false)}>
           <div className="bg-background border border-border p-5 w-full max-w-md space-y-3" onClick={(e) => e.stopPropagation()}>
-            <h4 className="font-typewriter text-sm uppercase tracking-widest">Save batch</h4>
+            <h4 className="font-typewriter text-sm uppercase tracking-widest">{editing ? `Save changes to ${editing.batch_ref}` : "Save batch"}</h4>
             <p className="text-xs font-body text-muted-foreground">
-              Stores an immutable snapshot of the formula, packaging and results as they stand. A sequential reference is assigned on save.
+              {editing
+                ? `Overwrites ${editing.batch_ref} with the calculator as it stands — allowed until actuals are recorded, then the record locks.`
+                : "Stores a snapshot of the formula, packaging and results as they stand. A sequential reference is assigned on save; it stays editable until actuals are recorded."}
             </p>
             <label className="block text-sm">
               <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Label (required)</span>

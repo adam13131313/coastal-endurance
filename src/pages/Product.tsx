@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Check, Minus, Plus, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { fetchProduct, defaultDeliveryDates, firstShipBase, FIRST_SHIP_DATE, type Product as CatalogProduct } from "@/lib/catalog";
-import { useCurrency, CURRENCIES, type Currency } from "@/context/CurrencyContext";
+import { useCurrency, CURRENCIES, SHIPPING_NOTE, type Currency } from "@/context/CurrencyContext";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import ruggedCoast from "@/assets/rugged-coast.jpg";
@@ -43,7 +43,6 @@ const Product = () => {
   const subscriptionPrice = bundleVariant ? bundleVariant.price_cents / 100 : price * 3;
   const savingsAmount = price * bundleBottles - subscriptionPrice;
   const currentPrice = purchaseType === "subscription" ? subscriptionPrice : price * quantity;
-  const inStock = (product?.stock_quantity ?? 0) > 0;
   const today = new Date().toISOString().slice(0, 10);
   // Orders open now; first shipments go from FIRST_SHIP_DATE (until that passes).
   const firstShip = FIRST_SHIP_DATE > today ? FIRST_SHIP_DATE : today;
@@ -125,7 +124,8 @@ const Product = () => {
             price: price.toFixed(2),
             priceCurrency: currencyCode,
             priceValidUntil: "2026-12-31",
-            availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            // Always orderable: stock never gates a sale, we just make more.
+            availability: "https://schema.org/InStock",
             url: "https://coastalendurance.com/product",
           },
           countryOfOrigin: { "@type": "Country", name: "Australia" },
@@ -174,9 +174,7 @@ const Product = () => {
                 {sym}{price.toFixed(2)} <span className="text-sm text-muted-foreground">{currencyCode}</span>
               </p>
               <p className="mt-2 font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
-                {FIRST_SHIP_DATE > today
-                  ? "Available now · First bottles ship from 10 August 2026"
-                  : "Now shipping · Free standard shipping to Australia & the UK"}
+                Now shipping · Australia, New Zealand, the UK, the US & Europe
               </p>
 
               <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px]">
@@ -189,8 +187,9 @@ const Product = () => {
                   "30ml, approximately 3 months of daily use",
                   "Fast-absorbing, non-greasy finish",
                   "No fragrance or essential oils",
-                  "Free standard shipping in Australia and the UK",
-                  "Express shipping available at checkout",
+                  // What shipping costs depends on the currency the order will be
+                  // placed in, so it can't be a fixed line.
+                  SHIPPING_NOTE[currency],
                   "Made in Australia",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-sm font-body">
@@ -292,7 +291,7 @@ const Product = () => {
 
                   <ul className="mt-5 space-y-2.5">
                      {[
-                      "Free standard shipping in Australia and the UK",
+                      SHIPPING_NOTE[currency],
                       "Pay once, no recurring charges",
                       "Choose when each bottle ships",
                     ].map((benefit, index) => (
@@ -333,13 +332,11 @@ const Product = () => {
 
                 <button
                   onClick={handleAddToCart}
-                  disabled={loading || !inStock}
+                  disabled={loading}
                   className="btn-primary w-full flex items-center justify-center"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : !inStock ? (
-                    "SOLD OUT"
                   ) : (
                     `ADD TO CART ${sym}${currentPrice.toFixed(2)} ${currencyCode}`
                   )}

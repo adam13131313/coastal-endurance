@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useCartStore } from "@/stores/cartStore";
 
-export type Currency = "AUD" | "GBP" | "USD" | "EUR";
+export type Currency = "AUD" | "GBP" | "USD" | "EUR" | "NZD";
 
 interface CurrencyConfig {
   code: Currency;
@@ -14,6 +14,7 @@ export const CURRENCIES: Record<Currency, CurrencyConfig> = {
   GBP: { code: "GBP", symbol: "£", label: "GBP £" },
   USD: { code: "USD", symbol: "$", label: "USD $" },
   EUR: { code: "EUR", symbol: "€", label: "EUR €" },
+  NZD: { code: "NZD", symbol: "$", label: "NZD $" },
 };
 
 // Checkout collects an address only in the region tied to the order currency:
@@ -21,11 +22,14 @@ export const CURRENCIES: Record<Currency, CurrencyConfig> = {
 // sane UK rate. Say where the active currency ships while the customer is still
 // on our side of the handoff — reaching Stripe and finding your country missing
 // from the address list is a dead end with nothing on screen to explain it.
+// No trailing full stop — the caller punctuates (the cart follows it with a
+// second sentence; the product page renders it as a bullet).
 export const SHIPPING_NOTE: Record<Currency, string> = {
-  AUD: "Free standard shipping in Australia, express available at checkout.",
-  GBP: "Free standard shipping in the UK, express available at checkout.",
-  USD: "Flat $20 tracked shipping to the United States.",
-  EUR: "Flat €20 tracked shipping within the EU.",
+  AUD: "Free standard shipping in Australia, express available at checkout",
+  GBP: "Free standard shipping in the UK, express available at checkout",
+  USD: "Flat $20 tracked shipping to the United States",
+  EUR: "Flat €20 tracked shipping within the EU",
+  NZD: "Free standard shipping in New Zealand, express available at checkout",
 };
 
 export const SHIPPING_ELSEWHERE = "Shipping somewhere else? Change the currency at the top of the page.";
@@ -39,15 +43,18 @@ const EU_REGIONS = new Set([
 ]);
 
 // Default currency from the visitor's locale/timezone (a privacy-friendly hint; no
-// IP lookup). UK → GBP, US → USD, EU → EUR, everyone else → AUD. The switcher overrides.
+// IP lookup). UK → GBP, NZ → NZD, US → USD, EU → EUR, everyone else → AUD. The
+// switcher overrides.
 function detectCurrency(): Currency {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "AUD" || stored === "GBP" || stored === "USD" || stored === "EUR") return stored;
+    if (stored && stored in CURRENCIES) return stored as Currency;
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
     if (tz === "Europe/London") return "GBP";
+    if (tz === "Pacific/Auckland") return "NZD";
     const region = new Intl.Locale(navigator.language).maximize().region;
     if (region === "GB") return "GBP";
+    if (region === "NZ") return "NZD";
     if (region === "US") return "USD";
     if (region && EU_REGIONS.has(region)) return "EUR";
   } catch { /* ignore */ }

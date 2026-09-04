@@ -50,17 +50,21 @@ const AdminCockpit = ({ orders, onGo }: { orders: DashOrder[]; onGo: (tab: strin
   const [ft, setFt] = useState<FtRow[]>([]);
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [openNotes, setOpenNotes] = useState(0);
+  const [unfiled, setUnfiled] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    const [f, p, n] = await Promise.all([
+    const [f, p, n, u] = await Promise.all([
       sb.from("contact_pipelines").select("id, stage, status, stage_entered_at, contacts(name, email)").eq("pipeline", "field_team").eq("status", "active"),
       sb.from("products").select("id, name, stock_quantity, active").eq("active", true),
       sb.from("staff_notes").select("id", { count: "exact", head: true }).eq("status", "open"),
+      // Forwarded mail and WhatsApp exports we couldn't match to a customer.
+      sb.from("comms_messages").select("id", { count: "exact", head: true }).eq("status", "unfiled"),
     ]);
     setFt((f.data as FtRow[]) ?? []);
     setProducts((p.data as ProductRow[]) ?? []);
     setOpenNotes(n.count ?? 0);
+    setUnfiled(u.count ?? 0);
     setLoading(false);
   }, []);
 
@@ -102,7 +106,7 @@ const AdminCockpit = ({ orders, onGo }: { orders: DashOrder[]; onGo: (tab: strin
 
   if (loading) return <p className="font-body text-muted-foreground">Loading…</p>;
 
-  const nothingNeedsYou = m.overdueShipments === 0 && ftDue.length === 0 && lowStock.length === 0 && openNotes === 0;
+  const nothingNeedsYou = m.overdueShipments === 0 && ftDue.length === 0 && lowStock.length === 0 && openNotes === 0 && unfiled === 0;
 
   return (
     <div className="max-w-[880px] space-y-8">
@@ -148,6 +152,13 @@ const AdminCockpit = ({ orders, onGo }: { orders: DashOrder[]; onGo: (tab: strin
             ))}
           </div>
         </section>
+      )}
+
+      {/* Unfiled comms */}
+      {unfiled > 0 && (
+        <button onClick={() => onGo("inbox")} className="block text-sm font-body text-muted-foreground hover:text-foreground">
+          {unfiled} message{unfiled === 1 ? "" : "s"} waiting to be filed against a customer →
+        </button>
       )}
 
       {/* Staff notes */}

@@ -6,6 +6,7 @@ import {
   type ProductionBatch, type BatchComponent, type QcCheck, type RawMaterialLot, type QcTemplate, type QcTemplateItem, type QcState,
 } from "@/lib/production";
 import QcChecklist from "@/components/production/QcChecklist";
+import { PRINCIPLES, STEPS } from "@/components/production/BatchGuide";
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const sortItems = (t?: QcTemplate) => [...(t?.qc_template_items ?? [])].sort((a, b) => a.sort_order - b.sort_order);
@@ -25,6 +26,7 @@ const Batches = () => {
   // New-batch + editing state.
   const [newBottles, setNewBottles] = useState("220");
   const [newNumber, setNewNumber] = useState("");
+  const [resizeBottles, setResizeBottles] = useState("");
   const [blend, setBlend] = useState<Record<string, { actualG: string; lotId: string }>>({});
   const [yieldUnits, setYieldUnits] = useState("");
   const [inProcess, setInProcess] = useState<QcState>({});
@@ -91,16 +93,45 @@ const Batches = () => {
     if (created) openDetail(created.id);
   };
 
+  const resizeBatch = async () => {
+    const n = Number(resizeBottles);
+    if (!Number.isFinite(n) || n <= 0) { toast.error("Enter the new bottle count."); return; }
+    setBusy("resize");
+    const { data, error } = await supabase.functions.invoke("record-batch", {
+      body: { action: "resize", batchId: selected, plannedMassG: massForBottles(n) },
+    });
+    setBusy(null);
+    if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not resize."); return; }
+    toast.success(`Resized to ${n} bottles. Reprint the make sheet — targets have changed.`);
+    setResizeBottles("");
+    await loadBatches();
+    refreshDetail();
+  };
+
+  const deleteBatch = async () => {
+    if (!batch) return;
+    if (!confirm(`Delete ${batch.batch_number}? It has not been blended, so nothing is lost. This can't be undone.`)) return;
+    setBusy("delete");
+    const { data, error } = await supabase.functions.invoke("record-batch", { body: { action: "delete", batchId: selected } });
+    setBusy(null);
+    if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not delete."); return; }
+    toast.success("Batch deleted.");
+    setSelected(null); setBatch(null);
+    await loadBatches();
+  };
+
   const saveBlend = async () => {
+    // Actual grams are the record; a lot is optional traceability. Record any
+    // ingredient with a weight, whether or not a lot is picked.
     const updates = components
-      .filter((c) => blend[c.id]?.lotId && blend[c.id]?.actualG !== "")
-      .map((c) => ({ batchComponentId: c.id, actualG: Number(blend[c.id].actualG), rawMaterialLotId: blend[c.id].lotId }));
-    if (!updates.length) { toast.error("Enter actual grams and pick a lot for at least one ingredient."); return; }
+      .filter((c) => blend[c.id]?.actualG !== undefined && blend[c.id]?.actualG !== "")
+      .map((c) => ({ batchComponentId: c.id, actualG: Number(blend[c.id].actualG), rawMaterialLotId: blend[c.id]?.lotId || null }));
+    if (!updates.length) { toast.error("Enter actual grams for at least one ingredient."); return; }
     setBusy("blend");
     const { data, error } = await supabase.functions.invoke("record-batch", { body: { action: "blend", batchId: selected, components: updates } });
     setBusy(null);
     if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not save the blend."); return; }
-    toast.success("Blend recorded; lot quantities decremented.");
+    toast.success(updates.some((u) => u.rawMaterialLotId) ? "Blend recorded; lot quantities decremented." : "Blend recorded.");
     refreshDetail();
   };
 
@@ -132,6 +163,88 @@ const Batches = () => {
     if (error || (data as { error?: string })?.error) { toast.error((data as { error?: string })?.error || "Could not update the batch."); return; }
     toast.success(decision === "release" ? "Batch released." : "Batch rejected.");
     refreshDetail();
+  };
+
+  // A clean, self-contained Batch Manufacturing Record for printing: the record
+  // (header, targets, weigh-out with blanks to fill at the bench, QC, sign-off)
+  // followed by the full method, so the operator has one sheet at the bench.
+  const printBmr = () => {
+    if (!batch) return;
+    const esc = (v: unknown) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const g = (v: number | null | undefined) => (v == null ? "—" : `${Number(v).toFixed(1)} g`);
+    const targetTotal = components.reduce((t, c) => t + (Number(c.target_g) || 0), 0);
+    const actualTotal = components.reduce((t, c) => t + (Number(c.actual_g) || 0), 0);
+    const compRows = components.map((c) => `<tr>
+        <td>${esc(c.raw_materials?.name ?? "")}</td>
+        <td class="n">${g(c.target_g)}</td>
+        <td class="n">${c.actual_g != null ? g(c.actual_g) : '<span class="blank"></span>'}</td>
+        <td>${c.raw_material_lots?.supplier_lot_number ? esc(c.raw_material_lots.supplier_lot_number) : '<span class="blank"></span>'}</td>
+        <td class="tick"></td>
+      </tr>`).join("");
+    const methodHtml = STEPS.map((st) => `<div class="step">
+        <p class="sh"><span class="sn">${st.n}</span>${esc(st.h)}${st.tab && st.tab !== "—" ? ` <span class="tab">${esc(st.tab)}</span>` : ""}</p>
+        <ul>${st.items.map((it) => `<li>${esc(it)}</li>`).join("")}</ul>
+      </div>`).join("");
+    const principlesHtml = PRINCIPLES.map((pr) => `<div class="pr"><strong>${esc(pr.h)}.</strong> ${esc(pr.p)}</div>`).join("");
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${esc(batch.batch_number)} BMR</title>
+    <style>
+      body{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#111;margin:26px;max-width:760px;line-height:1.42}
+      h1{font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin:0}
+      h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:20px 0 6px;border-bottom:1px solid #111;padding-bottom:3px}
+      .meta{margin:5px 0 0;color:#444}
+      .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+      .tile{border:1px solid #999;padding:6px 8px}
+      .tile span{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#666}
+      .tile strong{font-size:13px}
+      table{border-collapse:collapse;width:100%;margin-top:4px}
+      th,td{border:1px solid #999;padding:5px 7px;text-align:left;vertical-align:top}
+      th{font-size:9px;letter-spacing:.08em;text-transform:uppercase;background:#f2f2f2}
+      td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+      td.tick{width:26px}
+      .blank{display:inline-block;min-width:70px;border-bottom:1px solid #999;height:11px}
+      .princ{margin-top:8px}.pr{margin:5px 0;color:#222}
+      .step{margin:9px 0;break-inside:avoid}
+      .sh{margin:0 0 3px;font-weight:bold}
+      .sn{display:inline-block;background:#111;color:#fff;width:16px;height:16px;text-align:center;line-height:16px;margin-right:6px;font-size:10px}
+      .tab{background:#eee;color:#555;font-weight:normal;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:1px 5px;margin-left:4px}
+      .step ul{margin:2px 0 0 22px;padding:0}.step li{margin:2px 0}
+      .sign{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+      .sign div{border-bottom:1px solid #999;padding:14px 2px 3px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#555}
+      .pagebreak{page-break-before:always}
+      @media print{.noprint{display:none}}
+    </style></head><body>
+    <h1>Batch Manufacturing Record — ${esc(batch.batch_number)}</h1>
+    <p class="meta">Coastal Endurance · Field Oil · ${esc(BATCH_STATUS_LABEL[batch.status])} · operator ${esc(batch.operator ?? "—")} · opened ${esc(fmtDate(batch.created_at))}</p>
+    <div class="tiles">
+      <div class="tile"><span>Planned mass</span><strong>${g(batch.planned_mass_g)}</strong></div>
+      <div class="tile"><span>Theoretical</span><strong>${batch.theoretical_units ?? "—"} units</strong></div>
+      <div class="tile"><span>Yield</span><strong>${batch.yield_units != null ? batch.yield_units + " units" : "—"}</strong></div>
+      <div class="tile"><span>Best before</span><strong>${esc(fmtDate(batch.best_before))}</strong></div>
+    </div>
+    <h2>Blend — weigh out in the order below</h2>
+    <table><thead><tr><th>Ingredient</th><th>Target</th><th>Actual</th><th>Lot no.</th><th>✓</th></tr></thead>
+    <tbody>${compRows}
+      <tr><td><strong>Total</strong></td><td class="n"><strong>${g(targetTotal)}</strong></td><td class="n">${actualTotal > 0 ? "<strong>" + g(actualTotal) + "</strong>" : ""}</td><td></td><td></td></tr>
+    </tbody></table>
+    <div class="sign">
+      <div>Date made</div><div>Made by</div>
+      <div>In-process QC pass (init.)</div><div>Units filled (yield)</div>
+      <div>Finished QC pass (init.)</div><div>Best before set</div>
+    </div>
+    <div class="pagebreak"></div>
+    <h1>Method — Field Oil batch</h1>
+    <div class="princ">${principlesHtml}</div>
+    <h2>Steps</h2>
+    ${methodHtml}
+    <p class="noprint" style="margin-top:16px"><button id="__printBtn">Print</button></p>
+    </body></html>`;
+    const w = window.open("", "_blank", "width=820,height=980");
+    if (!w) { toast.error("Pop-up blocked — allow pop-ups for this site to print."); return; }
+    w.document.write(html); w.document.close();
+    // Wire the in-page Print button and offer the dialog on load. Inline onclick
+    // handlers are stripped in some document.write windows, so attach from here.
+    const arm = () => { const b = w.document.getElementById("__printBtn"); if (b) b.addEventListener("click", () => w.print()); };
+    if (w.document.readyState === "complete") arm(); else w.addEventListener("load", arm);
   };
 
   const exportBmr = () => {
@@ -175,7 +288,7 @@ const Batches = () => {
           </div>
           <div className="flex items-center gap-2">
             <StatusPill status={batch.status} />
-            <button onClick={() => window.print()} className="btn-outline text-xs px-3 py-1">Print</button>
+            <button onClick={printBmr} className="btn-outline text-xs px-3 py-1">Print</button>
             <button onClick={exportBmr} className="btn-outline text-xs px-3 py-1">Export</button>
           </div>
         </div>
@@ -193,6 +306,25 @@ const Batches = () => {
           <Stat label="Yield" value={batch.yield_units != null ? `${batch.yield_units} units` : "—"} />
           <Stat label="Best before" value={fmtDate(batch.best_before)} />
         </div>
+
+        {batch.status === "planning" && (
+          <div className="mb-8 border border-border p-4 flex flex-wrap items-end gap-3">
+            <div>
+              <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Resize this batch</p>
+              <p className="text-xs font-body text-muted-foreground mb-2 max-w-md">Nothing is weighed yet, so you can change the size or scrap it. Once you record a blend this locks into a production record.</p>
+              <div className="flex items-end gap-2">
+                <label className="text-sm">
+                  <span className="block font-typewriter text-[10px] uppercase tracking-widest text-muted-foreground mb-1">New bottle count</span>
+                  <input inputMode="numeric" value={resizeBottles} onChange={(e) => setResizeBottles(e.target.value)} placeholder={String(batch.theoretical_units ?? "")} className="w-32 px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground tabular-nums" />
+                </label>
+                <button onClick={resizeBatch} disabled={busy === "resize" || !Number(resizeBottles)} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "resize" ? "…" : "Resize"}</button>
+                {Number(resizeBottles) > 0 && <span className="text-xs font-body text-muted-foreground pb-2">≈ {fmtGrams(massForBottles(Number(resizeBottles)))} of blend</span>}
+              </div>
+            </div>
+            <span className="flex-1" />
+            <button onClick={deleteBatch} disabled={busy === "delete"} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-destructive disabled:opacity-50 pb-2">{busy === "delete" ? "…" : "Delete batch"}</button>
+          </div>
+        )}
 
         {/* Blend */}
         <Section title="Blend — actual weights & lots">
@@ -212,7 +344,7 @@ const Batches = () => {
                   onChange={(e) => setBlend((b) => ({ ...b, [c.id]: { ...b[c.id], lotId: e.target.value, actualG: b[c.id]?.actualG ?? "" } }))}
                   className="w-56 px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground disabled:opacity-50"
                 >
-                  <option value="">Select released lot…</option>
+                  <option value="">Lot (optional)…</option>
                   {releasedLots.filter((l) => l.raw_material_id === c.raw_material_id).map((l) => (
                     <option key={l.id} value={l.id}>lot {l.supplier_lot_number || "?"} · {l.qty_remaining}{l.unit} left</option>
                   ))}
@@ -226,6 +358,9 @@ const Batches = () => {
             </p>
             {!locked && <button onClick={saveBlend} disabled={busy === "blend"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "blend" ? "…" : "Save blend"}</button>}
           </div>
+          {!locked && (
+            <p className="mt-2 text-xs font-body text-muted-foreground">Lots are optional — pick one to draw down inventory and build the trace, or leave it blank and just record the grams.</p>
+          )}
         </Section>
 
         {/* Fill */}

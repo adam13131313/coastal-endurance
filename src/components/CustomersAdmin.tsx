@@ -1,22 +1,40 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { sb, fmtDate, fmtDateTime, type Contact, type ContactEvent } from "@/lib/crm";
+import {
+  sb, fmtDate, fmtDateTime, CHANNEL_LABEL, SOURCE_LABEL,
+  type Contact, type ContactEvent, type CommsMessage,
+} from "@/lib/crm";
 import { formatPrice } from "@/lib/catalog";
 
 // Customers: contacts (auto-populated from orders, field team, signups). Each is
 // a page you can open, edit, and keep a full communications history on: emails,
 // WhatsApp, calls and notes, all on one timeline. "Account" = they've created a
 // login; "Guest" = ordered/added without one.
+//
+// Messages get here three ways: typed into "Log a message", forwarded to the CRM
+// address (see the inbound-email function), or pasted in as a WhatsApp export
+// below. Anything that arrived but couldn't be matched waits in Admin -> Inbox.
 interface OrderLite { id: string; email: string; status: string; total_cents: number; currency: string; created_at: string }
-interface CommsMessage {
-  id: string; channel: string; direction: string; from_addr: string | null; to_addr: string | null;
-  subject: string | null; body: string; occurred_at: string; created_by: string | null;
-}
 
 const inputCls = "w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground";
 const CHANNELS = ["email", "whatsapp", "call", "sms", "other"];
-const chLabel: Record<string, string> = { email: "Email", whatsapp: "WhatsApp", call: "Call", sms: "SMS", other: "Msg" };
+
+// supabase.functions.invoke gives back a FunctionsHttpError with data:null on a
+// non-2xx, so the function's own message is inside error.context. Dig it out —
+// "That doesn't look like a WhatsApp export" is a lot more use than "failed".
+async function fnError(error: unknown, data: unknown): Promise<string | null> {
+  const inline = (data as { error?: string } | null)?.error;
+  if (inline) return inline;
+  const ctx = (error as { context?: Response } | null)?.context;
+  if (ctx && typeof ctx.json === "function") {
+    try {
+      const j = await ctx.json();
+      if (j?.error) return String(j.error);
+    } catch { /* not JSON — fall through to the caller's default */ }
+  }
+  return null;
+}
 
 const CustomersAdmin = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -35,6 +53,12 @@ const CustomersAdmin = () => {
   const [msg, setMsg] = useState({ channel: "email", direction: "in", subject: "", body: "", when: "" });
   const [assignQ, setAssignQ] = useState("");
   const [assignExtra, setAssignExtra] = useState<string[]>([]); // extra contact ids
+
+  // Paste-a-WhatsApp-chat form. Parsing happens server-side (the same parser the
+  // forwarded exports go through), so this holds only the raw text and whatever
+  // the preview told us about it.
+  const [wa, setWa] = useState({ text: "", counterparty: "" });
+  const [waPreview, setWaPreview] = useState<{ participants: string[]; count: number } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -93,6 +117,7 @@ const CustomersAdmin = () => {
     setNoteDraft("");
     setMsg({ channel: "email", direction: "in", subject: "", body: "", when: "" });
     setAssignExtra([]); setAssignQ("");
+    setWa({ text: "", counterparty: c.name ?? "" }); setWaPreview(null);
   };
 
   const saveDetails = async () => {
@@ -142,6 +167,48 @@ const CustomersAdmin = () => {
     await load();
   };
 
+  // WhatsApp import is preview-then-commit: the export names both people and
+  // only a human can say which one is the customer. Parsing runs server-side, in
+  // the same parser the emailed exports go through.
+  const tzOffset = () => -new Date().getTimezoneOffset();
+
+  const previewWhatsApp = async () => {
+    if (!wa.text.trim()) { toast.error("Paste the chat first."); return; }
+    setBusy(true);
+    const { data, error } = await supabase.functions.invoke("import-whatsapp", {
+      body: { text: wa.text, preview: true, counterparty: wa.counterparty || null, tzOffsetMinutes: tzOffset() },
+    });
+    setBusy(false);
+    if (error || (data as { error?: string })?.error) {
+      setWaPreview(null);
+      toast.error(await fnError(error, data) ?? "Couldn't read that as a WhatsApp export.");
+      return;
+    }
+    const d = data as { participants?: string[]; count?: number; counterparty?: string | null };
+    setWaPreview({ participants: d.participants ?? [], count: d.count ?? 0 });
+    if (!wa.counterparty && d.counterparty) setWa((w) => ({ ...w, counterparty: d.counterparty as string }));
+  };
+
+  const importWhatsApp = async () => {
+    if (!viewingId || !wa.text.trim()) return;
+    if (!wa.counterparty.trim()) { toast.error("Say which name in the chat is the customer."); return; }
+    setBusy(true);
+    const { data, error } = await supabase.functions.invoke("import-whatsapp", {
+      body: { text: wa.text, contactId: viewingId, counterparty: wa.counterparty, tzOffsetMinutes: tzOffset() },
+    });
+    setBusy(false);
+    if (error || (data as { error?: string })?.error) {
+      toast.error(await fnError(error, data) ?? "Import failed.");
+      return;
+    }
+    const d = data as { imported?: number; duplicates?: number };
+    const n = d.imported ?? 0;
+    toast.success(`Imported ${n} message${n === 1 ? "" : "s"}${d.duplicates ? ` · ${d.duplicates} already on file` : ""}.`);
+    setWa({ text: "", counterparty: wa.counterparty });
+    setWaPreview(null);
+    await load();
+  };
+
   if (loading) return <p className="font-body text-muted-foreground">Loading customers…</p>;
 
   const buyers = contacts.filter((c) => (ordersByEmail.get(c.email.toLowerCase()) ?? []).some((o) => o.status !== "refunded")).length;
@@ -168,8 +235,13 @@ const CustomersAdmin = () => {
       items.push({ at: new Date(m.occurred_at).getTime(), key: `m-${m.id}`, render: (
         <div className="px-3 py-2 text-sm font-body">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-typewriter uppercase tracking-widest bg-secondary px-1.5 py-0.5">{chLabel[m.channel] ?? m.channel} {m.direction === "in" ? "IN" : "OUT"}</span>
+            <span className="text-[10px] font-typewriter uppercase tracking-widest bg-secondary px-1.5 py-0.5">{CHANNEL_LABEL[m.channel] ?? m.channel} {m.direction === "in" ? "IN" : "OUT"}</span>
             {m.subject && <span className="font-medium">{m.subject}</span>}
+            {m.source && m.source !== "manual" && (
+              <span className="text-[10px] font-typewriter uppercase tracking-widest border border-border px-1.5 py-0.5 text-muted-foreground">
+                {SOURCE_LABEL[m.source] ?? m.source}
+              </span>
+            )}
             <span className="text-xs text-muted-foreground ml-auto">{fmtDateTime(m.occurred_at)}</span>
           </div>
           <p className="mt-1 whitespace-pre-wrap text-muted-foreground text-[13px]">{m.body}</p>
@@ -225,7 +297,7 @@ const CustomersAdmin = () => {
           <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground">Log a message</p>
           <div className="flex flex-wrap gap-2">
             <select value={msg.channel} onChange={(e) => setMsg({ ...msg, channel: e.target.value })} className={`${inputCls} w-32`}>
-              {CHANNELS.map((ch) => <option key={ch} value={ch}>{chLabel[ch]}</option>)}
+              {CHANNELS.map((ch) => <option key={ch} value={ch}>{CHANNEL_LABEL[ch]}</option>)}
             </select>
             <select value={msg.direction} onChange={(e) => setMsg({ ...msg, direction: e.target.value })} className={`${inputCls} w-40`}>
               <option value="in">Received (in)</option><option value="out">Sent (out)</option>
@@ -254,6 +326,52 @@ const CustomersAdmin = () => {
             )}
           </div>
           <button onClick={saveMessage} disabled={busy || !msg.body.trim()} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy ? "…" : "Log message"}</button>
+        </div>
+
+        {/* Import a WhatsApp chat */}
+        <div className="border border-border p-4 space-y-2">
+          <p className="font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground">Paste a WhatsApp chat</p>
+          <p className="text-xs font-body text-muted-foreground">
+            In WhatsApp: open the chat, tap the contact’s name, Export chat, Without media — then paste it here.
+            Emailing that export to the CRM address does the same thing without the copy-paste.
+          </p>
+          <textarea
+            value={wa.text}
+            onChange={(e) => { setWa({ ...wa, text: e.target.value }); setWaPreview(null); }}
+            rows={4}
+            placeholder="[31/08/2026, 09:12:10] Jane Smith: Hey Adam, got the oil…"
+            className={inputCls}
+          />
+          {waPreview && (
+            <p className="text-xs font-body text-muted-foreground">
+              {waPreview.count} message{waPreview.count === 1 ? "" : "s"}
+              {waPreview.participants.length > 0 ? ` · in this chat: ${waPreview.participants.join(", ")}` : ""}
+            </p>
+          )}
+          <L label="Which name in the chat is the customer?">
+            {waPreview && waPreview.participants.length > 0 ? (
+              <select value={wa.counterparty} onChange={(e) => setWa({ ...wa, counterparty: e.target.value })} className={inputCls}>
+                <option value="">Choose…</option>
+                {waPreview.participants.map((n) => <option key={n} value={n}>{n}</option>)}
+              </select>
+            ) : (
+              <input
+                value={wa.counterparty}
+                onChange={(e) => setWa({ ...wa, counterparty: e.target.value })}
+                placeholder="Their name exactly as it appears in the chat"
+                className={inputCls}
+              />
+            )}
+          </L>
+          <p className="text-xs font-body text-muted-foreground">Their lines are filed as received; everything else as sent by you.</p>
+          <div className="flex flex-wrap gap-2">
+            <button onClick={previewWhatsApp} disabled={busy || !wa.text.trim()} className="btn-outline text-xs px-3 py-1.5 disabled:opacity-50">
+              {busy && !waPreview ? "…" : "Check it"}
+            </button>
+            <button onClick={importWhatsApp} disabled={busy || !waPreview || !wa.counterparty.trim()} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">
+              {busy && waPreview ? "…" : waPreview ? `Import ${waPreview.count} message${waPreview.count === 1 ? "" : "s"}` : "Import"}
+            </button>
+          </div>
         </div>
 
         {/* Quick note */}

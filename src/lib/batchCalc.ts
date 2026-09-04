@@ -249,8 +249,8 @@ export function validateBatch(results: BatchResults): ValidationFlag[] {
     level: "info",
     code: "INCI_ORDER",
     message:
-      `Label order: ${inciOrder.join(", ")}. Sunflower is the carrier inside the vitamin E and rosemary extract: ` +
-      `it must appear on the label but is never dosed or ordered separately.`,
+      `Label order: ${inciOrder.join(", ")}. Sunflower is the carrier inside the rosemary CO2 extract ` +
+      `(~35% of it, per the AWO spec): it must appear on the label but is never dosed or ordered separately.`,
   });
 
   const unlocked = [

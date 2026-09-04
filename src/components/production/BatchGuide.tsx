@@ -2,7 +2,7 @@
 // step is recorded. Condensed from the Production & QC guide; the two principles
 // (oxidation + water) govern every choice below.
 
-const PRINCIPLES = [
+export const PRINCIPLES = [
   {
     h: "Oxidation is the enemy",
     p: "The blend is mostly polyunsaturated actives (hemp, rosehip) that go rancid with heat, light, air and time. So: blend at room temperature (never heat), work out of direct light, mix gently (don't whip air in), and fill promptly — same day.",
@@ -13,7 +13,7 @@ const PRINCIPLES = [
   },
 ];
 
-const STEPS = [
+export const STEPS = [
   {
     n: 1,
     tab: "—",

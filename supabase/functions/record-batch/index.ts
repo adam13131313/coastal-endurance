@@ -6,6 +6,8 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 //   action 'blend'  → record actual grams + the released lot used per component;
 //                     decrement each lot's qty_remaining (reversing any prior record).
 //   action 'fill'   → record units filled (yield) + theoretical units.
+//   action 'resize' → change planned mass + re-seed component targets (planning only).
+//   action 'delete' → scrap a batch that was never blended (planning only).
 // Released/rejected batches are read-only: every action is refused once released.
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -103,6 +105,35 @@ Deno.serve(async (req) => {
     if (!batch) return json({ error: "Unknown batch" }, 400);
     if (batch.status === "released" || batch.status === "rejected") return json({ error: `Batch is ${batch.status} and read-only.` }, 409);
 
+    // ---- resize / delete: planning only -----------------------------------
+    // A batch may be re-sized or scrapped only while nothing has been weighed.
+    // Once blending starts (status leaves 'planning') it is a production record.
+    if (action === "resize" || action === "delete") {
+      if (batch.status !== "planning") {
+        return json({ error: `This batch is ${batch.status} — resize and delete are only allowed before any blend is recorded. Correct it as a new batch instead.` }, 409);
+      }
+      if (action === "delete") {
+        await admin.from("batch_components").delete().eq("batch_id", batchId);
+        await admin.from("production_batches").delete().eq("id", batchId);
+        return json({ ok: true, deleted: true });
+      }
+      // resize
+      const plannedMassG = Number(body?.plannedMassG);
+      if (!Number.isFinite(plannedMassG) || plannedMassG <= 0) return json({ error: "plannedMassG must be a positive number" }, 400);
+      const theoreticalUnits = Math.floor((plannedMassG / DENSITY_G_PER_ML) / BOTTLE_ML);
+      await admin.from("production_batches").update({ planned_mass_g: plannedMassG, theoretical_units: theoreticalUnits }).eq("id", batchId);
+      // Re-seed component targets from the batch's formula at the new mass.
+      const { data: comps } = await admin.from("formula_components").select("raw_material_id, percent_ww").eq("formula_id", batch.formula_id);
+      if (comps?.length) {
+        await admin.from("batch_components").delete().eq("batch_id", batchId);
+        await admin.from("batch_components").insert(comps.map((c: { raw_material_id: string; percent_ww: number }) => ({
+          batch_id: batchId, raw_material_id: c.raw_material_id, target_g: (Number(c.percent_ww) / 100) * plannedMassG, actual_g: null, raw_material_lot_id: null,
+        })));
+      }
+      const { data: updated } = await admin.from("production_batches").select("*").eq("id", batchId).maybeSingle();
+      return json({ ok: true, batch: updated });
+    }
+
     // ---- blend: actual grams + lots, decrement lot qty_remaining ----------
     if (action === "blend") {
       const updates: { batchComponentId: string; actualG: number; rawMaterialLotId: string }[] = Array.isArray(body?.components) ? body.components : [];
@@ -111,26 +142,30 @@ Deno.serve(async (req) => {
       const { data: existing } = await admin.from("batch_components").select("*").eq("batch_id", batchId);
       const byId = new Map((existing ?? []).map((c: Record<string, unknown>) => [c.id as string, c]));
 
-      // Validate all selected lots up front (must be released; material must match).
+      // Validate up front. A lot is optional traceability; validate it only when
+      // one is supplied (must be released and match the ingredient). Grams are
+      // always required and are the record itself.
       for (const u of updates) {
         const comp = byId.get(u.batchComponentId);
         if (!comp) return json({ error: "Unknown batch component" }, 400);
+        if (!Number.isFinite(Number(u.actualG)) || Number(u.actualG) < 0) return json({ error: "actualG must be a non-negative number" }, 400);
+        if (!u.rawMaterialLotId) continue; // no lot chosen — grams only
         const { data: lot } = await admin.from("raw_material_lots").select("id, status, raw_material_id, qty_remaining").eq("id", u.rawMaterialLotId).maybeSingle();
         if (!lot) return json({ error: "Unknown lot selected" }, 400);
         if (lot.status !== "released") return json({ error: `A selected lot is ${lot.status}; only released lots can be used.` }, 400);
         if (lot.raw_material_id !== comp.raw_material_id) return json({ error: "A selected lot doesn't match its ingredient." }, 400);
-        if (!Number.isFinite(Number(u.actualG)) || Number(u.actualG) < 0) return json({ error: "actualG must be a non-negative number" }, 400);
       }
 
-      // Apply, reversing any prior decrement so re-recording is safe.
+      // Apply, reversing any prior decrement so re-recording is safe. A null lot
+      // means grams-only: record the weight, clear any prior lot, touch no stock.
       const lotDelta = new Map<string, number>(); // lotId → grams to subtract (net)
       for (const u of updates) {
         const comp = byId.get(u.batchComponentId)!;
         const prevLot = comp.raw_material_lot_id as string | null;
         const prevActual = Number(comp.actual_g) || 0;
         if (prevLot) lotDelta.set(prevLot, (lotDelta.get(prevLot) ?? 0) - prevActual); // add back
-        lotDelta.set(u.rawMaterialLotId, (lotDelta.get(u.rawMaterialLotId) ?? 0) + Number(u.actualG)); // take out
-        await admin.from("batch_components").update({ actual_g: Number(u.actualG), raw_material_lot_id: u.rawMaterialLotId }).eq("id", u.batchComponentId);
+        if (u.rawMaterialLotId) lotDelta.set(u.rawMaterialLotId, (lotDelta.get(u.rawMaterialLotId) ?? 0) + Number(u.actualG)); // take out
+        await admin.from("batch_components").update({ actual_g: Number(u.actualG), raw_material_lot_id: u.rawMaterialLotId ?? null }).eq("id", u.batchComponentId);
       }
       for (const [lotId, delta] of lotDelta) {
         if (delta === 0) continue;
