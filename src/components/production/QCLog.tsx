@@ -7,12 +7,24 @@ type Filter = "all" | "incoming" | "in_process" | "finished";
 
 const QCLog = () => {
   const [checks, setChecks] = useState<QcCheck[]>([]);
+  const [subjectLabels, setSubjectLabels] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await sb.from("qc_checks").select("*, qc_check_items ( * )").order("performed_at", { ascending: false });
+    const [{ data }, { data: batches }, { data: lots }] = await Promise.all([
+      sb.from("qc_checks").select("*, qc_check_items ( * )").order("performed_at", { ascending: false }),
+      sb.from("production_batches").select("id, batch_number"),
+      sb.from("raw_material_lots").select("id, supplier_lot_number, raw_materials ( name )"),
+    ]);
+    // Map each subject_id (a batch or a raw-material lot) to a readable label.
+    const labels: Record<string, string> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    for (const b of (batches as any[]) ?? []) labels[b.id] = b.batch_number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    for (const l of (lots as any[]) ?? []) labels[l.id] = `${l.raw_materials?.name ?? "lot"} · lot ${l.supplier_lot_number || "?"}`;
+    setSubjectLabels(labels);
     setChecks((data as QcCheck[]) ?? []);
     setLoading(false);
   }, []);
@@ -64,6 +76,9 @@ const QCLog = () => {
 
       {/* All checks */}
       <section>
+        <p className="text-xs font-body text-muted-foreground mb-3 max-w-[640px]">
+          Every QC check ever recorded, in one register. You run these where the work happens — <strong>incoming</strong> when releasing a raw-material lot (Materials), <strong>in-process</strong> during a blend and <strong>finished</strong> before release (both on a batch, in Batches). This tab is the read-only record of all of them, plus the hemp peroxide trend above. Each row names the batch or lot it belongs to.
+        </p>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h3 className="font-typewriter text-lg uppercase tracking-wider">QC checks</h3>
           <div className="flex gap-1">
@@ -81,7 +96,7 @@ const QCLog = () => {
               <div key={c.id} className="border border-border p-3">
                 <p className="text-sm font-body">
                   <span className="font-typewriter uppercase tracking-wider text-xs">{c.type.replace("_", "-")}</span>{" · "}
-                  <span className="text-muted-foreground">{c.subject_type}</span>{" · "}
+                  <span className="font-medium">{subjectLabels[c.subject_id] ?? (c.subject_type === "batch" ? "batch" : "raw lot")}</span>{" · "}
                   <span className={c.result === "pass" ? "text-foreground font-medium" : c.result === "fail" ? "text-destructive font-medium" : "text-muted-foreground"}>{c.result}</span>
                   {" · "}<span className="text-muted-foreground">{fmtDateTime(c.performed_at)} · {c.performed_by}</span>
                 </p>
