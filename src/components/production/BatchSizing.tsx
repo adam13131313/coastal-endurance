@@ -191,6 +191,9 @@ const BatchSizing = () => {
   const [saved, setSaved] = useState<SavedBatch[]>([]);
   const [showArchived, setShowArchived] = useState(false);
   const [viewing, setViewing] = useState<SavedBatch | null>(null);
+  // A saved batch stays editable until actuals are recorded — that is the
+  // "made it" moment; after that it is a production record and locks.
+  const [editing, setEditing] = useState<SavedBatch | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -352,6 +355,31 @@ const BatchSizing = () => {
     if (!saveLabel.trim()) { toast.error("Give the batch a label."); return; }
     setBusy("save");
     const snaps = buildSnapshots(ingredients, components, results);
+    if (editing) {
+      // The is-null guard means a record that gained actuals since it was opened
+      // (another tab, another day) refuses the write instead of clobbering it.
+      const { data: upd, error } = await sb.from("batch_calculations").update({
+        label: saveLabel.trim(),
+        notes: saveNotes.trim() || null,
+        bottles: results.inputs.bottles,
+        target_fill_ml: results.inputs.targetFillMl,
+        process_loss_pct: results.inputs.processLossPct,
+        ordering_buffer_pct: results.inputs.orderingBufferPct,
+        ...snaps,
+        batch_volume_ml: results.batchVolumeMl,
+        batch_mass_g: results.batchMassG,
+        blend_density_g_ml: results.blendDensityGMl,
+        au_grown_pct: results.auGrownPct,
+      }).eq("id", editing.id).is("actual_bottles_filled", null).select("*").maybeSingle();
+      setBusy(null);
+      if (error || !upd) { toast.error("Couldn't update — has this batch had actuals recorded?"); return; }
+      toast.success(`${editing.batch_ref} updated. Reprint the make sheet; any draft POs built from the old numbers don't update themselves.`);
+      setSaveOpen(false); setSaveLabel(""); setSaveNotes(""); setEditing(null);
+      const { data: list } = await sb.from("batch_calculations").select("*").order("created_at", { ascending: false });
+      setSaved((list as SavedBatch[]) ?? []);
+      await loadAll();
+      return;
+    }
     const { data: userData } = await supabase.auth.getUser();
     const { data, error } = await sb.from("batch_calculations").insert({
       label: saveLabel.trim(),
@@ -403,7 +431,7 @@ const BatchSizing = () => {
     toast.success(unarchive ? "Unarchived." : "Archived.");
   };
 
-  const duplicateIntoCalculator = (b: SavedBatch) => {
+  const loadSnapshotIntoCalculator = (b: SavedBatch) => {
     setBottles(String(b.bottles)); setFill(String(Number(b.target_fill_ml)));
     setLoss(String(Number(b.process_loss_pct))); setBuffer(String(Number(b.ordering_buffer_pct)));
     setIngRows(b.formula_snapshot.map((i) => ({
@@ -419,6 +447,21 @@ const BatchSizing = () => {
       packSize: c.packSize != null ? String(c.packSize) : "",
       minOrderPacks: c.minOrderPacks != null ? String(c.minOrderPacks) : "",
     })));
+  };
+
+  const editBatch = (b: SavedBatch) => {
+    loadSnapshotIntoCalculator(b);
+    setEditing(b);
+    setSaveLabel(b.label); setSaveNotes(b.notes ?? "");
+    setViewing(null);
+    toast.success(`${b.batch_ref} opened for editing. Save changes writes back to the same record.`);
+  };
+
+  const cancelEdit = async () => { setEditing(null); setSaveLabel(""); setSaveNotes(""); await loadAll(); };
+
+  const duplicateIntoCalculator = (b: SavedBatch) => {
+    loadSnapshotIntoCalculator(b);
+    setEditing(null);
     setViewing(null);
     toast.success(`${b.batch_ref} loaded into the calculator as a new draft. Note: master-data commits are disabled for duplicated rows.`);
   };
@@ -574,6 +617,9 @@ const BatchSizing = () => {
 
           <div className="mt-4 flex flex-wrap gap-2">
             <button onClick={() => printMakeSheet(viewing)} className="btn-primary text-xs px-4 py-2">Print make sheet</button>
+            {viewing.actual_bottles_filled == null && !viewing.archived_at && (
+              <button onClick={() => editBatch(viewing)} className="btn-outline text-xs px-3 py-1.5">Edit batch</button>
+            )}
             <button onClick={() => buildDraftPos(viewing)} disabled={busy === "drafts"} className="btn-outline text-xs px-3 py-1.5 disabled:opacity-50">{busy === "drafts" ? "…" : "Build purchase orders"}</button>
             <button onClick={() => duplicateIntoCalculator(viewing)} className="btn-outline text-xs px-3 py-1.5">Duplicate into calculator</button>
             <button onClick={() => { setActualsFor(viewing); setABottles(viewing.actual_bottles_filled != null ? String(viewing.actual_bottles_filled) : ""); setAVolume(viewing.actual_batch_volume_ml != null ? String(Number(viewing.actual_batch_volume_ml)) : ""); setANotes(viewing.actual_notes ?? ""); }} className="btn-outline text-xs px-3 py-1.5">Record actuals</button>
@@ -607,6 +653,11 @@ const BatchSizing = () => {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h3 className="font-typewriter text-lg uppercase tracking-wider">Batch sizing</h3>
+            {editing && (
+              <p className="mt-1 inline-block bg-foreground text-background px-2 py-0.5 font-typewriter text-[11px] uppercase tracking-widest">
+                Editing {editing.batch_ref} · {editing.label}
+              </p>
+            )}
             <p className="mt-1 text-sm font-body text-muted-foreground">
               Bottles in, purchasable quantities out. Edits here are scratch: nothing writes back to the formula or materials unless you explicitly save it.
             </p>
@@ -660,7 +711,8 @@ const BatchSizing = () => {
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
         <button onClick={normalise} className="btn-outline text-xs px-3 py-1.5">Normalise to 100%</button>
-        <button onClick={() => setSaveOpen(true)} className="btn-primary text-xs px-4 py-2">Save batch</button>
+        <button onClick={() => setSaveOpen(true)} className="btn-primary text-xs px-4 py-2">{editing ? `Save changes to ${editing.batch_ref}` : "Save batch"}</button>
+        {editing && <button onClick={cancelEdit} className="btn-outline text-xs px-3 py-1.5">Cancel edit</button>}
         <button onClick={() => copySheet(results, flags, null, null, formulaLabel)} className="btn-outline text-xs px-3 py-1.5">Copy order sheet</button>
         <button onClick={() => downloadCsv(results, flags, "batch-order-sheet")} className="btn-outline text-xs px-3 py-1.5">CSV</button>
         <button onClick={loadAll} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground px-2">Reset</button>
@@ -709,9 +761,11 @@ const BatchSizing = () => {
       {saveOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setSaveOpen(false)}>
           <div className="bg-background border border-border p-5 w-full max-w-md space-y-3" onClick={(e) => e.stopPropagation()}>
-            <h4 className="font-typewriter text-sm uppercase tracking-widest">Save batch</h4>
+            <h4 className="font-typewriter text-sm uppercase tracking-widest">{editing ? `Save changes to ${editing.batch_ref}` : "Save batch"}</h4>
             <p className="text-xs font-body text-muted-foreground">
-              Stores an immutable snapshot of the formula, packaging and results as they stand. A sequential reference is assigned on save.
+              {editing
+                ? `Overwrites ${editing.batch_ref} with the calculator as it stands — allowed until actuals are recorded, then the record locks.`
+                : "Stores a snapshot of the formula, packaging and results as they stand. A sequential reference is assigned on save; it stays editable until actuals are recorded."}
             </p>
             <label className="block text-sm">
               <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Label (required)</span>
