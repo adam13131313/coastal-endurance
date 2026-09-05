@@ -93,6 +93,7 @@ export interface EmailTemplate {
   label: string;
   subject: string;
   body: string;
+  channel: "email" | "whatsapp";
   event_type: string;
   stage_on_send: string | null;
   sort: number;

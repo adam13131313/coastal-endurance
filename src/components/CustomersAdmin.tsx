@@ -274,7 +274,7 @@ const CustomersAdmin = () => {
         <div className="border border-border p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
           <L label="Name"><input value={draft.name ?? ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} className={inputCls} /></L>
           <L label="Email"><input value={draft.email ?? ""} onChange={(e) => setDraft({ ...draft, email: e.target.value })} className={inputCls} /></L>
-          <L label="Phone"><input value={draft.phone ?? ""} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} className={inputCls} /></L>
+          <L label="Phone"><input value={draft.phone ?? ""} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} placeholder="+61412345678" className={inputCls} /><span className="mt-1 block text-[10px] font-body text-muted-foreground">Full international form for WhatsApp — country code, e.g. +61412345678.</span></L>
           <L label="Source / how you know them"><input value={draft.source ?? ""} onChange={(e) => setDraft({ ...draft, source: e.target.value })} className={inputCls} /></L>
           <L label="Country"><input value={draft.country ?? ""} onChange={(e) => setDraft({ ...draft, country: e.target.value })} className={inputCls} /></L>
           <L label="Preferred currency">

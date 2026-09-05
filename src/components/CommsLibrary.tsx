@@ -8,17 +8,17 @@ import { sb, type EmailTemplate } from "@/lib/crm";
 // (which passes onBack for a "back to pipeline" link).
 const CommsLibrary = ({ onBack }: { onBack?: () => void }) => {
   const [rows, setRows] = useState<EmailTemplate[]>([]);
-  const [draft, setDraft] = useState<Record<string, { label: string; subject: string; body: string; active: boolean }>>({});
+  const [draft, setDraft] = useState<Record<string, { label: string; subject: string; body: string; active: boolean; channel: "email" | "whatsapp" }>>({});
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
-  const [adding, setAdding] = useState({ key: "", label: "", subject: "", body: "" });
+  const [adding, setAdding] = useState<{ key: string; label: string; subject: string; body: string; channel: "email" | "whatsapp" }>({ key: "", label: "", subject: "", body: "", channel: "email" });
 
   const load = useCallback(async () => {
     setLoading(true);
     const { data } = await sb.from("email_templates").select("*").order("sort", { ascending: true });
     const list = (data as EmailTemplate[]) ?? [];
     setRows(list);
-    setDraft(Object.fromEntries(list.map((t) => [t.id, { label: t.label, subject: t.subject, body: t.body, active: t.active }])));
+    setDraft(Object.fromEntries(list.map((t) => [t.id, { label: t.label, subject: t.subject, body: t.body, active: t.active, channel: t.channel }])));
     setLoading(false);
   }, []);
 
@@ -29,7 +29,7 @@ const CommsLibrary = ({ onBack }: { onBack?: () => void }) => {
     if (!d) return;
     setBusy(t.id);
     const { error } = await sb.from("email_templates").update({
-      label: d.label.trim() || t.label, subject: d.subject, body: d.body, active: d.active, updated_at: new Date().toISOString(),
+      label: d.label.trim() || t.label, subject: d.channel === "whatsapp" ? "" : d.subject, body: d.body, active: d.active, channel: d.channel, updated_at: new Date().toISOString(),
     }).eq("id", t.id);
     setBusy(null);
     if (error) { toast.error("Couldn't save."); return; }
@@ -42,12 +42,12 @@ const CommsLibrary = ({ onBack }: { onBack?: () => void }) => {
     if (!key || !adding.label.trim()) { toast.error("Add a key and a label."); return; }
     setBusy("add");
     const { error } = await sb.from("email_templates").insert({
-      key, label: adding.label.trim(), subject: adding.subject || "Subject", body: adding.body || "Hi {{first_name}},\n\n", sort: (rows.at(-1)?.sort ?? 0) + 1,
+      key, label: adding.label.trim(), subject: adding.channel === "whatsapp" ? "" : (adding.subject || "Subject"), body: adding.body || "Hi {{first_name}},\n\n", channel: adding.channel, sort: (rows.at(-1)?.sort ?? 0) + 1,
     });
     setBusy(null);
     if (error) { toast.error(String(error.message).includes("duplicate") ? "That key already exists." : "Couldn't add."); return; }
     toast.success("Template added.");
-    setAdding({ key: "", label: "", subject: "", body: "" });
+    setAdding({ key: "", label: "", subject: "", body: "", channel: "email" });
     load();
   };
 
@@ -75,18 +75,27 @@ const CommsLibrary = ({ onBack }: { onBack?: () => void }) => {
                   onChange={(e) => setDraft((s) => ({ ...s, [t.id]: { ...s[t.id], label: e.target.value } }))}
                   className="font-typewriter text-sm uppercase tracking-wider bg-background border-b border-border focus:outline-none focus:border-foreground px-1"
                 />
-                <label className="flex items-center gap-1.5 text-xs font-body text-muted-foreground">
-                  <input type="checkbox" checked={d.active} onChange={(e) => setDraft((s) => ({ ...s, [t.id]: { ...s[t.id], active: e.target.checked } }))} />
-                  Active
-                </label>
+                <div className="flex items-center gap-3">
+                  <select value={d.channel} onChange={(e) => setDraft((s) => ({ ...s, [t.id]: { ...s[t.id], channel: e.target.value as "email" | "whatsapp" } }))}
+                    className="text-[11px] font-typewriter uppercase tracking-wider px-2 py-1 border border-border bg-background rounded-none focus:outline-none">
+                    <option value="email">Email</option>
+                    <option value="whatsapp">WhatsApp</option>
+                  </select>
+                  <label className="flex items-center gap-1.5 text-xs font-body text-muted-foreground">
+                    <input type="checkbox" checked={d.active} onChange={(e) => setDraft((s) => ({ ...s, [t.id]: { ...s[t.id], active: e.target.checked } }))} />
+                    Active
+                  </label>
+                </div>
               </div>
+              {d.channel !== "whatsapp" && (
+                <label className="block text-sm">
+                  <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Subject</span>
+                  <input value={d.subject} onChange={(e) => setDraft((s) => ({ ...s, [t.id]: { ...s[t.id], subject: e.target.value } }))}
+                    className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
+                </label>
+              )}
               <label className="block text-sm">
-                <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Subject</span>
-                <input value={d.subject} onChange={(e) => setDraft((s) => ({ ...s, [t.id]: { ...s[t.id], subject: e.target.value } }))}
-                  className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
-              </label>
-              <label className="block text-sm">
-                <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Body</span>
+                <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">{d.channel === "whatsapp" ? "WhatsApp message" : "Body"}</span>
                 <textarea value={d.body} rows={8} onChange={(e) => setDraft((s) => ({ ...s, [t.id]: { ...s[t.id], body: e.target.value } }))}
                   className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground leading-relaxed" />
               </label>
@@ -107,7 +116,13 @@ const CommsLibrary = ({ onBack }: { onBack?: () => void }) => {
             <input placeholder="key (e.g. reminder)" value={adding.key} onChange={(e) => setAdding((a) => ({ ...a, key: e.target.value }))} className="flex-1 px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
             <input placeholder="Label" value={adding.label} onChange={(e) => setAdding((a) => ({ ...a, label: e.target.value }))} className="flex-1 px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
           </div>
-          <input placeholder="Subject" value={adding.subject} onChange={(e) => setAdding((a) => ({ ...a, subject: e.target.value }))} className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
+          <select value={adding.channel} onChange={(e) => setAdding((a) => ({ ...a, channel: e.target.value as "email" | "whatsapp" }))} className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground">
+            <option value="email">Email template</option>
+            <option value="whatsapp">WhatsApp template (no subject)</option>
+          </select>
+          {adding.channel !== "whatsapp" && (
+            <input placeholder="Subject" value={adding.subject} onChange={(e) => setAdding((a) => ({ ...a, subject: e.target.value }))} className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
+          )}
           <textarea placeholder="Body (use {{first_name}})" rows={4} value={adding.body} onChange={(e) => setAdding((a) => ({ ...a, body: e.target.value }))} className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
           <button onClick={addTemplate} disabled={busy === "add"} className="btn-outline text-xs px-4 py-2 disabled:opacity-50">{busy === "add" ? "…" : "Add template"}</button>
         </div>

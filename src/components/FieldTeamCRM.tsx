@@ -251,7 +251,7 @@ const FieldTeamCRM = () => {
     // Open WhatsApp before any await so it counts as a user-gesture pop-up.
     window.open(link, "_blank", "noopener,noreferrer");
     setSending(true);
-    await logEvent(compose.row.contact_id, compose.tpl.event_type, `Sent via WhatsApp: ${compose.subject}`, { subject: compose.subject, via: "whatsapp" });
+    await logEvent(compose.row.contact_id, compose.tpl.event_type, `Sent via WhatsApp: ${compose.subject || compose.tpl.label}`, { subject: compose.subject || compose.tpl.label, via: "whatsapp" });
     await advanceAfterSend(compose.row, compose.tpl);
     toast.success("Opened WhatsApp and logged as sent.");
     setCompose(null);
@@ -305,6 +305,7 @@ const FieldTeamCRM = () => {
         <Field label="Phone (for WhatsApp)" value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} w="w-44" />
         <Field label="How you know them" value={form.source} onChange={(v) => setForm((f) => ({ ...f, source: v }))} w="w-52" />
         <button onClick={addProspect} disabled={busy === "add"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "add" ? "…" : "Add prospect"}</button>
+        <p className="w-full text-[11px] font-body text-muted-foreground">Phone in full international form for WhatsApp — country code, no spaces needed, e.g. +61412345678 or +447911123456.</p>
       </div>
 
       {/* Board */}
@@ -393,26 +394,41 @@ const FieldTeamCRM = () => {
               <h3 className="font-typewriter text-sm uppercase tracking-widest">{compose.tpl.label}</h3>
               <span className="text-xs font-body text-muted-foreground">to {compose.row.contacts.email}{compose.row.contacts.phone ? ` · ${compose.row.contacts.phone}` : ""}</span>
             </div>
-            <label className="block text-sm mb-3">
-              <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Subject</span>
-              <input value={compose.subject} onChange={(e) => setCompose((c) => c && { ...c, subject: e.target.value })}
-                className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
-            </label>
+            {compose.tpl.channel !== "whatsapp" && (
+              <label className="block text-sm mb-3">
+                <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Subject</span>
+                <input value={compose.subject} onChange={(e) => setCompose((c) => c && { ...c, subject: e.target.value })}
+                  className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
+              </label>
+            )}
             <label className="block text-sm mb-4">
-              <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Message (edit freely)</span>
+              <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">{compose.tpl.channel === "whatsapp" ? "WhatsApp message (edit freely)" : "Message (edit freely)"}</span>
               <textarea value={compose.body} onChange={(e) => setCompose((c) => c && { ...c, body: e.target.value })} rows={11}
                 className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground leading-relaxed" />
             </label>
             <div className="flex flex-wrap items-center gap-2">
-              <button onClick={sendViaApp} disabled={sending} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{sending ? "…" : "Send via app"}</button>
-              <button onClick={copyCompose} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Copy</button>
-              {waLink(compose.row.contacts.phone) && (
-                <button onClick={sendViaWhatsApp} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Send via WhatsApp</button>
+              {compose.tpl.channel === "whatsapp" ? (
+                <>
+                  <button onClick={sendViaWhatsApp} disabled={sending || !waLink(compose.row.contacts.phone)} className="btn-primary text-xs px-4 py-2 disabled:opacity-50" title={waLink(compose.row.contacts.phone) ? "" : "No phone number on this contact — add one on the card first."}>{sending ? "…" : "Send via WhatsApp"}</button>
+                  <button onClick={copyCompose} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Copy</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={sendViaApp} disabled={sending} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{sending ? "…" : "Send via app"}</button>
+                  <button onClick={copyCompose} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Copy</button>
+                  {waLink(compose.row.contacts.phone) && (
+                    <button onClick={sendViaWhatsApp} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Send via WhatsApp</button>
+                  )}
+                </>
               )}
               <button onClick={markSentManually} disabled={sending} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-50">Mark as sent</button>
               <button onClick={() => setCompose(null)} disabled={sending} className="ml-auto text-xs font-body text-muted-foreground hover:text-foreground">Cancel</button>
             </div>
-            <p className="mt-3 text-[11px] font-body text-muted-foreground">Send via app = we email it (reply-to hello@) and log it. Send via WhatsApp = opens WhatsApp to their number with this message ready, and logs it. Copy = paste into your own email, then Mark as sent to log it.</p>
+            <p className="mt-3 text-[11px] font-body text-muted-foreground">
+              {compose.tpl.channel === "whatsapp"
+                ? "Send via WhatsApp = opens WhatsApp to their number with this message ready, and logs it. Copy = copy the text to paste yourself, then Mark as sent to log it."
+                : "Send via app = we email it (reply-to hello@) and log it. Send via WhatsApp = opens WhatsApp to their number with this message ready, and logs it. Copy = paste into your own email, then Mark as sent to log it."}
+            </p>
           </div>
         </div>
       )}
