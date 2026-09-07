@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, interpolate, fmtDate, fmtDateTime, waLink, telLink,
+  sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, interpolate, fmtDate, fmtDateTime, waLink, telLink, emailLooksValid, phoneWarning,
   type FieldTeamRow, type ContactEvent, type EmailTemplate,
 } from "@/lib/crm";
 import CommsLibrary from "@/components/CommsLibrary";
@@ -305,7 +305,13 @@ const FieldTeamCRM = () => {
         <Field label="Phone (for WhatsApp)" value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} w="w-44" />
         <Field label="How you know them" value={form.source} onChange={(v) => setForm((f) => ({ ...f, source: v }))} w="w-52" />
         <button onClick={addProspect} disabled={busy === "add"} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy === "add" ? "…" : "Add prospect"}</button>
-        <p className="w-full text-[11px] font-body text-muted-foreground">Phone in full international form for WhatsApp — country code, no spaces needed, e.g. +61412345678 or +447911123456.</p>
+        <p className="w-full text-[11px] font-body text-muted-foreground">
+          {form.email && !emailLooksValid(form.email)
+            ? <span className="text-destructive">That email doesn't look valid.</span>
+            : phoneWarning(form.phone)
+              ? <span className="text-destructive">{phoneWarning(form.phone)}</span>
+              : "Phone in full international form for WhatsApp — country code, e.g. +61412345678 or +447911123456."}
+        </p>
       </div>
 
       {/* Board */}

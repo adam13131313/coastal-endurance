@@ -17,6 +17,7 @@ export interface Contact {
   preferred_currency: string;
   marketing_consent: boolean;
   tags: string[];
+  alt_emails: string[];
   notes: string | null;
   user_id: string | null;   // set when the contact has created an account (membership)
   created_at: string;
@@ -83,6 +84,23 @@ export const telLink = (phone: string | null | undefined): string | null => {
   if (!phone) return null;
   const cleaned = phone.replace(/[^\d+]/g, "");
   return cleaned.length >= 6 ? `tel:${cleaned}` : null;
+};
+
+// Light, non-blocking format checks so obvious typos get flagged at entry
+// without bothering anyone. emailLooksValid is a shape check, not delivery
+// verification; phoneWarning returns a hint string (or null when fine/empty).
+export const emailLooksValid = (email: string | null | undefined): boolean =>
+  !!email && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+
+export const phoneWarning = (phone: string | null | undefined): string | null => {
+  const p = (phone ?? "").trim();
+  if (!p) return null;
+  if (/[a-zA-Z]/.test(p)) return "That contains letters — enter digits only.";
+  if (!p.startsWith("+")) return "Add a country code for WhatsApp, e.g. +61412345678 (drop the leading 0).";
+  const digits = p.replace(/[^\d]/g, "");
+  if (digits.length < 8 || digits.length > 15) return "That doesn't look like a full international number.";
+  if (/^\+\d{1,3}0/.test(p)) return "There's a 0 after the country code — international numbers drop it (e.g. +61412…, not +610412…).";
+  return null;
 };
 
 // Email templates live in the DB (public.email_templates), editable in the Comms

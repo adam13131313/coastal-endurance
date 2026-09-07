@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  sb, fmtDate, fmtDateTime, CHANNEL_LABEL, SOURCE_LABEL,
+  sb, fmtDate, fmtDateTime, CHANNEL_LABEL, SOURCE_LABEL, emailLooksValid, phoneWarning,
   type Contact, type ContactEvent, type CommsMessage,
 } from "@/lib/crm";
 import { formatPrice } from "@/lib/catalog";
@@ -57,6 +57,7 @@ const CustomersAdmin = () => {
   // Paste-a-WhatsApp-chat form. Parsing happens server-side (the same parser the
   // forwarded exports go through), so this holds only the raw text and whatever
   // the preview told us about it.
+  const [mergeQ, setMergeQ] = useState("");
   const [wa, setWa] = useState({ text: "", counterparty: "" });
   const [waPreview, setWaPreview] = useState<{ participants: string[]; count: number } | null>(null);
 
@@ -102,8 +103,18 @@ const CustomersAdmin = () => {
     return map;
   }, [events]);
 
+  // A contact's orders match on its primary email and any alt_emails (merged in
+  // from a duplicate that ordered under a different address).
+  const ordersFor = (c: Contact): OrderLite[] => {
+    const keys = [c.email, ...(c.alt_emails ?? [])].map((e) => e.toLowerCase());
+    const seen = new Set<string>();
+    const out: OrderLite[] = [];
+    for (const k of keys) for (const o of ordersByEmail.get(k) ?? []) if (!seen.has(o.id)) { seen.add(o.id); out.push(o); }
+    return out;
+  };
+
   const ltv = (c: Contact) =>
-    (ordersByEmail.get(c.email.toLowerCase()) ?? []).filter((o) => o.status !== "refunded").reduce((s, o) => s + o.total_cents, 0);
+    ordersFor(c).filter((o) => o.status !== "refunded").reduce((s, o) => s + o.total_cents, 0);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -134,6 +145,21 @@ const CustomersAdmin = () => {
     setBusy(false);
     if (error) { toast.error(String(error.message).includes("duplicate") ? "That email belongs to another contact." : "Couldn't save."); return; }
     toast.success("Saved."); await load();
+  };
+
+  const mergeContact = async (loserId: string) => {
+    if (!viewingId || loserId === viewingId) return;
+    const loser = contacts.find((x) => x.id === loserId);
+    const survivor = contacts.find((x) => x.id === viewingId);
+    if (!loser || !survivor) return;
+    if (!confirm(`Merge "${loser.name || loser.email}" INTO "${survivor.name || survivor.email}"?\n\nAll history, pipeline, tags and phone move onto this record; ${loser.email} is kept as an alternate email so their orders still match. "${loser.name || loser.email}" is then deleted. This can't be undone.`)) return;
+    setBusy(true);
+    const { data, error } = await sb.rpc("admin_merge_contacts", { p_survivor: viewingId, p_loser: loserId });
+    setBusy(false);
+    if (error || (data as { error?: string })?.error) { toast.error((error?.message) || "Couldn't merge."); return; }
+    toast.success(`Merged. ${loser.email} kept as an alternate email.`);
+    setMergeQ("");
+    await load();
   };
 
   const addNote = async () => {
@@ -211,13 +237,13 @@ const CustomersAdmin = () => {
 
   if (loading) return <p className="font-body text-muted-foreground">Loading customers…</p>;
 
-  const buyers = contacts.filter((c) => (ordersByEmail.get(c.email.toLowerCase()) ?? []).some((o) => o.status !== "refunded")).length;
+  const buyers = contacts.filter((c) => ordersFor(c).some((o) => o.status !== "refunded")).length;
   const members = contacts.filter((c) => c.user_id).length;
 
   // -------------------------------------------------------------- detail page
   if (viewingId && draft) {
     const c = contacts.find((x) => x.id === viewingId);
-    const co = c ? ordersByEmail.get(c.email.toLowerCase()) ?? [] : [];
+    const co = c ? ordersFor(c) : [];
     const hasAccount = !!c?.user_id;
 
     // Merge events + messages into one timeline (newest first).
@@ -273,8 +299,8 @@ const CustomersAdmin = () => {
         {/* Editable details */}
         <div className="border border-border p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
           <L label="Name"><input value={draft.name ?? ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} className={inputCls} /></L>
-          <L label="Email"><input value={draft.email ?? ""} onChange={(e) => setDraft({ ...draft, email: e.target.value })} className={inputCls} /></L>
-          <L label="Phone"><input value={draft.phone ?? ""} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} placeholder="+61412345678" className={inputCls} /><span className="mt-1 block text-[10px] font-body text-muted-foreground">Full international form for WhatsApp — country code, e.g. +61412345678.</span></L>
+          <L label="Email"><input value={draft.email ?? ""} onChange={(e) => setDraft({ ...draft, email: e.target.value })} className={inputCls} />{draft.email && !emailLooksValid(draft.email) && <span className="mt-1 block text-[10px] font-body text-destructive">That doesn't look like a valid email.</span>}{c?.alt_emails && c.alt_emails.length > 0 && <span className="mt-1 block text-[10px] font-body text-muted-foreground">Also: {c.alt_emails.join(", ")}</span>}</L>
+          <L label="Phone"><input value={draft.phone ?? ""} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} placeholder="+61412345678" className={inputCls} />{phoneWarning(draft.phone) ? <span className="mt-1 block text-[10px] font-body text-destructive">{phoneWarning(draft.phone)}</span> : <span className="mt-1 block text-[10px] font-body text-muted-foreground">Full international form for WhatsApp, e.g. +61412345678.</span>}</L>
           <L label="Source / how you know them"><input value={draft.source ?? ""} onChange={(e) => setDraft({ ...draft, source: e.target.value })} className={inputCls} /></L>
           <L label="Country"><input value={draft.country ?? ""} onChange={(e) => setDraft({ ...draft, country: e.target.value })} className={inputCls} /></L>
           <L label="Preferred currency">
@@ -291,6 +317,26 @@ const CustomersAdmin = () => {
           </div>
           <div className="md:col-span-2"><button onClick={saveDetails} disabled={busy} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{busy ? "…" : "Save details"}</button></div>
         </div>
+
+        {/* Merge a duplicate into this record */}
+        <details className="border border-dashed border-border p-4">
+          <summary className="text-sm font-typewriter uppercase tracking-wider text-muted-foreground cursor-pointer">Merge a duplicate into this contact</summary>
+          <p className="mt-2 text-xs font-body text-muted-foreground">Same person under a second email? Find their other record — it folds into this one (history, pipeline, tags, phone), its email is kept as an alternate so their orders still match, and the duplicate is deleted.</p>
+          <input value={mergeQ} onChange={(e) => setMergeQ(e.target.value)} placeholder="Search name or email…" className={`${inputCls} mt-3 w-full`} />
+          {mergeQ.trim() && (
+            <div className="mt-2 border border-border divide-y divide-border">
+              {contacts.filter((x) => x.id !== viewingId && (x.email.toLowerCase().includes(mergeQ.toLowerCase()) || (x.name ?? "").toLowerCase().includes(mergeQ.toLowerCase()))).slice(0, 6).map((x) => (
+                <button key={x.id} onClick={() => mergeContact(x.id)} disabled={busy} className="w-full text-left px-3 py-2 text-sm hover:bg-secondary/60 disabled:opacity-50 flex items-center justify-between gap-2">
+                  <span><span className="font-medium">{x.name || x.email}</span> <span className="text-muted-foreground text-xs">{x.email}</span></span>
+                  <span className="text-[10px] font-typewriter uppercase tracking-wider text-muted-foreground">Merge in →</span>
+                </button>
+              ))}
+              {contacts.filter((x) => x.id !== viewingId && (x.email.toLowerCase().includes(mergeQ.toLowerCase()) || (x.name ?? "").toLowerCase().includes(mergeQ.toLowerCase()))).length === 0 && (
+                <p className="px-3 py-2 text-xs font-body text-muted-foreground">No match.</p>
+              )}
+            </div>
+          )}
+        </details>
 
         {/* Log a message */}
         <div className="border border-border p-4 space-y-2">
