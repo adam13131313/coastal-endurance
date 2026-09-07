@@ -279,7 +279,7 @@ const CustomersAdmin = () => {
           <L label="Country"><input value={draft.country ?? ""} onChange={(e) => setDraft({ ...draft, country: e.target.value })} className={inputCls} /></L>
           <L label="Preferred currency">
             <select value={draft.preferred_currency ?? "AUD"} onChange={(e) => setDraft({ ...draft, preferred_currency: e.target.value })} className={inputCls}>
-              <option value="AUD">AUD</option><option value="GBP">GBP</option><option value="USD">USD</option>
+              <option value="AUD">AUD</option><option value="GBP">GBP</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="NZD">NZD</option>
             </select>
           </L>
           <L label="Tags (comma-separated)"><input value={draft.tagsText ?? ""} onChange={(e) => setDraft({ ...draft, tagsText: e.target.value })} className={inputCls} placeholder="advisor, vip…" /></L>
