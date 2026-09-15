@@ -25,6 +25,8 @@ import ProductIdeas from "@/components/ProductIdeas";
 import StockControl from "@/components/StockControl";
 import CustomersAdmin from "@/components/CustomersAdmin";
 import CommsInbox from "@/components/CommsInbox";
+import SubscribersAdmin from "@/components/SubscribersAdmin";
+import WaitlistAdmin from "@/components/WaitlistAdmin";
 import CompetitorsAdmin from "@/components/CompetitorsAdmin";
 import BrandStudy from "@/components/BrandStudy";
 import IPAdmin from "@/components/IPAdmin";
@@ -88,7 +90,7 @@ function formatAddress(a: Record<string, unknown> | null): string {
 const NAV_GROUPS = [
   { group: "Today", keys: ["today"] },
   { group: "Sell", keys: ["orders", "dispatch", "stock", "customers", "inbox"] },
-  { group: "Grow", keys: ["campaign", "content", "field", "comms", "notes"] },
+  { group: "Grow", keys: ["campaign", "content", "field", "comms", "subscribers", "waitlist", "notes"] },
   { group: "Make", keys: ["supply", "production"] },
   { group: "Business", keys: ["ideas"] },
   { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "brandstudy", "ip", "social"] },
@@ -97,18 +99,24 @@ const NAV_GROUPS = [
 const TAB_LABEL: Record<string, string> = {
   today: "Today", overview: "Charts", campaign: "Campaign", content: "Content",
   social: "Social guide", dispatch: "To ship", orders: "Orders", stock: "Stock",
-  customers: "Customers", inbox: "Inbox", field: "Field team", comms: "Comms", notes: "Field Notes", supply: "Supply", production: "Production",
+  customers: "Customers", inbox: "Inbox", field: "Field team", comms: "Comms", subscribers: "Subscribers", waitlist: "Waitlist", notes: "Field Notes", supply: "Supply", production: "Production",
   ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
   guide: "Staff guide", brand: "Brand", positioning: "Positioning", brandstudy: "Brand system", ip: "IP & TM",
 };
+
+// Today's date in the staff member's own timezone (YYYY-MM-DD), for the
+// "shipped on" default and the date picker's upper bound.
+const localToday = () => new Date().toLocaleDateString("en-CA");
 
 // Dispatch row controls. Defined at MODULE scope (not inside Admin) so their
 // component identity is stable across renders. When they were declared inside
 // Admin, every keystroke re-created the component type, remounting the input —
 // which dropped focus after each character and swallowed the first click on the
 // button (you had to click "Mark shipped" twice).
-const TrackShip = ({ value, onChange, onShip, busy }: {
-  value: string; onChange: (v: string) => void; onShip: () => void; busy: boolean;
+const TrackShip = ({ value, onChange, shippedOn, onShippedOnChange, onShip, busy }: {
+  value: string; onChange: (v: string) => void;
+  shippedOn: string; onShippedOnChange: (v: string) => void;
+  onShip: () => void; busy: boolean;
 }) => (
   <span className="flex items-center gap-2">
     <input
@@ -117,10 +125,53 @@ const TrackShip = ({ value, onChange, onShip, busy }: {
       onChange={(e) => onChange(e.target.value)}
       className="px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground w-36"
     />
+    <input
+      type="date"
+      title="Date it was actually posted (quoted in the customer's email)"
+      value={shippedOn}
+      max={localToday()}
+      onChange={(e) => onShippedOnChange(e.target.value)}
+      className="px-2 py-1 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground"
+    />
     <button onClick={onShip} disabled={busy} className="btn-outline text-xs px-3 py-1 disabled:opacity-50">
       {busy ? "…" : "Mark shipped"}
     </button>
   </span>
+);
+
+// Shipping notification draft, produced by ship-delivery when a delivery is
+// marked shipped. Nothing is emailed until the admin reviews it here and
+// clicks Send — closing the modal sends nothing.
+type ShipDraft = { deliveryId: string; to: string; subject: string; text: string };
+
+const ShipEmailModal = ({ draft, onChange, onSend, onClose, sending }: {
+  draft: ShipDraft; onChange: (d: ShipDraft) => void; onSend: () => void; onClose: () => void; sending: boolean;
+}) => (
+  <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => !sending && onClose()}>
+    <div className="bg-background border border-border w-full max-w-lg p-5" onClick={(e) => e.stopPropagation()}>
+      <div className="flex items-baseline justify-between mb-3">
+        <h3 className="font-typewriter text-sm uppercase tracking-widest">Shipping email — review before it goes</h3>
+        <span className="text-xs font-body text-muted-foreground">to {draft.to}</span>
+      </div>
+      <label className="block text-sm mb-3">
+        <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Subject</span>
+        <input value={draft.subject} onChange={(e) => onChange({ ...draft, subject: e.target.value })}
+          className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground" />
+      </label>
+      <label className="block text-sm mb-4">
+        <span className="block font-typewriter text-[11px] uppercase tracking-widest text-muted-foreground mb-1">Message (edit freely)</span>
+        <textarea value={draft.text} onChange={(e) => onChange({ ...draft, text: e.target.value })} rows={12}
+          className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground leading-relaxed" />
+      </label>
+      <div className="flex items-center gap-2">
+        <button onClick={onSend} disabled={sending} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{sending ? "…" : "Send email"}</button>
+        <button onClick={onClose} disabled={sending} className="ml-auto text-xs font-body text-muted-foreground hover:text-foreground">Don't send</button>
+      </div>
+      <p className="mt-3 text-[11px] font-body text-muted-foreground">
+        The shipment is already marked shipped. Send email = emails the customer (reply-to hello@) and logs it. Don't send = no email goes out.
+      </p>
+    </div>
+  </div>
 );
 
 // Move a not-yet-shipped delivery to a new date (customer asked; staff actions it).
@@ -149,8 +200,11 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "inbox" | "field" | "comms" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning" | "brandstudy" | "ip">("today");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "orders" | "stock" | "customers" | "inbox" | "field" | "comms" | "subscribers" | "waitlist" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning" | "brandstudy" | "ip">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
+  const [shippedOn, setShippedOn] = useState<Record<string, string>>({});
+  const [shipDraft, setShipDraft] = useState<ShipDraft | null>(null);
+  const [sendingDraft, setSendingDraft] = useState(false);
   const [dates, setDates] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [heard, setHeard] = useState<Record<string, string>>({});
@@ -206,15 +260,38 @@ const Admin = () => {
   const shipDelivery = async (deliveryId: string) => {
     setBusy(deliveryId);
     const { data, error } = await supabase.functions.invoke("ship-delivery", {
-      body: { deliveryId, trackingNumber: tracking[deliveryId] || "" },
+      body: {
+        deliveryId,
+        trackingNumber: tracking[deliveryId] || "",
+        shippedOn: shippedOn[deliveryId] || localToday(),
+      },
     });
+    const draft = (data as { draft?: Omit<ShipDraft, "deliveryId"> | null })?.draft;
     if (error || (data as { error?: string })?.error) {
-      toast.error("Couldn't mark shipped. Try again.");
+      toast.error((data as { error?: string })?.error || "Couldn't mark shipped. Try again.");
+    } else if (draft) {
+      setShipDraft({ deliveryId, ...draft });
+      toast.success("Marked shipped — review the email before it goes.");
     } else {
-      toast.success("Marked shipped, customer emailed.");
+      toast.success("Marked shipped. No email on this order, so nothing to send.");
     }
     await loadOrders();
     setBusy(null);
+  };
+
+  const sendShipDraft = async () => {
+    if (!shipDraft) return;
+    setSendingDraft(true);
+    const { data, error } = await supabase.functions.invoke("send-order-email", {
+      body: { deliveryId: shipDraft.deliveryId, subject: shipDraft.subject, text: shipDraft.text },
+    });
+    if (error || (data as { error?: string })?.error) {
+      toast.error((data as { error?: string })?.error || "Email failed to send. The draft is still open — try again.");
+    } else {
+      toast.success(`Shipping email sent to ${shipDraft.to}.`);
+      setShipDraft(null);
+    }
+    setSendingDraft(false);
   };
 
   const rescheduleDelivery = async (deliveryId: string, current: string) => {
@@ -265,7 +342,10 @@ const Admin = () => {
   const today = todayISO();
 
   // Flatten every still-scheduled shipment across all orders, soonest first.
+  // Only real orders: abandoned checkouts (status "pending") also have
+  // delivery rows, and the reminders digest already excludes them.
   const dispatch = orders
+    .filter((o) => o.status === "paid" || o.status === "fulfilled")
     .flatMap((o) => o.order_deliveries.filter((d) => d.status === "scheduled").map((d) => ({ d, o })))
     .sort((a, b) => a.d.scheduled_for.localeCompare(b.d.scheduled_for));
 
@@ -370,6 +450,8 @@ const Admin = () => {
 
           {tab === "customers" && <CustomersAdmin />}
           {tab === "inbox" && <CommsInbox onGo={(t) => setTab(t as typeof tab)} />}
+          {tab === "subscribers" && <SubscribersAdmin />}
+          {tab === "waitlist" && <WaitlistAdmin />}
 
           {tab === "content" && <ContentGenerator />}
 
@@ -423,6 +505,8 @@ const Admin = () => {
                         <TrackShip
                           value={tracking[d.id] ?? ""}
                           onChange={(v) => setTracking((t) => ({ ...t, [d.id]: v }))}
+                          shippedOn={shippedOn[d.id] ?? localToday()}
+                          onShippedOnChange={(v) => setShippedOn((s) => ({ ...s, [d.id]: v }))}
                           onShip={() => shipDelivery(d.id)}
                           busy={busy === d.id}
                         />
@@ -506,6 +590,8 @@ const Admin = () => {
                                 <TrackShip
                                   value={tracking[d.id] ?? ""}
                                   onChange={(v) => setTracking((t) => ({ ...t, [d.id]: v }))}
+                                  shippedOn={shippedOn[d.id] ?? localToday()}
+                                  onShippedOnChange={(v) => setShippedOn((s) => ({ ...s, [d.id]: v }))}
                                   onShip={() => shipDelivery(d.id)}
                                   busy={busy === d.id}
                                 />
@@ -548,6 +634,16 @@ const Admin = () => {
           </div>
         </div>
       </section>
+
+      {shipDraft && (
+        <ShipEmailModal
+          draft={shipDraft}
+          onChange={setShipDraft}
+          onSend={sendShipDraft}
+          onClose={() => setShipDraft(null)}
+          sending={sendingDraft}
+        />
+      )}
     </main>
   );
 };

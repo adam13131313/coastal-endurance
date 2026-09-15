@@ -25,7 +25,7 @@ const AdminGuide = () => (
       <H>Your daily job</H>
       <ol className="list-decimal pl-5 space-y-2">
         <li>Open the <strong>To ship</strong> tab. Anything overdue is shown in bold.</li>
-        <li>Post the bottle, type the tracking number into the row, and click <strong>Mark shipped</strong>. The customer is automatically emailed their tracking.</li>
+        <li>Post the bottle, type the tracking number into the row, set the posted-on date if it wasn't today, and click <strong>Mark shipped</strong>. A draft email with their tracking opens for you to review — edit it if you like, then click <strong>Send email</strong>. Nothing is emailed until you do.</li>
         <li>You also get a <strong>daily email</strong> each morning listing what is due or overdue, so you never have to remember to check.</li>
       </ol>
     </section>
@@ -33,7 +33,7 @@ const AdminGuide = () => (
     <section>
       <H>How to…</H>
       <ul className="space-y-3">
-        <li><strong>Ship a delivery:</strong> To ship tab → enter tracking → Mark shipped.</li>
+        <li><strong>Ship a delivery:</strong> To ship tab → enter tracking → Mark shipped → review the draft → Send email.</li>
         <li><strong>Complete an order:</strong> Orders tab → Mark order fulfilled (once every shipment is sent).</li>
         <li><strong>Change a delivery date:</strong> a customer (usually 12-month supply) asks to move a shipment → To ship tab → change the date in that shipment's date box → <strong>Save date</strong>. Works only before it is shipped. Customers are told to contact us for this, so you action it here.</li>
         <li><strong>Refund a customer:</strong> do it in <strong>Stripe</strong> (Payments → open the order → Refund). The store updates itself: the order is set to refunded, remaining shipments are cancelled, bottles are restocked, you get a confirmation email, and the customer is emailed a refund confirmation. Do not change anything here by hand.</li>
