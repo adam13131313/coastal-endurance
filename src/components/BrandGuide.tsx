@@ -113,11 +113,11 @@ const BrandGuide = () => (
     <section>
       <H>Logo &amp; downloads</H>
       <div className="flex items-center gap-4 mb-4">
-        <img src="/android-chrome-512x512.png" alt="Coastal Endurance logo" className="w-16 h-16 border border-border" />
-        <p className="text-sm">Mountain and sun mark, black on white. Square. Use on a light background; invert if needed for dark.</p>
+        <img src="/icon-512.png" alt="Coastal Endurance logo" className="w-16 h-16 border border-border" />
+        <p className="text-sm">Hand-drawn mark: peaks over water lines, black on off-white. Square. Use on a light background; the SVG favicon inverts automatically for dark.</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
-        <DownloadLink href="/android-chrome-512x512.png" label="Logo" note="PNG, 512px" />
+        <DownloadLink href="/icon-512.png" label="Logo" note="PNG, 512px" />
         <DownloadLink href="/og-image.png" label="Social / OG image" note="PNG" />
         {photos.map(([href, label]) => (
           <DownloadLink key={href} href={href} label={label} note="JPG" />
