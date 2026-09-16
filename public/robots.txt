@@ -4,9 +4,6 @@ Disallow: /auth
 Disallow: /account
 Disallow: /cart
 Disallow: /field-team
-Disallow: /favicon.ico
-Disallow: /favicon.png
-Disallow: /favicon-32x32.png
 
 User-agent: Bingbot
 Allow: /
@@ -14,9 +11,6 @@ Disallow: /auth
 Disallow: /account
 Disallow: /cart
 Disallow: /field-team
-Disallow: /favicon.ico
-Disallow: /favicon.png
-Disallow: /favicon-32x32.png
 
 User-agent: Twitterbot
 Allow: /
@@ -30,8 +24,5 @@ Disallow: /auth
 Disallow: /account
 Disallow: /cart
 Disallow: /field-team
-Disallow: /favicon.ico
-Disallow: /favicon.png
-Disallow: /favicon-32x32.png
 
 Sitemap: https://coastalendurance.com/sitemap.xml

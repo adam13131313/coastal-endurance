@@ -7,7 +7,7 @@ Field Oil is positioned as equipment maintenance for outdoor-exposed skin. Built
 ## Pages
 
 - [Home](/): Brand intro and Field Oil overview.
-- [Field Oil Product](/product): Full product page — pricing ($85 AUD / 30ml), one-time purchase, and 12-month subscription (4 bottles for the price of 3).
+- [Field Oil Product](/product): Full product page — pricing ($78 AUD / 30ml), one-time purchase, and 12-month subscription (4 bottles for the price of 3).
 - [Ingredients](/ingredients): Full breakdown of all 7 ingredients, INCI list, characteristics, storage, and FAQ.
 - [About](/about): Why Field Oil exists, the equipment-maintenance philosophy, who it's built for.
 - [Contact](/contact): Contact form, wholesale inquiries, response times.
