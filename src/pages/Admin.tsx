@@ -22,6 +22,7 @@ import BrandGuide from "@/components/BrandGuide";
 import ProductionAdmin from "@/components/ProductionAdmin";
 import SupplyAdmin from "@/components/SupplyAdmin";
 import ProductIdeas from "@/components/ProductIdeas";
+import DecisionLog from "@/components/DecisionLog";
 import StockControl from "@/components/StockControl";
 import CustomersAdmin from "@/components/CustomersAdmin";
 import FulfilmentAdmin from "@/components/FulfilmentAdmin";
@@ -93,7 +94,7 @@ const NAV_GROUPS = [
   { group: "Sell", keys: ["orders", "dispatch", "fulfilment", "stock", "customers", "inbox"] },
   { group: "Grow", keys: ["campaign", "content", "field", "comms", "subscribers", "waitlist", "notes"] },
   { group: "Make", keys: ["supply", "production"] },
-  { group: "Business", keys: ["ideas"] },
+  { group: "Business", keys: ["ideas", "decisions"] },
   { group: "Reference", keys: ["overview", "board", "assistant", "guide", "brand", "positioning", "brandstudy", "ip", "social"] },
 ] as const;
 
@@ -101,7 +102,7 @@ const TAB_LABEL: Record<string, string> = {
   today: "Today", overview: "Charts", campaign: "Campaign", content: "Content",
   social: "Social guide", dispatch: "To ship", fulfilment: "Fulfilment", orders: "Orders", stock: "Stock",
   customers: "Customers", inbox: "Inbox", field: "Field team", comms: "Comms", subscribers: "Subscribers", waitlist: "Waitlist", notes: "Field Notes", supply: "Supply", production: "Production",
-  ideas: "Product ideas", board: "Staff board", assistant: "Assistant",
+  ideas: "Product ideas", decisions: "Decisions", board: "Staff board", assistant: "Assistant",
   guide: "Staff guide", brand: "Brand", positioning: "Positioning", brandstudy: "Brand system", ip: "IP & TM",
 };
 
@@ -201,7 +202,7 @@ const Admin = () => {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "fulfilment" | "orders" | "stock" | "customers" | "inbox" | "field" | "comms" | "subscribers" | "waitlist" | "notes" | "supply" | "production" | "ideas" | "board" | "assistant" | "guide" | "brand" | "positioning" | "brandstudy" | "ip">("today");
+  const [tab, setTab] = useState<"today" | "overview" | "campaign" | "content" | "social" | "dispatch" | "fulfilment" | "orders" | "stock" | "customers" | "inbox" | "field" | "comms" | "subscribers" | "waitlist" | "notes" | "supply" | "production" | "ideas" | "decisions" | "board" | "assistant" | "guide" | "brand" | "positioning" | "brandstudy" | "ip">("today");
   const [tracking, setTracking] = useState<Record<string, string>>({});
   const [shippedOn, setShippedOn] = useState<Record<string, string>>({});
   const [shipDraft, setShipDraft] = useState<ShipDraft | null>(null);
@@ -468,6 +469,8 @@ const Admin = () => {
           {tab === "production" && <ProductionAdmin />}
 
           {tab === "ideas" && <ProductIdeas />}
+
+          {tab === "decisions" && <DecisionLog />}
 
           {tab === "dispatch" && (
             dispatch.length === 0 ? (
