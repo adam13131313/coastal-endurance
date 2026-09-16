@@ -157,8 +157,8 @@ const About = () => {
           <h2 className="text-3xl md:text-4xl font-typewriter uppercase">Who it's for</h2>
           <div className="mt-8 space-y-6 font-body text-muted-foreground leading-relaxed text-[17px]">
             <p>
-              Men who've spent their lives outdoors and paid for it in weathered skin. Surfers and
-              swimmers, riders and runners, tradies and dads on the sideline.
+              Men who've spent their lives outdoors and paid for it in weathered skin. Men whose
+              days are hard on the skin.
             </p>
             <p className="text-foreground font-medium">
               But honestly, if your skin has copped its share of sun, salt, wind and years, it's for you.

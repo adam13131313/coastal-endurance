@@ -375,9 +375,8 @@ const Product = () => {
             WHO IT'S FOR
           </h2>
           <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px] text-left">
-            Field Oil is built for those who spend real time outside. Surfers, runners, cyclists,
-            builders, professionals who train before or after work. If your skin faces the elements daily,
-            this is your maintenance tool.
+            Field Oil is built for men whose days are hard on the skin &mdash; men who spend real
+            time outside. If your skin faces the elements daily, this is your maintenance tool.
           </p>
         </div>
       </section>

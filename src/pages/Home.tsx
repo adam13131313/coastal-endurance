@@ -61,7 +61,7 @@ const Home = () => {
             Field Oil maintains what the elements wear down
           </h2>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
-            Field Oil is a daily face oil built for those who spend their days outside, surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
+            Field Oil is a daily face oil for men whose days are hard on the skin &mdash; anyone who works, trains, or lives under the Australian sky.
           </p>
         </Reveal>
       </section>
