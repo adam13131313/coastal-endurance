@@ -34,6 +34,7 @@ const AdminGuide = () => (
       <H>How to…</H>
       <ul className="space-y-3">
         <li><strong>Ship a delivery:</strong> To ship tab → enter tracking → Mark shipped → review the draft → Send email.</li>
+        <li><strong>Run a batch dispatch (MyPost):</strong> Fulfilment tab → <strong>Export MyPost CSV</strong> → import it in MyPost Business, pay, download and print the labels → pack and lodge → download MyPost's consignment CSV → <strong>Import tracking</strong>. Each matched parcel is marked shipped and its email opens as a draft; nothing sends until you click Send. Printer setup and label troubleshooting are in the staff handbook's "Label prep and printing" section.</li>
         <li><strong>Complete an order:</strong> Orders tab → Mark order fulfilled (once every shipment is sent).</li>
         <li><strong>Change a delivery date:</strong> a customer (usually 12-month supply) asks to move a shipment → To ship tab → change the date in that shipment's date box → <strong>Save date</strong>. Works only before it is shipped. Customers are told to contact us for this, so you action it here.</li>
         <li><strong>Refund a customer:</strong> do it in <strong>Stripe</strong> (Payments → open the order → Refund). The store updates itself: the order is set to refunded, remaining shipments are cancelled, bottles are restocked, you get a confirmation email, and the customer is emailed a refund confirmation. Do not change anything here by hand.</li>
@@ -64,9 +65,10 @@ const AdminGuide = () => (
           ["Today", "The cockpit: shipments due, low stock, campaign pace, field-team follow-ups, open notes. Start here."],
           ["Orders", "Every order, with addresses and fulfilment status."],
           ["To ship", "The dispatch queue."],
+          ["Fulfilment", "Batch dispatch: export the MyPost CSV, import tracking back, review shipping emails."],
           ["Stock", "Current stock, audited adjustments, and adding a released batch's yield."],
           ["Customers", "Every contact (auto-captured from orders, field team, signups) with order history."],
-          ["Campaign", "Father's Day pace + Year-1 plan, plus where sales come from and reach needed."],
+          ["Campaign", "Active campaign pace (when one is running) + Year-1 plan, plus where sales come from and reach needed."],
           ["Content", "Generate on-brand social, website, and email copy plus video shot lists."],
           ["Field team", "The recruitment pipeline board: invite → code → trial → advocate, with emails."],
           ["Comms", "The email templates the pipeline sends ({{first_name}} and {{code}} fill automatically)."],
