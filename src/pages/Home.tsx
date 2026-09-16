@@ -43,7 +43,7 @@ const Home = () => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.25s" }}>
               <Link to="/product" className="group inline-flex items-center justify-center px-6 py-3 bg-background text-foreground font-typewriter text-sm uppercase tracking-wider hover:bg-background/90 transition-colors">
-                MAINTAIN YOUR BARRIER
+                SHOP FIELD OIL
                 <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link to="/about" className="inline-flex items-center justify-center px-6 py-3 border border-background/60 text-background font-typewriter text-sm uppercase tracking-wider hover:bg-background hover:text-foreground transition-colors">
@@ -78,7 +78,7 @@ const Home = () => {
                 FIELD OIL 001
               </h2>
               <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
-                A face oil that supports your skin's natural barrier.
+                A face oil that keeps weathered skin in working order.
                 It absorbs fast, doesn't leave a greasy film, and holds up
                 to a full day outdoors. One bottle, once a day &mdash; that's
                 the whole routine.
