@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -22,7 +22,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Account = lazy(() => import("./pages/Account"));
 const FieldTeam = lazy(() => import("./pages/FieldTeam"));
-const FathersDay = lazy(() => import("./pages/FathersDay"));
 const FieldNotes = lazy(() => import("./pages/FieldNotes"));
 const FieldNote = lazy(() => import("./pages/FieldNote"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
@@ -51,7 +50,8 @@ const AppContent = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/account" element={<Account />} />
               <Route path="/field-team" element={<FieldTeam />} />
-              <Route path="/fathers-day" element={<FathersDay />} />
+              {/* The Father's Day 2026 campaign page is retired; keep old links working. */}
+              <Route path="/fathers-day" element={<Navigate to="/product" replace />} />
               <Route path="/field-notes" element={<FieldNotes />} />
               <Route path="/field-notes/:slug" element={<FieldNote />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />

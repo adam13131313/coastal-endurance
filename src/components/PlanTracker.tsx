@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/catalog";
+import { ACTIVE_CAMPAIGN, type CampaignConfig } from "@/lib/campaign";
 
 interface DashOrder {
   status: string;
@@ -38,17 +39,10 @@ const Row = ({ label, actual, target, value, sub }: { label: string; actual: str
   </div>
 );
 
-// Father's Day campaign: two goals — sell 200 bottles and recruit 15 Field Team
-// members for the free trial, by launch day. Batch is 220 units.
-const CAMPAIGN = {
-  label: "Father's Day campaign",
-  targetBottles: 200,
-  targetFieldTeam: 15,
-  start: "2026-07-01",
-  end: "2026-09-06", // Father's Day AU
-};
-
-const CampaignTracker = ({ orders }: { orders: DashOrder[] }) => {
+// Renders the active campaign's pace (bottles sold, and optionally Field Team
+// recruited) against its targets. Which campaign — if any — is running lives in
+// src/lib/campaign.ts; with none active this component isn't rendered at all.
+const CampaignTracker = ({ campaign, orders }: { campaign: CampaignConfig; orders: DashOrder[] }) => {
   const [fieldTeamCount, setFieldTeamCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -58,8 +52,8 @@ const CampaignTracker = ({ orders }: { orders: DashOrder[] }) => {
   }, []);
 
   const m = useMemo(() => {
-    const start = new Date(CAMPAIGN.start);
-    const end = new Date(CAMPAIGN.end);
+    const start = new Date(campaign.start);
+    const end = new Date(campaign.end);
     const now = new Date();
     const paid = orders.filter(
       (o) => (o.status === "paid" || o.status === "fulfilled") && new Date(o.created_at) >= start,
@@ -70,47 +64,49 @@ const CampaignTracker = ({ orders }: { orders: DashOrder[] }) => {
     const totalDays = Math.max(1, Math.round((end.getTime() - start.getTime()) / dayMs));
     const daysGone = Math.min(totalDays, Math.max(0, (now.getTime() - start.getTime()) / dayMs));
     const daysLeft = Math.max(0, Math.ceil((end.getTime() - now.getTime()) / dayMs));
-    const evenPace = (CAMPAIGN.targetBottles / totalDays) * daysGone;
-    const needPerDay = daysLeft > 0 ? Math.max(0, CAMPAIGN.targetBottles - bottles) / daysLeft : 0;
+    const evenPace = (campaign.targetBottles / totalDays) * daysGone;
+    const needPerDay = daysLeft > 0 ? Math.max(0, campaign.targetBottles - bottles) / daysLeft : 0;
     return { bottles, revenue, orderCount: paid.length, daysLeft, evenPace, needPerDay };
-  }, [orders]);
+  }, [campaign, orders]);
 
   const delta = Math.round(m.bottles - m.evenPace);
-  const done = m.bottles >= CAMPAIGN.targetBottles;
+  const done = m.bottles >= campaign.targetBottles;
   const ft = fieldTeamCount ?? 0;
 
   return (
     <div className="space-y-7 border border-foreground p-5">
       <div className="flex items-baseline justify-between">
         <h2 className="font-typewriter text-sm uppercase tracking-widest text-foreground">
-          {CAMPAIGN.label}
+          {campaign.label}
         </h2>
-        <span className="text-xs font-body text-muted-foreground">{m.daysLeft} days to Father's Day</span>
+        <span className="text-xs font-body text-muted-foreground">{m.daysLeft} days left</span>
       </div>
       <Row
         label="Bottles sold"
         actual={`${m.bottles}`}
-        target={`${CAMPAIGN.targetBottles}`}
-        value={pct(m.bottles, CAMPAIGN.targetBottles)}
+        target={`${campaign.targetBottles}`}
+        value={pct(m.bottles, campaign.targetBottles)}
         sub={
           done
             ? "Target hit. ✓"
             : `${delta >= 0 ? `${delta} ahead of` : `${-delta} behind`} even pace · need ${m.needPerDay.toFixed(1)}/day from today · ${m.orderCount} orders · ${formatPrice(m.revenue)}`
         }
       />
-      <Row
-        label="Field Team recruited"
-        actual={`${ft}`}
-        target={`${CAMPAIGN.targetFieldTeam}`}
-        value={pct(ft, CAMPAIGN.targetFieldTeam)}
-        sub={
-          fieldTeamCount === null
-            ? "Loading…"
-            : ft >= CAMPAIGN.targetFieldTeam
-              ? "Target hit. ✓"
-              : `${CAMPAIGN.targetFieldTeam - ft} to go · issue codes in the Field team tab`
-        }
-      />
+      {campaign.targetFieldTeam != null && (
+        <Row
+          label="Field Team recruited"
+          actual={`${ft}`}
+          target={`${campaign.targetFieldTeam}`}
+          value={pct(ft, campaign.targetFieldTeam)}
+          sub={
+            fieldTeamCount === null
+              ? "Loading…"
+              : ft >= campaign.targetFieldTeam
+                ? "Target hit. ✓"
+                : `${campaign.targetFieldTeam - ft} to go · issue codes in the Field team tab`
+          }
+        />
+      )}
     </div>
   );
 };
@@ -145,7 +141,7 @@ const PlanTracker = ({ orders }: { orders: DashOrder[] }) => {
   if (!plan || plan.year1_units == null) {
     return (
       <div className="max-w-[760px] space-y-8">
-        <CampaignTracker orders={orders} />
+        {ACTIVE_CAMPAIGN && <CampaignTracker campaign={ACTIVE_CAMPAIGN} orders={orders} />}
         <p className="font-body text-muted-foreground text-sm">No plan targets set yet. (They live in the admin-only `plan` table.)</p>
       </div>
     );
@@ -169,7 +165,7 @@ const PlanTracker = ({ orders }: { orders: DashOrder[] }) => {
 
   return (
     <div className="max-w-[760px] space-y-8">
-      <CampaignTracker orders={orders} />
+      {ACTIVE_CAMPAIGN && <CampaignTracker campaign={ACTIVE_CAMPAIGN} orders={orders} />}
 
       <div className="flex items-baseline justify-between">
         <h2 className="font-typewriter text-sm uppercase tracking-widest text-foreground">Year 1 vs plan</h2>

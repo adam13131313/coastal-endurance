@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/catalog";
 import { FT_STAGE_LABEL } from "@/lib/crm";
+import { ACTIVE_CAMPAIGN } from "@/lib/campaign";
 
 // The "Today" cockpit: every needs-action signal on one screen — dispatch queue,
 // low stock, campaign pace, field-team follow-ups due, open staff notes — so
@@ -18,7 +19,6 @@ interface DashOrder {
   order_deliveries: { status: string; scheduled_for: string }[];
 }
 
-const CAMPAIGN = { targetBottles: 200, targetFieldTeam: 15, start: "2026-07-01", end: "2026-09-06" };
 const LOW_STOCK_AT = 15;
 
 interface FtRow {
@@ -79,19 +79,23 @@ const AdminCockpit = ({ orders, onGo }: { orders: DashOrder[]; onGo: (tab: strin
     const overdueShipments = scheduled.filter((d) => d.scheduled_for < today).length;
     const dueThisWeek = scheduled.filter((d) => d.scheduled_for >= today && d.scheduled_for <= new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)).length;
 
-    // Campaign pace
-    const start = new Date(CAMPAIGN.start); const end = new Date(CAMPAIGN.end); const now = new Date();
-    const inWindow = paidish.filter((o) => new Date(o.created_at) >= start);
-    const bottles = inWindow.reduce((s, o) => s + o.order_items.reduce((t, it) => t + it.bottles_each * it.quantity, 0), 0);
-    const daysLeft = Math.max(0, Math.ceil((end.getTime() - now.getTime()) / 86400000));
-    const needPerDay = daysLeft > 0 ? Math.max(0, CAMPAIGN.targetBottles - bottles) / daysLeft : 0;
+    // Campaign pace (only while a campaign is configured in src/lib/campaign.ts)
+    let campaign: { bottles: number; daysLeft: number; needPerDay: number } | null = null;
+    if (ACTIVE_CAMPAIGN) {
+      const start = new Date(ACTIVE_CAMPAIGN.start); const end = new Date(ACTIVE_CAMPAIGN.end); const now = new Date();
+      const inWindow = paidish.filter((o) => new Date(o.created_at) >= start);
+      const bottles = inWindow.reduce((s, o) => s + o.order_items.reduce((t, it) => t + it.bottles_each * it.quantity, 0), 0);
+      const daysLeft = Math.max(0, Math.ceil((end.getTime() - now.getTime()) / 86400000));
+      const needPerDay = daysLeft > 0 ? Math.max(0, ACTIVE_CAMPAIGN.targetBottles - bottles) / daysLeft : 0;
+      campaign = { bottles, daysLeft, needPerDay };
+    }
 
     // Last 7 days sales
     const weekAgo = new Date(Date.now() - 7 * 86400000);
     const lastWeek = paidish.filter((o) => new Date(o.created_at) >= weekAgo);
     const weekRevenue = lastWeek.reduce((s, o) => s + o.total_cents, 0);
 
-    return { overdueShipments, dueThisWeek, bottles, daysLeft, needPerDay, weekOrders: lastWeek.length, weekRevenue };
+    return { overdueShipments, dueThisWeek, campaign, weekOrders: lastWeek.length, weekRevenue };
   }, [orders]);
 
   const ftDue = useMemo(
@@ -117,8 +121,16 @@ const AdminCockpit = ({ orders, onGo }: { orders: DashOrder[]; onGo: (tab: strin
 
       {/* Stat strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Stat label="Campaign" value={`${m.bottles} / ${CAMPAIGN.targetBottles}`} sub={`${m.needPerDay.toFixed(1)}/day needed · ${m.daysLeft}d left`} onClick={() => onGo("campaign")} />
-        <Stat label="Field team" value={`${ftConfirmed} / ${CAMPAIGN.targetFieldTeam}`} sub={`${ftDue.length} follow-up${ftDue.length === 1 ? "" : "s"} due`} onClick={() => onGo("field")} alert={ftDue.some((x) => x.due.overdue)} />
+        {m.campaign && ACTIVE_CAMPAIGN && (
+          <Stat label="Campaign" value={`${m.campaign.bottles} / ${ACTIVE_CAMPAIGN.targetBottles}`} sub={`${m.campaign.needPerDay.toFixed(1)}/day needed · ${m.campaign.daysLeft}d left`} onClick={() => onGo("campaign")} />
+        )}
+        <Stat
+          label="Field team"
+          value={ACTIVE_CAMPAIGN?.targetFieldTeam != null ? `${ftConfirmed} / ${ACTIVE_CAMPAIGN.targetFieldTeam}` : `${ftConfirmed}`}
+          sub={`${ftDue.length} follow-up${ftDue.length === 1 ? "" : "s"} due`}
+          onClick={() => onGo("field")}
+          alert={ftDue.some((x) => x.due.overdue)}
+        />
         <Stat label="To ship" value={`${m.overdueShipments + m.dueThisWeek}`} sub={m.overdueShipments ? `${m.overdueShipments} OVERDUE` : "next 7 days"} onClick={() => onGo("dispatch")} alert={m.overdueShipments > 0} />
         <Stat label="Last 7 days" value={`${m.weekOrders} orders`} sub={formatPrice(m.weekRevenue)} onClick={() => onGo("orders")} />
       </div>
