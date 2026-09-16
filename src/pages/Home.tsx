@@ -72,15 +72,16 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <Reveal className="order-2 lg:order-1">
               <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
-                THE HERO PRODUCT
+                THE ONLY PRODUCT WE MAKE
               </span>
               <h2 className="mt-4 text-3xl md:text-5xl font-typewriter uppercase">
                 FIELD OIL 001
               </h2>
               <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
-                A barrier oil that supports your skin's natural barrier. 
-                Fast-absorbing, non-greasy, built for real conditions. 
-                One product. Daily. That's the routine.
+                A face oil that supports your skin's natural barrier.
+                It absorbs fast, doesn't leave a greasy film, and holds up
+                to a full day outdoors. One bottle, once a day &mdash; that's
+                the whole routine.
               </p>
               <ul className="mt-8 space-y-3">
                 {[
