@@ -23,13 +23,16 @@ export const CURRENCIES: Record<Currency, CurrencyConfig> = {
 // on our side of the handoff — reaching Stripe and finding your country missing
 // from the address list is a dead end with nothing on screen to explain it.
 // No trailing full stop — the caller punctuates (the cart follows it with a
-// second sentence; the product page renders it as a bullet).
+// second sentence; the product page renders it as a bullet). The three
+// free-shipping currencies share one line naming all three regions on purpose:
+// the coverage is the selling point, and the currency switcher (see
+// SHIPPING_ELSEWHERE) is how a customer moves to the region they need.
 export const SHIPPING_NOTE: Record<Currency, string> = {
-  AUD: "Free standard shipping in Australia, express available at checkout",
-  GBP: "Free standard shipping in the UK, express available at checkout",
+  AUD: "Free standard shipping to Australia, the UK and New Zealand, express available at checkout",
+  GBP: "Free standard shipping to Australia, the UK and New Zealand, express available at checkout",
   USD: "Flat $20 tracked shipping to the United States",
   EUR: "Flat €20 tracked shipping within the EU",
-  NZD: "Free standard shipping in New Zealand, express available at checkout",
+  NZD: "Free standard shipping to Australia, the UK and New Zealand, express available at checkout",
 };
 
 export const SHIPPING_ELSEWHERE = "Shipping somewhere else? Change the currency at the top of the page.";
