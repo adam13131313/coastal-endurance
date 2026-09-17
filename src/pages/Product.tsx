@@ -117,7 +117,7 @@ const Product = () => {
           "@type": "Product",
           name: "Field Oil 001",
           description: "A daily face oil for healthy skin. Naturally derived: Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, plus a natural antioxidant system. No added fragrance, zero essential oils. 30ml. Made in Australia.",
-          image: "https://coastalendurance.com/opengraph-image.png",
+          image: "https://coastalendurance.com/og-image.png",
           brand: { "@type": "Brand", name: "Coastal Endurance" },
           offers: {
             "@type": "Offer",
@@ -375,9 +375,8 @@ const Product = () => {
             WHO IT'S FOR
           </h2>
           <p className="mt-6 font-body text-muted-foreground leading-relaxed text-[17px] text-left">
-            Field Oil is built for those who spend real time outside. Surfers, runners, cyclists,
-            builders, professionals who train before or after work. If your skin faces the elements daily,
-            this is your maintenance tool.
+            Field Oil is built for men whose days are hard on the skin &mdash; men who spend real
+            time outside. If your skin faces the elements daily, this is your maintenance tool.
           </p>
         </div>
       </section>

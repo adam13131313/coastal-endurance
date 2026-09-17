@@ -283,7 +283,7 @@ const Ingredients = () => {
         <div className="max-w-[700px] mx-auto px-6">
           <h2 className="text-xl font-typewriter uppercase mb-3">BUILT FOR</h2>
           <p className="font-body text-muted-foreground leading-relaxed text-[17px]">
-            Men with significant outdoor exposure, surfers, tradies, cyclists, and outdoor workers exposed to the elements.
+            Men whose days are hard on the skin &mdash; significant, repeated exposure to the elements.
           </p>
           <p className="mt-4 text-[17px] font-body font-medium text-foreground">
             Not anti-aging. Barrier maintenance for cumulative environmental exposure from prolonged outdoor conditions.

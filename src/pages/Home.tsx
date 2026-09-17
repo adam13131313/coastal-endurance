@@ -43,7 +43,7 @@ const Home = () => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: "0.25s" }}>
               <Link to="/product" className="group inline-flex items-center justify-center px-6 py-3 bg-background text-foreground font-typewriter text-sm uppercase tracking-wider hover:bg-background/90 transition-colors">
-                MAINTAIN YOUR BARRIER
+                SHOP FIELD OIL
                 <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link to="/about" className="inline-flex items-center justify-center px-6 py-3 border border-background/60 text-background font-typewriter text-sm uppercase tracking-wider hover:bg-background hover:text-foreground transition-colors">
@@ -61,7 +61,7 @@ const Home = () => {
             Field Oil maintains what the elements wear down
           </h2>
           <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed text-left">
-            Field Oil is a daily face oil built for those who spend their days outside, surfers, runners, cyclists, builders, farmers, anyone who works and lives under the Australian sky.
+            Field Oil is a daily face oil for men whose days are hard on the skin &mdash; anyone who works, trains, or lives under the Australian sky.
           </p>
         </Reveal>
       </section>
@@ -72,15 +72,16 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <Reveal className="order-2 lg:order-1">
               <span className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground">
-                THE HERO PRODUCT
+                THE ONLY PRODUCT WE MAKE
               </span>
               <h2 className="mt-4 text-3xl md:text-5xl font-typewriter uppercase">
                 FIELD OIL 001
               </h2>
               <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
-                A barrier oil that supports your skin's natural barrier. 
-                Fast-absorbing, non-greasy, built for real conditions. 
-                One product. Daily. That's the routine.
+                A face oil that keeps weathered skin in working order.
+                It absorbs fast, doesn't leave a greasy film, and holds up
+                to a full day outdoors. One bottle, once a day &mdash; that's
+                the whole routine.
               </p>
               <ul className="mt-8 space-y-3">
                 {[
