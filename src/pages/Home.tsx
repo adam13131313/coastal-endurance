@@ -78,7 +78,7 @@ const Home = () => {
                 FIELD OIL 001
               </h2>
               <p className="mt-6 text-[17px] font-body text-muted-foreground leading-relaxed">
-                A face oil that keeps weathered skin in working order.
+                A face oil that keeps outdoor skin in working order.
                 It absorbs fast, doesn't leave a greasy film, and holds up
                 to a full day outdoors. One bottle, once a day &mdash; that's
                 the whole routine.
