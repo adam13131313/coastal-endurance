@@ -22,6 +22,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Account = lazy(() => import("./pages/Account"));
 const FieldTeam = lazy(() => import("./pages/FieldTeam"));
+const Brand = lazy(() => import("./pages/Brand"));
 const FieldNotes = lazy(() => import("./pages/FieldNotes"));
 const FieldNote = lazy(() => import("./pages/FieldNote"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
@@ -50,6 +51,8 @@ const AppContent = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/account" element={<Account />} />
               <Route path="/field-team" element={<FieldTeam />} />
+              {/* Unlinked, noindex working brief for creative review — shared by URL only. */}
+              <Route path="/brand" element={<Brand />} />
               {/* The Father's Day 2026 campaign page is retired; keep old links working. */}
               <Route path="/fathers-day" element={<Navigate to="/product" replace />} />
               <Route path="/field-notes" element={<FieldNotes />} />
