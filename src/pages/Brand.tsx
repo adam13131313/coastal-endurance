@@ -200,19 +200,6 @@ const Brand = () => {
         </p>
       </Section>
 
-      <section className="section-padding">
-        <div className="max-w-[700px] mx-auto px-6">
-          <p className="font-body text-sm text-muted-foreground">
-            Thoughts, pushback, better lines:{" "}
-            <a
-              href="mailto:hello@coastalendurance.com"
-              className="text-foreground underline underline-offset-4 hover:text-primary transition-colors"
-            >
-              hello@coastalendurance.com
-            </a>
-          </p>
-        </div>
-      </section>
     </main>
   );
 };
