@@ -117,8 +117,9 @@ const Brand = () => {
 
       <Section title="Positioning">
         <p>
-          Premium, and unapologetic about it. Field Oil 001 sells at A$78 for 30 ml. That is Aesop
-          territory, not supermarket territory, and it's deliberate.
+          Premium, and unapologetic about it. Field Oil 001 sells at A$78 for 30 ml (note we are
+          pre-revenue and in testing). That is Aesop territory, not middling territory, and it's
+          deliberate.
         </p>
         <p>
           Aesop is the reference: a Melbourne brand that proved the world pays properly for
