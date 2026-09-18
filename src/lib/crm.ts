@@ -162,7 +162,7 @@ export const CHANNEL_LABEL: Record<string, string> = {
 // Shown as a small badge so it's always obvious whether a message was typed in
 // by hand or filed automatically.
 export const SOURCE_LABEL: Record<string, string> = {
-  manual: "Logged by hand", inbound_email: "Forwarded in", whatsapp_export: "WhatsApp import",
+  manual: "Logged by hand", inbound_email: "Forwarded in", whatsapp_export: "WhatsApp import", website: "From the website",
 };
 
 /** A one-line "who was this with" for an unfiled message in the review queue. */

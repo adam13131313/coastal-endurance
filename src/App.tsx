@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import ScrollToTop from "@/components/ScrollToTop";
+import FeedbackWidget from "@/components/FeedbackWidget";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Home from "./pages/Home";
@@ -65,6 +66,7 @@ const AppContent = () => {
           </Suspense>
         </div>
         <Footer />
+        <FeedbackWidget />
       </div>
     </BrowserRouter>
   );
