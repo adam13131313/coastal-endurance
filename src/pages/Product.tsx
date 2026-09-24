@@ -117,7 +117,7 @@ const Product = () => {
           "@type": "Product",
           name: "Field Oil 001",
           description: "A daily face oil for healthy skin. Naturally derived: Rosehip and Hemp actives, Australian-grown Jojoba and Macadamia carriers, plus a natural antioxidant system. No added fragrance, zero essential oils. 30ml. Made in Australia.",
-          image: "https://coastalendurance.com/og-image.png",
+          image: "https://coastalendurance.com/opengraph-image.png",
           brand: { "@type": "Brand", name: "Coastal Endurance" },
           offers: {
             "@type": "Offer",

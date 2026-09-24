@@ -5,6 +5,9 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 const AUDIENCE_NAME = "Coastal Endurance updates";
+const SITE = "https://coastalendurance.com";
+// List welcome: brand-named sender on the verified hello@ address, replies welcome.
+const FROM_ADDRESS = "Coastal Endurance <hello@coastalendurance.com>";
 
 const ALLOWED_ORIGINS = ["https://coastalendurance.com", "https://www.coastalendurance.com"];
 function originAllowed(o: string | null) {
@@ -79,6 +82,48 @@ async function addToResend(email: string) {
   }
 }
 
+// Short thank-you that reiterates the promise. Every send carries a real
+// unsubscribe link + a List-Unsubscribe header so Gmail/Yahoo one-click works
+// and this stays out of spam.
+async function sendWelcome(email: string, token: string) {
+  if (!RESEND_API_KEY) return;
+  const unsubPage = `${SITE}/unsubscribe?token=${encodeURIComponent(token)}`;
+  const unsubPost = `${SUPABASE_URL}/functions/v1/newsletter-unsubscribe?token=${encodeURIComponent(token)}`;
+  const html = `
+    <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 28px">
+      <p style="font-size:13px;font-weight:600;letter-spacing:3px;margin:0">COASTAL ENDURANCE</p>
+      <hr style="border:none;border-top:1px solid #d6cfc4;margin:16px 0 24px"/>
+      <p style="font-size:15px;color:#333;line-height:1.6">You're on the list. Thanks.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6"><strong>Updates only. No noise.</strong> New products, restocks, and nothing else. You'll hear from us when there's something worth the email — not before.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6">That's the whole promise.</p>
+      <p style="font-size:15px;color:#333;line-height:1.6">Adam<br/><span style="color:#999">Coastal Endurance · Made in Australia</span></p>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0 12px"/>
+      <p style="font-size:12px;color:#999;line-height:1.5">You're getting this because you subscribed at coastalendurance.com. <a href="${unsubPage}" style="color:#999">Unsubscribe</a> any time.</p>
+    </div>`;
+  const text = `You're on the list. Thanks.\n\nUpdates only. No noise. New products, restocks, and nothing else. You'll hear from us when there's something worth the email — not before.\n\nThat's the whole promise.\n\nAdam\nCoastal Endurance · Made in Australia\n\nUnsubscribe any time: ${unsubPage}`;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: FROM_ADDRESS,
+        to: email,
+        reply_to: "hello@coastalendurance.com",
+        subject: "You're on the list",
+        html,
+        text,
+        headers: {
+          "List-Unsubscribe": `<${unsubPost}>, <${unsubPage}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
+      }),
+    });
+    if (!res.ok) console.warn("welcome email failed", res.status, await res.text().catch(() => ""));
+  } catch (e) {
+    console.warn("sendWelcome error", e);
+  }
+}
+
 Deno.serve(async (req) => {
   const h = cors(req.headers.get("Origin"));
   const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...h, "Content-Type": "application/json" } });
@@ -100,14 +145,36 @@ Deno.serve(async (req) => {
       return json({ error: "Too many requests. Please try again shortly." }, 429);
     }
 
-    // Dedup: only insert if this email isn't already captured.
-    const { data: existing } = await admin.from("newsletter_signups").select("id").eq("email", email).maybeSingle();
+    // Dedup on email. Decide whether this signup earns a welcome:
+    //  - brand new email            → insert, welcome once
+    //  - previously unsubscribed    → reactivate (clear unsubscribed_at), welcome again
+    //  - already active + welcomed  → no-op (never double-email a returning form submit)
+    const { data: existing } = await admin
+      .from("newsletter_signups")
+      .select("id, token, unsubscribed_at, welcomed_at")
+      .eq("email", email)
+      .maybeSingle();
+
+    let welcomeToken: string | null = null;
     if (!existing) {
-      const { error } = await admin.from("newsletter_signups").insert({ email, source });
+      const { data: inserted, error } = await admin
+        .from("newsletter_signups")
+        .insert({ email, source })
+        .select("token")
+        .single();
       if (error) console.warn("newsletter insert failed", error.message);
+      else welcomeToken = inserted?.token ?? null;
+    } else if (existing.unsubscribed_at || !existing.welcomed_at) {
+      await admin.from("newsletter_signups").update({ unsubscribed_at: null }).eq("id", existing.id);
+      welcomeToken = existing.token;
     }
 
-    // Sync to the Resend audience (handles sending + unsubscribe later).
+    if (welcomeToken) {
+      await sendWelcome(email, welcomeToken).catch((e) => console.warn("welcome error", e));
+      await admin.from("newsletter_signups").update({ welcomed_at: new Date().toISOString() }).eq("email", email);
+    }
+
+    // Sync to the Resend audience (bulk broadcasts + their unsubscribe handling).
     await addToResend(email);
 
     return json({ ok: true });

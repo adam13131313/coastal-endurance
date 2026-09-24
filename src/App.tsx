@@ -25,6 +25,7 @@ const FieldTeam = lazy(() => import("./pages/FieldTeam"));
 const Brand = lazy(() => import("./pages/Brand"));
 const FieldNotes = lazy(() => import("./pages/FieldNotes"));
 const FieldNote = lazy(() => import("./pages/FieldNote"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const CheckoutCancel = lazy(() => import("./pages/CheckoutCancel"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -57,6 +58,7 @@ const AppContent = () => {
               <Route path="/fathers-day" element={<Navigate to="/product" replace />} />
               <Route path="/field-notes" element={<FieldNotes />} />
               <Route path="/field-notes/:slug" element={<FieldNote />} />
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/checkout/cancel" element={<CheckoutCancel />} />
               <Route path="/admin" element={<Admin />} />

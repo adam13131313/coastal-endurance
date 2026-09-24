@@ -118,7 +118,7 @@ const BrandGuide = () => (
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
         <DownloadLink href="/icon-512.png" label="Logo" note="PNG, 512px" />
-        <DownloadLink href="/og-image.png" label="Social / OG image" note="PNG" />
+        <DownloadLink href="/opengraph-image.png" label="Social / OG image" note="PNG, 1200×630" />
         {photos.map(([href, label]) => (
           <DownloadLink key={href} href={href} label={label} note="JPG" />
         ))}

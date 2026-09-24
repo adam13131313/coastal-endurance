@@ -13,6 +13,12 @@ project_id = "eutbtqkhzizndynilcpl"
   [functions.stripe-webhook]
     verify_jwt = false
 
+  # newsletter-unsubscribe is gated by a per-subscriber unguessable token, not a
+  # JWT. It must accept the header List-Unsubscribe one-click POST that Gmail/Yahoo
+  # send with no Authorization header, so verify_jwt has to be off here.
+  [functions.newsletter-unsubscribe]
+    verify_jwt = false
+
   # inbound-email is called by Resend when mail arrives at the CRM address, with
   # a Svix signature instead of a Supabase JWT — so verify_jwt has to be off. The
   # function verifies that signature against INBOUND_WEBHOOK_SECRET and refuses
