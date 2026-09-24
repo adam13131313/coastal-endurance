@@ -1,12 +1,16 @@
-// Field Oil financial model — v3 (bottoms-up: $78 retail, 700-unit batch, not
-// GST-registered). Source: coastal_endurance_model_v3. These are the planning
+// Field Oil financial model — v3 (bottoms-up: $78 retail, 700 units a year made
+// in 100-unit batches, not GST-registered). Source: coastal_endurance_model_v3.
+// Annual volume and run size are separate levers: volume drives revenue and
+// contribution, run size drives how much cash sits in inventory at once. These
+// are the planning
 // ASSUMPTIONS and derived unit economics; live actuals-vs-plan live in the
 // Campaign tab (Plan tracker) and the admin `plan` table. To re-baseline the
 // on-screen model, edit the constants below — every margin, break-even and P&L
 // figure recomputes from them.
 
 const PRICE = 78.0; // retail, GST-inclusive. Not GST-registered, so net = gross.
-const YEAR1_UNITS = 700; // base-case volume — one production batch.
+const YEAR1_UNITS = 700; // base-case volume sold in the year.
+const BATCH_SIZE = 100; // standard production run — the business makes to a cadence, not one big batch.
 const FIXED_MONTHLY = 150; // Supabase / Vercel / Klaviyo / domain.
 
 // Product COGS per unit — the inventoriable cost of one finished, packed bottle.
@@ -56,7 +60,12 @@ const contributionMargin = contributionUnit / PRICE; // 67.1%
 const setupTotal = sum(SETUP); // $10,000
 const fixedYear = FIXED_MONTHLY * 12; // $1,800
 const breakevenUnits = Math.ceil((setupTotal + fixedYear) / contributionUnit); // ~226
-const cashToLaunch = setupTotal + YEAR1_UNITS * productCogs + FIXED_MONTHLY * 3; // $20,250
+// Cash needed up front. Making in 100-unit runs means only one batch of
+// inventory is funded at a time, not the whole year's — the single biggest
+// cash effect of the batch-size decision.
+const batchesPerYear = Math.ceil(YEAR1_UNITS / BATCH_SIZE);
+const batchInventory = BATCH_SIZE * productCogs; // $1,400 per run
+const cashToLaunch = setupTotal + batchInventory + FIXED_MONTHLY * 3; // $11,850
 
 const revenueY1 = PRICE * YEAR1_UNITS;
 const cogsY1 = productCogs * YEAR1_UNITS;
@@ -97,7 +106,8 @@ const FinancialModel = () => {
       <div>
         <h3 className="font-typewriter text-sm uppercase tracking-widest text-foreground">Financial model — assumptions</h3>
         <p className="mt-2 text-xs font-body text-muted-foreground max-w-[640px]">
-          The base-case planning model (v3): {money0(PRICE)} retail, {YEAR1_UNITS}-unit batch, not GST-registered.
+          The base-case planning model (v3): {money0(PRICE)} retail, {YEAR1_UNITS} units a year made in
+          {" "}{BATCH_SIZE}-unit batches, not GST-registered.
           These are targets and cost assumptions — track them against live sales in the Campaign tab.
         </p>
       </div>
@@ -109,7 +119,7 @@ const FinancialModel = () => {
         <Tile label="Gross margin" value={pct(grossMargin)} sub={`${money(grossProfitUnit)}/unit after product COGS`} />
         <Tile label="Variable cost / unit" value={money(variableCost)} sub="product COGS + fulfilment" />
         <Tile label="Break-even" value={`${breakevenUnits} units`} sub="to cover Year-1 fixed + setup" />
-        <Tile label="Cash to launch" value={money0(cashToLaunch)} sub="before any revenue" />
+        <Tile label="Cash up front" value={money0(cashToLaunch)} sub={`setup + one ${BATCH_SIZE}-unit run + 3 months fixed`} />
       </div>
 
       {/* Per-unit cost stack */}
@@ -168,19 +178,23 @@ const FinancialModel = () => {
         <h4 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-2">Cash to launch (before revenue)</h4>
         <div>
           <Line label="One-off setup" value={setupTotal} />
-          <Line label={`Inventory — full batch (${YEAR1_UNITS} × ${money(productCogs)} product COGS)`} value={YEAR1_UNITS * productCogs} />
+          <Line label={`Inventory — one ${BATCH_SIZE}-unit run (${BATCH_SIZE} × ${money(productCogs)} product COGS)`} value={batchInventory} />
           <Line label="First 3 months fixed" value={FIXED_MONTHLY * 3} />
-          <Line label="Total cash to launch" value={cashToLaunch} strong top />
+          <Line label="Total cash up front" value={cashToLaunch} strong top />
         </div>
         <p className="mt-2 text-xs font-body text-muted-foreground">
-          Fulfilment (shipping + processing) is per-sale, not pre-paid, so it's excluded from launch cash.
+          Only one run of inventory is funded at a time — the year's {YEAR1_UNITS} units are made in
+          about {batchesPerYear} runs of {BATCH_SIZE}, each paid for out of the last one's sales.
+          Fulfilment (shipping + processing) is per-sale, not pre-paid, so it's excluded.
+          Minimum order quantities on the smaller ingredients can force buying more than one run needs;
+          the Supply batch calculator shows that surplus.
         </p>
       </div>
 
       {/* Scenarios */}
       <div>
         <h4 className="font-typewriter text-xs uppercase tracking-widest text-muted-foreground mb-3">
-          Scenarios — units sold vs {YEAR1_UNITS} batch
+          Scenarios — units sold against the {YEAR1_UNITS}-unit year
         </h4>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[420px] text-sm font-body">

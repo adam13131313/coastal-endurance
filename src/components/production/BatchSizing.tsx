@@ -200,7 +200,10 @@ const BatchSizing = () => {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
 
-  const [bottles, setBottles] = useState("700");
+  // Standard run size. Small batches keep the oil fresh, cap what a failed
+  // batch costs, and spread the materials spend — at the price of a QC cycle
+  // and a set-up/clean-down per 100 units.
+  const [bottles, setBottles] = useState("100");
   const [fill, setFill] = useState("30.0");
   const [loss, setLoss] = useState("8");
   const [buffer, setBuffer] = useState("10");

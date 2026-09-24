@@ -24,7 +24,7 @@ const Batches = () => {
   const [checks, setChecks] = useState<QcCheck[]>([]);
 
   // New-batch + editing state.
-  const [newBottles, setNewBottles] = useState("220");
+  const [newBottles, setNewBottles] = useState("100");
   const [newNumber, setNewNumber] = useState("");
   const [resizeBottles, setResizeBottles] = useState("");
   const [blend, setBlend] = useState<Record<string, { actualG: string; lotId: string }>>({});
