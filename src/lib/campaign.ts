@@ -9,8 +9,7 @@ export interface CampaignConfig {
   end: string; // YYYY-MM-DD
 }
 
-// No campaign is running right now (the Father's Day 2026 campaign ended
-// 6 Sep 2026). To run the next one, replace null with a config, e.g.:
+// No campaign is running right now. To run one, replace null with a config, e.g.:
 //   { label: "Summer campaign", targetBottles: 150, targetFieldTeam: 10,
 //     start: "2026-12-01", end: "2027-01-31" }
 // The Campaign tab tracker and the Today cockpit tile reappear automatically.

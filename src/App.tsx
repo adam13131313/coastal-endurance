@@ -53,7 +53,7 @@ const AppContent = () => {
               <Route path="/field-team" element={<FieldTeam />} />
               {/* Unlinked, noindex working brief for creative review — shared by URL only. */}
               <Route path="/brand" element={<Brand />} />
-              {/* The Father's Day 2026 campaign page is retired; keep old links working. */}
+              {/* Retired campaign page; the redirect keeps old inbound links working. */}
               <Route path="/fathers-day" element={<Navigate to="/product" replace />} />
               <Route path="/field-notes" element={<FieldNotes />} />
               <Route path="/field-notes/:slug" element={<FieldNote />} />

@@ -49,7 +49,7 @@ const SECTIONS = [
     ["Target", "Men ~35–55 with years of outdoor exposure (surfers, cyclists, runners, tradies, outdoor workers)"],
     ["Fragrance", "Zero added fragrance, zero essential oils"],
     ["Provenance", "Majority Australian-grown ingredients; made in Australia"],
-    ["Launched", "6 September 2026 (Father's Day AU)"],
+    ["Launched", "6 September 2026"],
   ] },
   { sub: "Current formula (100% naturally derived)" },
   { p: "Rosehip and Hemp (active oils); Australian Jojoba and Macadamia (carrier oils); Meadowfoam, Vitamin E, Sunflower, and Rosemary (natural antioxidant/carrier system). 100% naturally derived, no synthetics." },
