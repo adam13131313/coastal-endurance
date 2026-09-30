@@ -6,7 +6,7 @@ import Markdown from "@/components/Markdown";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
 
-type Kind = "self" | "competitor" | "inspiration";
+type Kind = "self" | "competitor" | "inspiration" | "reference";
 interface Competitor {
   id: string; name: string; kind: Kind; category: string | null; url: string | null;
   one_liner: string | null; our_position: string | null; profile: string | null; sort: number;
@@ -60,6 +60,7 @@ const CompetitorsAdmin = () => {
   const self = rows.find((r) => r.kind === "self");
   const competitors = rows.filter((r) => r.kind === "competitor");
   const inspirations = rows.filter((r) => r.kind === "inspiration");
+  const references = rows.filter((r) => r.kind === "reference");
 
   const EditForm = ({ id }: { id: string | null }) => (
     <div className="mt-4 pt-4 border-t border-border space-y-2">
@@ -68,6 +69,7 @@ const CompetitorsAdmin = () => {
         <select value={draft.kind} onChange={(e) => setDraft((d) => ({ ...d, kind: e.target.value as Kind }))} className="px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground">
           <option value="competitor">Competitor</option>
           <option value="inspiration">Inspiration</option>
+          <option value="reference">Reference</option>
           <option value="self">Our position</option>
         </select>
       </div>
@@ -148,6 +150,14 @@ const CompetitorsAdmin = () => {
         <section>
           <h3 className="font-typewriter text-sm uppercase tracking-widest text-muted-foreground mb-3">Brand inspiration</h3>
           <div className="space-y-3">{inspirations.map((c) => <Card key={c.id} c={c} />)}</div>
+        </section>
+      )}
+
+      {/* References — single lessons (a mechanic, a UX pattern, a boundary), not whole-brand inspiration */}
+      {references.length > 0 && (
+        <section>
+          <h3 className="font-typewriter text-sm uppercase tracking-widest text-muted-foreground mb-3">References</h3>
+          <div className="space-y-3">{references.map((c) => <Card key={c.id} c={c} />)}</div>
         </section>
       )}
     </div>
