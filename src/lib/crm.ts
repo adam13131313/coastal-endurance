@@ -118,14 +118,34 @@ export interface EmailTemplate {
   active: boolean;
 }
 
+// What {{code}} becomes when the contact has no issued code yet.
+export const NO_CODE_PLACEHOLDER = "[no code issued yet — click Issue code first]";
+
+// True while a message still carries that placeholder — the compose box uses it to
+// hold back Send, so a message never goes out telling someone to use "[no code…".
+export const hasUnfilledCode = (text: string): boolean => (text ?? "").includes(NO_CODE_PLACEHOLDER);
+
 // Fill template placeholders for a contact. {{code}} comes from the pipeline row's
 // issued discount code; if none exists yet the placeholder says so (visible in the
 // editable compose box, so it can't slip out unnoticed).
 export function interpolate(text: string, c: Contact, extras?: { code?: string | null }): string {
   return (text ?? "")
     .replace(/\{\{\s*first_name\s*\}\}/g, firstName(c))
-    .replace(/\{\{\s*code\s*\}\}/g, extras?.code || "[no code issued yet — click Issue code first]");
+    .replace(/\{\{\s*code\s*\}\}/g, extras?.code || NO_CODE_PLACEHOLDER);
 }
+
+// State of a member's code in Stripe (mirrors supabase/functions/_shared/promo-status.ts).
+// Stripe shows the same "invalid" at checkout for a spent code as for a dead one.
+export type PromoStatus = "active" | "redeemed" | "inactive" | "missing";
+
+export const CODE_STATUS_LABEL: Record<Exclude<PromoStatus, "active">, string> = {
+  redeemed: "Code used",
+  inactive: "Code inactive",
+  missing: "Code not in Stripe",
+};
+
+export const codeIsDead = (s: PromoStatus | undefined): s is Exclude<PromoStatus, "active"> =>
+  s === "redeemed" || s === "inactive" || s === "missing";
 
 export const fmtDate = (s: string | null) =>
   s ? new Date(s).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) : "—";

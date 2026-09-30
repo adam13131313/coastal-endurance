@@ -1,5 +1,6 @@
 import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { classifyPromo, statusesFor } from "../_shared/promo-status.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -66,6 +67,20 @@ async function findPromo(code: string) {
   return list.data[0] ?? null;
 }
 
+// Every promotion code hanging off our coupon (up to 1,000 — the team is a couple
+// of dozen). Throws on a Stripe error; callers decide whether that is fatal.
+async function listCouponPromos(): Promise<Stripe.PromotionCode[]> {
+  const out: Stripe.PromotionCode[] = [];
+  let starting_after: string | undefined;
+  for (let i = 0; i < 10; i++) {
+    const page = await stripe.promotionCodes.list({ coupon: COUPON_ID, limit: 100, starting_after });
+    out.push(...page.data);
+    if (!page.has_more) break;
+    starting_after = page.data[page.data.length - 1]?.id;
+  }
+  return out;
+}
+
 async function deactivate(code: string) {
   try {
     const p = await findPromo(code);
@@ -118,13 +133,7 @@ Deno.serve(async (req) => {
       // Pull redemption status from Stripe for codes tied to our coupon.
       const status = new Map<string, { redeemed: boolean; active: boolean }>();
       try {
-        let starting_after: string | undefined;
-        for (let i = 0; i < 10; i++) {
-          const page = await stripe.promotionCodes.list({ coupon: COUPON_ID, limit: 100, starting_after });
-          for (const p of page.data) status.set(p.code, { redeemed: (p.times_redeemed ?? 0) > 0, active: p.active });
-          if (!page.has_more) break;
-          starting_after = page.data[page.data.length - 1]?.id;
-        }
+        for (const p of await listCouponPromos()) status.set(p.code, { redeemed: (p.times_redeemed ?? 0) > 0, active: p.active });
       } catch (e) {
         console.warn("promo status fetch failed", e);
       }
@@ -138,14 +147,45 @@ Deno.serve(async (req) => {
       return json({ members });
     }
 
+    // ---- STATUS -----------------------------------------------------------
+    // Live state in Stripe for a batch of codes, so the CRM can flag one that is
+    // spent or switched off before it goes out. Stripe shows the same "invalid" for
+    // both, so nothing else tells them apart. "missing" = not one of our codes.
+    if (action === "status") {
+      const codes: string[] = Array.isArray(body?.codes)
+        ? [...new Set<string>(body.codes.filter((c: unknown): c is string => typeof c === "string" && c.length > 0 && c.length <= 64))].slice(0, 500)
+        : [];
+      try {
+        return json({ statuses: statusesFor(codes, await listCouponPromos()) });
+      } catch (e) {
+        // Say "unavailable" rather than guess, so a Stripe hiccup never paints good codes as dead.
+        console.warn("promo status fetch failed", e);
+        return json({ statuses: {}, unavailable: true });
+      }
+    }
+
     // ---- ISSUE ------------------------------------------------------------
     if (action === "issue") {
       const email = isEmail(body?.email) ? body.email.trim().toLowerCase() : "";
       if (!email) return json({ error: "Enter a valid email" }, 400);
       await ensureCoupon();
 
-      // If this email already had a code, retire it first.
+      const silent = body?.silent === true;
       const { data: existing } = await admin.from(TABLE).select("id, discount_code").eq("email", email).maybeSingle();
+
+      // A code that is still live and unused is the one the member holds (or is
+      // about to be sent), so retiring it would turn it into "invalid" at checkout.
+      // Hand it back instead, unless the caller explicitly forces a replacement.
+      // A Stripe error here propagates (500) rather than deactivating blind.
+      if (existing?.discount_code && body?.force !== true) {
+        const current = await findPromo(existing.discount_code);
+        if (classifyPromo(current) === "active") {
+          if (!silent) await sendCodeEmail(email, existing.discount_code).catch((e) => console.error("email error", e));
+          return json({ code: existing.discount_code, email, existing: true, emailed: !silent && !!RESEND_API_KEY });
+        }
+      }
+
+      // Otherwise retire the old code (a no-op if it is already spent) and make a new one.
       if (existing?.discount_code) await deactivate(existing.discount_code);
 
       // Create a unique single-use promotion code (retry on rare code collision).
@@ -170,7 +210,6 @@ Deno.serve(async (req) => {
 
       // silent = generate the code only; the admin sends the email themselves
       // through the CRM compose modal (review + edit before anything goes out).
-      const silent = body?.silent === true;
       if (!silent) await sendCodeEmail(email, code).catch((e) => console.error("email error", e));
       return json({ code, email, emailed: !silent && !!RESEND_API_KEY });
     }

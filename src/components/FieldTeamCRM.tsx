@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   sb, FT_STAGES, FT_STAGE_LABEL, CONFIRMED_STAGES, LOST_REASONS, interpolate, fmtDate, fmtDateTime, waLink, telLink, emailLooksValid, phoneWarning,
-  type FieldTeamRow, type ContactEvent, type EmailTemplate,
+  hasUnfilledCode, codeIsDead, CODE_STATUS_LABEL,
+  type FieldTeamRow, type ContactEvent, type EmailTemplate, type PromoStatus,
 } from "@/lib/crm";
 import CommsLibrary from "@/components/CommsLibrary";
 
@@ -32,6 +33,9 @@ const FieldTeamCRM = () => {
   const [sending, setSending] = useState(false);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [showLibrary, setShowLibrary] = useState(false);
+  // Stripe's view of each issued code (keyed by code). Empty until it arrives, and
+  // stays empty if Stripe or the function is unavailable — no chip beats a false alarm.
+  const [codeStatus, setCodeStatus] = useState<Record<string, PromoStatus>>({});
   // Empty stages collapse to a narrow rail so the occupied columns fit on screen.
   // Opening one is remembered until it is closed again.
   const [openEmpty, setOpenEmpty] = useState<Set<string>>(new Set());
@@ -41,6 +45,18 @@ const FieldTeamCRM = () => {
       if (!next.delete(key)) next.add(key);
       return next;
     });
+
+  const refreshCodeStatus = useCallback(async (list: FieldTeamRow[]) => {
+    const codes = [...new Set(list.map((r) => r.meta?.discount_code).filter((c): c is string => !!c))];
+    if (codes.length === 0) { setCodeStatus({}); return; }
+    try {
+      const { data, error } = await supabase.functions.invoke("field-team", { body: { action: "status", codes } });
+      const res = data as { statuses?: Record<string, PromoStatus>; unavailable?: boolean } | null;
+      setCodeStatus(error || res?.unavailable ? {} : res?.statuses ?? {});
+    } catch {
+      setCodeStatus({});
+    }
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -53,6 +69,7 @@ const FieldTeamCRM = () => {
       .order("created_at", { ascending: true });
     const list = (data as FieldTeamRow[]) ?? [];
     setRows(list);
+    void refreshCodeStatus(list); // not awaited: the board renders while Stripe answers
     const ids = list.map((r) => r.contact_id);
     if (ids.length) {
       const { data: ev } = await sb.from("contact_events").select("*").in("contact_id", ids).order("created_at", { ascending: false });
@@ -63,7 +80,7 @@ const FieldTeamCRM = () => {
       setEvents({});
     }
     setLoading(false);
-  }, []);
+  }, [refreshCodeStatus]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -152,19 +169,31 @@ const FieldTeamCRM = () => {
 
   // Generate a code WITHOUT emailing, then open the welcome email pre-filled
   // with the code for review + send. No email ever leaves without a look.
-  const issueCode = async (row: FieldTeamRow) => {
+  // `force` replaces a code that still works (Re-issue); without it the function hands
+  // back a live code rather than switching it off under whoever holds it.
+  const issueCode = async (row: FieldTeamRow, force = false) => {
     setBusy(row.id);
     try {
-      const { data, error } = await supabase.functions.invoke("field-team", { body: { action: "issue", email: row.contacts.email, silent: true } });
+      const { data, error } = await supabase.functions.invoke("field-team", { body: { action: "issue", email: row.contacts.email, silent: true, ...(force ? { force: true } : {}) } });
       if (error || (data as { error?: string })?.error) throw new Error((data as { error?: string })?.error || "Issue failed");
-      const code = (data as { code?: string })?.code;
+      const { code, existing } = (data as { code?: string; existing?: boolean }) ?? {};
+      const previous = row.meta?.discount_code;
+      const replaced = !!previous && previous !== code;
       const now = new Date().toISOString();
       const newMeta = { ...row.meta, discount_code: code };
-      await sb.from("contact_pipelines").update({ stage: "code_sent", status: "active", stage_entered_at: now, meta: newMeta, updated_at: now }).eq("id", row.id);
-      await logEvent(row.contact_id, "code_issued", `Code ${code} generated (not emailed — pending review)`, { discount_code: code });
+      // Only restart the stage clock when the card actually moves stage.
+      const moved = row.stage !== "code_sent";
+      await sb.from("contact_pipelines").update({ status: "active", meta: newMeta, updated_at: now, ...(moved ? { stage: "code_sent", stage_entered_at: now } : {}) }).eq("id", row.id);
+      await logEvent(
+        row.contact_id, "code_issued",
+        existing ? `Code ${code} is still live — reused (not emailed — pending review)`
+          : replaced ? `Code ${code} re-issued, replacing ${previous} (not emailed — pending review)`
+          : `Code ${code} generated (not emailed — pending review)`,
+        { discount_code: code, ...(replaced ? { replaced: previous } : {}) },
+      );
       await load();
       openCodeEmail({ ...row, stage: "code_sent", meta: newMeta }, code ?? null);
-      toast.success(`Code ${code} generated. Review the welcome email, then send.`);
+      toast.success(existing ? `${code} is still live, so it was reused. Review the message, then send.` : `Code ${code} ${replaced ? "re-issued" : "generated"}. Review the message, then send.`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Couldn't issue a code.");
     } finally {
@@ -172,12 +201,38 @@ const FieldTeamCRM = () => {
     }
   };
 
+  // Replace a member's code with a new one. Say plainly what that does first: it
+  // switches the old code off, and if the old one was already used it is another free bottle.
+  const reissueCode = async (row: FieldTeamRow) => {
+    const old = row.meta?.discount_code;
+    const status = old ? codeStatus[old] : undefined;
+    const who = row.contacts.name || row.contacts.email;
+    const effect = status === "redeemed"
+      ? `${old} has already been used, so a new code is worth another free bottle.`
+      : codeIsDead(status)
+        ? `${old} isn't live in Stripe, so this makes them a fresh working code.`
+        : `${old} still works. Re-issuing switches it off, so anyone holding it (including ${who}) gets "invalid" at checkout until you send the new one.`;
+    if (!window.confirm(`Re-issue a code for ${who}?\n\n${effect}`)) return;
+    await issueCode(row, true);
+  };
+
+  // Emailing a code Stripe says is spent, off, or unknown would hand them "invalid" at
+  // checkout, so make that a deliberate choice. Only asks when the message carries a code.
+  const okToSendCode = (code: string | null | undefined, body: string) => {
+    if (!code || !/\{\{\s*code\s*\}\}/.test(body)) return true;
+    const status = codeStatus[code];
+    if (!codeIsDead(status)) return true;
+    return window.confirm(`Stripe says ${code} is ${status === "redeemed" ? "already used" : status === "inactive" ? "switched off" : "not one of your codes"}, so they'd get "invalid" at checkout.\n\nOpen the message anyway? (Cancel, then use Re-issue for a fresh code.)`);
+  };
+
   // Open the welcome/code template in the compose modal (used after issuing,
   // and by "Email code" to re-send). Falls back to any code-bearing template.
   const openCodeEmail = (row: FieldTeamRow, code: string | null) => {
     const tpl = templates.find((t) => t.key === "accept") ?? templates.find((t) => /\{\{\s*code\s*\}\}/.test(t.body));
     if (!tpl) { toast.error("No welcome/code email template found — add one in Comms."); return; }
-    const extras = { code: code ?? (row.meta?.discount_code as string | undefined) ?? null };
+    const useCode = code ?? (row.meta?.discount_code as string | undefined) ?? null;
+    if (!okToSendCode(useCode, tpl.body)) return;
+    const extras = { code: useCode };
     setCompose({ row, tpl, subject: interpolate(tpl.subject, row.contacts, extras), body: interpolate(tpl.body, row.contacts, extras) });
   };
 
@@ -204,6 +259,7 @@ const FieldTeamCRM = () => {
 
   const openCompose = (row: FieldTeamRow, tpl: EmailTemplate) => {
     const extras = { code: (row.meta?.discount_code as string | undefined) ?? null };
+    if (!okToSendCode(extras.code, tpl.body)) return;
     setCompose({ row, tpl, subject: interpolate(tpl.subject, row.contacts, extras), body: interpolate(tpl.body, row.contacts, extras) });
   };
 
@@ -269,6 +325,10 @@ const FieldTeamCRM = () => {
     setSending(false);
     load();
   };
+
+  // A message still carrying the "[no code issued yet…" placeholder can't go out.
+  // Editing that text away (or issuing the code first) lifts the block.
+  const unfilledCode = !!compose && hasUnfilledCode(compose.body);
 
   if (loading) return <p className="font-body text-muted-foreground">Loading pipeline…</p>;
 
@@ -357,7 +417,9 @@ const FieldTeamCRM = () => {
                     phoneDraft={phoneDraft[row.id] ?? (expanded === row.id ? (row.contacts.phone ?? "") : "")}
                     onToggle={() => setExpanded(expanded === row.id ? null : row.id)}
                     onStage={(st) => setStage(row, st)}
+                    codeStatus={row.meta?.discount_code ? codeStatus[row.meta.discount_code] : undefined}
                     onIssue={() => issueCode(row)}
+                    onReissue={() => reissueCode(row)}
                     onEmailCode={() => openCodeEmail(row, null)}
                     onLost={(reason) => markLost(row, reason)}
                     templates={templates}
@@ -412,22 +474,27 @@ const FieldTeamCRM = () => {
               <textarea value={compose.body} onChange={(e) => setCompose((c) => c && { ...c, body: e.target.value })} rows={11}
                 className="w-full px-2 py-1.5 border border-border bg-background text-sm rounded-none focus:outline-none focus:ring-1 focus:ring-foreground leading-relaxed" />
             </label>
+            {unfilledCode && (
+              <p className="mb-3 text-xs font-body text-destructive">
+                This message has no code in it yet. Close it and issue their code first (Confirmed stage, then Issue code), then open it again, or replace the bracketed text yourself. Sending is switched off until then.
+              </p>
+            )}
             <div className="flex flex-wrap items-center gap-2">
               {compose.tpl.channel === "whatsapp" ? (
                 <>
-                  <button onClick={sendViaWhatsApp} disabled={sending || !waLink(compose.row.contacts.phone)} className="btn-primary text-xs px-4 py-2 disabled:opacity-50" title={waLink(compose.row.contacts.phone) ? "" : "No phone number on this contact — add one on the card first."}>{sending ? "…" : "Send via WhatsApp"}</button>
+                  <button onClick={sendViaWhatsApp} disabled={sending || unfilledCode || !waLink(compose.row.contacts.phone)} className="btn-primary text-xs px-4 py-2 disabled:opacity-50" title={waLink(compose.row.contacts.phone) ? "" : "No phone number on this contact — add one on the card first."}>{sending ? "…" : "Send via WhatsApp"}</button>
                   <button onClick={copyCompose} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Copy</button>
                 </>
               ) : (
                 <>
-                  <button onClick={sendViaApp} disabled={sending} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{sending ? "…" : "Send via app"}</button>
+                  <button onClick={sendViaApp} disabled={sending || unfilledCode} className="btn-primary text-xs px-4 py-2 disabled:opacity-50">{sending ? "…" : "Send via app"}</button>
                   <button onClick={copyCompose} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Copy</button>
                   {waLink(compose.row.contacts.phone) && (
-                    <button onClick={sendViaWhatsApp} disabled={sending} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Send via WhatsApp</button>
+                    <button onClick={sendViaWhatsApp} disabled={sending || unfilledCode} className="btn-outline text-xs px-3 py-2 disabled:opacity-50">Send via WhatsApp</button>
                   )}
                 </>
               )}
-              <button onClick={markSentManually} disabled={sending} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-50">Mark as sent</button>
+              <button onClick={markSentManually} disabled={sending || unfilledCode} className="text-xs font-typewriter uppercase tracking-wider text-muted-foreground hover:text-foreground disabled:opacity-50">Mark as sent</button>
               <button onClick={() => setCompose(null)} disabled={sending} className="ml-auto text-xs font-body text-muted-foreground hover:text-foreground">Cancel</button>
             </div>
             <p className="mt-3 text-[11px] font-body text-muted-foreground">
@@ -444,16 +511,21 @@ const FieldTeamCRM = () => {
 
 // ---- Card ----------------------------------------------------------------
 const Card = ({
-  row, busy, expanded, events, noteDraft, phoneDraft, templates, onToggle, onStage, onIssue, onEmailCode, onLost, onCompose, onNoteChange, onSaveNote, onPhoneChange, onSavePhone,
+  row, busy, expanded, events, noteDraft, phoneDraft, templates, codeStatus, onToggle, onStage, onIssue, onReissue, onEmailCode, onLost, onCompose, onNoteChange, onSaveNote, onPhoneChange, onSavePhone,
 }: {
   row: FieldTeamRow; busy: boolean; expanded: boolean; events: ContactEvent[]; noteDraft: string; phoneDraft: string; templates: EmailTemplate[];
-  onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onEmailCode: () => void; onLost: (reason: string) => void;
+  codeStatus: PromoStatus | undefined;
+  onToggle: () => void; onStage: (s: string) => void; onIssue: () => void; onReissue: () => void; onEmailCode: () => void; onLost: (reason: string) => void;
   onCompose: (tpl: EmailTemplate) => void;
   onNoteChange: (v: string) => void; onSaveNote: () => void;
   onPhoneChange: (v: string) => void; onSavePhone: () => void;
 }) => {
   const c = row.contacts;
   const code = row.meta?.discount_code;
+  const awaitingCode = row.stage === "confirmed" || row.stage === "code_sent";
+  // A spent code is only a problem while the member is still waiting to use it; once
+  // they've ordered it is just history, so the chip stays neutral.
+  const codeProblem = codeIsDead(codeStatus) && awaitingCode;
   return (
     <div className="border border-border bg-background p-3">
       <div className="flex items-start justify-between gap-2">
@@ -477,7 +549,9 @@ const Card = ({
 
       {(code || (c.source && c.source !== "field_team") || c.country) && (
         <div className="mt-1.5 flex flex-wrap gap-1">
-          {code && <Chip>Code ✓</Chip>}
+          {code && (codeIsDead(codeStatus)
+            ? <Chip warn={codeProblem}>{CODE_STATUS_LABEL[codeStatus]}</Chip>
+            : <Chip>Code ✓</Chip>)}
           {c.source && c.source !== "field_team" && <Chip>{c.source}</Chip>}
           {c.country && <Chip>{c.country}</Chip>}
         </div>
@@ -498,9 +572,18 @@ const Card = ({
       <div className="mt-2 space-y-2">
         {(row.stage === "confirmed" || row.stage === "code_sent") && (
           code ? (
-            <button onClick={onEmailCode} disabled={busy} className="w-full text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
-              Email code
-            </button>
+            <div className="flex gap-2">
+              <button onClick={onEmailCode} disabled={busy} className="flex-1 text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
+                Email code
+              </button>
+              <button
+                onClick={onReissue} disabled={busy}
+                title={codeProblem ? "This code can't be used — make a fresh one" : "Switch this code off and make a new one"}
+                className={`shrink-0 text-[11px] font-typewriter uppercase tracking-wider px-2 py-1 disabled:opacity-50 ${codeProblem ? "btn-primary" : "btn-outline"}`}
+              >
+                Re-issue
+              </button>
+            </div>
           ) : (
             <button onClick={onIssue} disabled={busy} className="w-full text-[11px] font-typewriter uppercase tracking-wider btn-outline px-2 py-1 disabled:opacity-50">
               Issue code
@@ -578,8 +661,8 @@ const StageAge = ({ enteredAt }: { enteredAt: string | null }) => {
   );
 };
 
-const Chip = ({ children }: { children: React.ReactNode }) => (
-  <span className="text-[10px] font-typewriter uppercase tracking-widest text-muted-foreground border border-border px-1.5 py-0.5">{children}</span>
+const Chip = ({ children, warn }: { children: React.ReactNode; warn?: boolean }) => (
+  <span className={`text-[10px] font-typewriter uppercase tracking-widest border px-1.5 py-0.5 ${warn ? "text-destructive border-destructive" : "text-muted-foreground border-border"}`}>{children}</span>
 );
 
 const LostButton = ({ onLost, disabled }: { onLost: (r: string) => void; disabled: boolean }) => {
